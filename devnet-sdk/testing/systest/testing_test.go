@@ -30,14 +30,15 @@ type mockTB struct {
 	lastError string
 }
 
-func (m *mockTB) Helper()               {}
-func (m *mockTB) Name() string          { return m.name }
-func (m *mockTB) Cleanup(func())        {}
-func (m *mockTB) Error(args ...any)     {}
-func (m *mockTB) Errorf(string, ...any) {}
-func (m *mockTB) Fail()                 {}
-func (m *mockTB) FailNow()              {}
-func (m *mockTB) Failed() bool          { return false }
+func (m *mockTB) Context() context.Context { return context.Background() }
+func (m *mockTB) Helper()                  {}
+func (m *mockTB) Name() string             { return m.name }
+func (m *mockTB) Cleanup(func())           {}
+func (m *mockTB) Error(args ...any)        {}
+func (m *mockTB) Errorf(string, ...any)    {}
+func (m *mockTB) Fail()                    {}
+func (m *mockTB) FailNow()                 {}
+func (m *mockTB) Failed() bool             { return false }
 func (m *mockTB) Fatal(args ...any) {
 	m.failed = true
 	m.lastError = fmt.Sprint(args...)
