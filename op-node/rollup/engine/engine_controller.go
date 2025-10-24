@@ -21,19 +21,13 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/event"
 )
 
-type syncStatusEnum int
+// elSyncPhase tracks the current phase within EL sync mode
+type elSyncPhase int
 
 const (
-	syncStatusCL syncStatusEnum = iota
-	// We transition between the 4 EL states linearly. We spend the majority of the time in the second & fourth.
-	// We only want to EL sync if there is no finalized block & once we finish EL sync we need to mark the last block
-	// as finalized so we can switch to consolidation
-	// TODO(protocol-quest#91): We can restart EL sync & still consolidate if there finalized blocks on the execution client if the
-	// execution client is running in archive mode. In some cases we may want to switch back from CL to EL sync, but that is complicated.
-	syncStatusWillStartEL               // First if we are directed to EL sync, check that nothing has been finalized yet
-	syncStatusStartedEL                 // Perform our EL sync
-	syncStatusFinishedELButNotFinalized // EL sync is done, but we need to mark the final sync block as finalized
-	syncStatusFinishedEL                // EL sync is done & we should be performing consolidation
+	elSyncPhaseNone elSyncPhase = iota
+	elSyncPhaseActive
+	elSyncPhaseFinishing
 )
 
 var ErrNoFCUNeeded = errors.New("no FCU call was needed")
@@ -93,15 +87,16 @@ type CrossUpdateHandler interface {
 }
 
 type EngineController struct {
-	engine     ExecEngine // Underlying execution engine RPC
-	log        log.Logger
-	metrics    opmetrics.Metricer
-	syncCfg    *sync.Config
-	syncStatus syncStatusEnum
-	chainSpec  *rollup.ChainSpec
-	rollupCfg  *rollup.Config
-	elStart    time.Time
-	clock      clock.Clock
+	engine        ExecEngine // Underlying execution engine RPC
+	log           log.Logger
+	metrics       opmetrics.Metricer
+	syncCfg       *sync.Config
+	elSyncPhase   elSyncPhase // Tracks current phase within EL sync
+	elSyncStarted bool        // Tracks whether EL sync has been started (prevents repeated checks)
+	chainSpec     *rollup.ChainSpec
+	rollupCfg     *rollup.Config
+	elStart       time.Time
+	clock         clock.Clock
 
 	// L1 chain for reset functionality
 	l1 sync.L1Chain
@@ -162,9 +157,10 @@ var _ event.Deriver = (*EngineController)(nil)
 func NewEngineController(ctx context.Context, engine ExecEngine, log log.Logger, m opmetrics.Metricer,
 	rollupCfg *rollup.Config, syncCfg *sync.Config, l1 sync.L1Chain, emitter event.Emitter,
 ) *EngineController {
-	syncStatus := syncStatusCL
+	elSyncPhase := elSyncPhaseNone
+
 	if syncCfg.SyncMode == sync.ELSync {
-		syncStatus = syncStatusWillStartEL
+		elSyncPhase = elSyncPhaseActive // This represents the "WillStartEL" equivalent
 	}
 
 	return &EngineController{
@@ -174,7 +170,8 @@ func NewEngineController(ctx context.Context, engine ExecEngine, log log.Logger,
 		chainSpec:      rollup.NewChainSpec(rollupCfg),
 		rollupCfg:      rollupCfg,
 		syncCfg:        syncCfg,
-		syncStatus:     syncStatus,
+		elSyncPhase:    elSyncPhase,
+		elSyncStarted:  false,
 		clock:          clock.SystemClock,
 		l1:             l1,
 		ctx:            ctx,
@@ -225,9 +222,8 @@ func (e *EngineController) IsEngineInitialELSyncing() bool {
 }
 
 func (e *EngineController) isEngineInitialELSyncing() bool {
-	return e.syncStatus == syncStatusWillStartEL ||
-		e.syncStatus == syncStatusStartedEL ||
-		e.syncStatus == syncStatusFinishedELButNotFinalized
+	return e.syncCfg.SyncMode == sync.ELSync &&
+		(e.elSyncPhase == elSyncPhaseActive || e.elSyncPhase == elSyncPhaseFinishing)
 }
 
 // SetFinalizedHead implements LocalEngineControl.
@@ -345,8 +341,8 @@ func (e *EngineController) logSyncProgressMaybe() func() {
 // It returns true if the status is acceptable.
 func (e *EngineController) checkNewPayloadStatus(status eth.ExecutePayloadStatus) bool {
 	if e.syncCfg.SyncMode == sync.ELSync {
-		if status == eth.ExecutionValid && e.syncStatus == syncStatusStartedEL {
-			e.syncStatus = syncStatusFinishedELButNotFinalized
+		if status == eth.ExecutionValid && e.elSyncPhase == elSyncPhaseActive {
+			e.elSyncPhase = elSyncPhaseFinishing
 		}
 		// Allow SYNCING and ACCEPTED if engine EL sync is enabled
 		return status == eth.ExecutionValid || status == eth.ExecutionSyncing || status == eth.ExecutionAccepted
@@ -363,8 +359,8 @@ func (e *EngineController) checkNewPayloadStatus(status eth.ExecutePayloadStatus
 // It returns true if the status is acceptable.
 func (e *EngineController) checkForkchoiceUpdatedStatus(status eth.ExecutePayloadStatus) bool {
 	if e.syncCfg.SyncMode == sync.ELSync {
-		if status == eth.ExecutionValid && e.syncStatus == syncStatusStartedEL {
-			e.syncStatus = syncStatusFinishedELButNotFinalized
+		if status == eth.ExecutionValid && e.elSyncPhase == elSyncPhaseActive {
+			e.elSyncPhase = elSyncPhaseFinishing
 		}
 		// Allow SYNCING if engine P2P sync is enabled
 		return status == eth.ExecutionValid || status == eth.ExecutionSyncing
@@ -495,16 +491,18 @@ func (e *EngineController) InsertUnsafePayload(ctx context.Context, envelope *et
 
 func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *eth.ExecutionPayloadEnvelope, ref eth.L2BlockRef) error {
 	// Check if there is a finalized head once when doing EL sync. If so, transition to CL sync
-	if e.syncStatus == syncStatusWillStartEL {
+	// This is equivalent to the original syncStatusWillStartEL check (now using elSyncPhase)
+	if e.syncCfg.SyncMode == sync.ELSync && e.elSyncPhase == elSyncPhaseActive && !e.elSyncStarted {
 		b, err := e.engine.L2BlockRefByLabel(ctx, eth.Finalized)
 		rollupGenesisIsFinalized := b.Hash == e.rollupCfg.Genesis.L2.Hash
 		if errors.Is(err, ethereum.NotFound) || rollupGenesisIsFinalized || e.syncCfg.SupportsPostFinalizationELSync {
-			e.syncStatus = syncStatusStartedEL
+			e.elSyncStarted = true
 			e.log.Info("Starting EL sync")
 			e.elStart = e.clock.Now()
 			e.SyncDeriver.OnELSyncStarted()
 		} else if err == nil {
-			e.syncStatus = syncStatusFinishedEL
+			// Skip EL sync and go straight to CL sync
+			e.elSyncPhase = elSyncPhaseNone
 			e.log.Info("Skipping EL sync and going straight to CL sync because there is a finalized block", "id", b.ID())
 			return nil
 		} else {
@@ -537,7 +535,7 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 		SafeBlockHash:      e.safeHead.Hash,
 		FinalizedBlockHash: e.finalizedHead.Hash,
 	}
-	if e.syncStatus == syncStatusFinishedELButNotFinalized {
+	if e.elSyncPhase == elSyncPhaseFinishing {
 		fc.SafeBlockHash = envelope.ExecutionPayload.BlockHash
 		fc.FinalizedBlockHash = envelope.ExecutionPayload.BlockHash
 		e.SetUnsafeHead(ref) // ensure that the unsafe head stays ahead of safe/finalized labels.
@@ -575,9 +573,9 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 	e.needFCUCall = false
 	e.emitter.Emit(ctx, UnsafeUpdateEvent{Ref: ref})
 
-	if e.syncStatus == syncStatusFinishedELButNotFinalized {
+	if e.elSyncPhase == elSyncPhaseFinishing {
 		e.log.Info("Finished EL sync", "sync_duration", e.clock.Since(e.elStart), "finalized_block", ref.ID().String())
-		e.syncStatus = syncStatusFinishedEL
+		e.elSyncPhase = elSyncPhaseNone
 	}
 
 	if fcRes.PayloadStatus.Status == eth.ExecutionValid {
