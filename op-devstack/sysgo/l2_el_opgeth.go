@@ -30,6 +30,7 @@ type OpGeth struct {
 	supervisorRPC string
 	l2Geth        *geth.GethInstance
 	readOnly      bool
+	listenAddr    string
 
 	authRPC string
 	userRPC string
@@ -114,7 +115,7 @@ func (n *OpGeth) Start() {
 			ethCfg.InteropMempoolFiltering = true
 			nodeCfg.P2P = p2p.Config{
 				NoDiscovery: true,
-				ListenAddr:  "127.0.0.1:0",
+				ListenAddr:  n.listenAddr,
 				MaxPeers:    10,
 			}
 			return nil
@@ -173,6 +174,7 @@ func WithOpGeth(id stack.L2ELNodeID, opts ...L2ELOption) stack.Option[*Orchestra
 			jwtPath:       jwtPath,
 			jwtSecret:     jwtSecret,
 			supervisorRPC: supervisorRPC,
+			listenAddr:    cfg.ListenAddr,
 		}
 		l2EL.Start()
 		p.Cleanup(func() {
