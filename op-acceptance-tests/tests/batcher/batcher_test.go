@@ -35,21 +35,24 @@ func TestBatcherFullChannelsAfterDowntime(gt *testing.T) {
 	latestUnsafe_A := sys.L2CL.StopSequencer()
 	l.Info("Latest unsafe block after stopping the L2 sequencer", "latestUnsafe", latestUnsafe_A)
 
-	parent := latestUnsafe_A
+	parentHash := latestUnsafe_A
 	nonce := uint64(0)
 	for j := 0; j < 200; j++ {
 		l1Origin := sys.L1EL.BlockRefByLabel(eth.Unsafe).Hash
 
 		for i := 0; i < 5; i++ {
-			l.Debug("Sequencing L2 block", "iteration", i, "parent", parent)
-			sequenceBlockWithL1Origin(t, ts_L2, parent, l1Origin, cathrine, alice, nonce)
+			l.Debug("Sequencing L2 block", "iteration", i, "parent", parentHash)
+			sequenceBlockWithL1Origin(t, ts_L2, parentHash, l1Origin, cathrine, alice, nonce)
 			nonce++
 
-			parent = sys.L2CL.HeadBlockRef(types.LocalUnsafe).Hash
+			parent := sys.L2CL.HeadBlockRef(types.LocalUnsafe)
+			parentHash = parent.Hash
 
 			sys.L2EL.WaitForPendingNonceMatch(cathrine.Address(), nonce, 10, 1*time.Second)
 
 			sys.AdvanceTime(time.Second * 2)
+
+			sys.L2EL.Reached(eth.Unsafe, parent.Number+1, 3)
 		}
 
 		l.Debug("Sequencing L1 block", "iteration_j", j)
