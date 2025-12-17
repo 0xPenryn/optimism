@@ -545,16 +545,16 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 		SafeBlockHash:      e.safeHead.Hash,
 		FinalizedBlockHash: e.finalizedHead.Hash,
 	}
-	if e.syncStatus == syncStatusFinishedELButNotFinalized {
-		fc.SafeBlockHash = envelope.ExecutionPayload.BlockHash
-		fc.FinalizedBlockHash = envelope.ExecutionPayload.BlockHash
-		e.SetUnsafeHead(ref) // ensure that the unsafe head stays ahead of safe/finalized labels.
-		e.emitter.Emit(ctx, UnsafeUpdateEvent{Ref: ref})
-		e.SetLocalSafeHead(ref)
-		e.SetSafeHead(ref)
-		e.onSafeUpdate(ctx, ref, ref)
-		e.SetFinalizedHead(ref)
-	}
+	// if e.syncStatus == syncStatusFinishedELButNotFinalized {
+	// 	fc.SafeBlockHash = envelope.ExecutionPayload.BlockHash
+	// 	fc.FinalizedBlockHash = envelope.ExecutionPayload.BlockHash
+	// 	e.SetUnsafeHead(ref) // ensure that the unsafe head stays ahead of safe/finalized labels.
+	// 	e.emitter.Emit(ctx, UnsafeUpdateEvent{Ref: ref})
+	// 	e.SetLocalSafeHead(ref)
+	// 	e.SetSafeHead(ref)
+	// 	e.onSafeUpdate(ctx, ref, ref)
+	// 	e.SetFinalizedHead(ref)
+	// }
 	logFn := e.logSyncProgressMaybe()
 	defer logFn()
 	fcu2Start := time.Now()
