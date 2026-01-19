@@ -34,6 +34,7 @@ const (
 	NativeAssetLiquidity          = "0x4200000000000000000000000000000000000029"
 	LiquidityController           = "0x420000000000000000000000000000000000002a"
 	FeeSplitter                   = "0x420000000000000000000000000000000000002b"
+	SDM                           = "0x420000000000000000000000000000000000002c"
 	Create2Deployer               = "0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2"
 	MultiCall3                    = "0xcA11bde05977b3631167028862bE2a173976CA11"
 	Safe_v130                     = "0x69f4D1788e39c87893C980c06EdF4b7f686e2938"
@@ -91,6 +92,7 @@ var (
 	EntryPoint_v060Addr               = common.HexToAddress(EntryPoint_v060)
 	SenderCreator_v070Addr            = common.HexToAddress(SenderCreator_v070)
 	EntryPoint_v070Addr               = common.HexToAddress(EntryPoint_v070)
+	SDMAddr                           = common.HexToAddress(SDM)
 
 	Predeploys          = make(map[string]*Predeploy)
 	PredeploysByAddress = make(map[common.Address]*Predeploy)
@@ -113,6 +115,7 @@ func init() {
 	Predeploys["ETHLiquidity"] = &Predeploy{Address: ETHLiquidityAddr}
 	Predeploys["SuperchainTokenBridge"] = &Predeploy{Address: SuperchainTokenBridgeAddr}
 	Predeploys["FeeSplitter"] = &Predeploy{Address: FeeSplitterAddr}
+	Predeploys["SDM"] = &Predeploy{Address: SDMAddr}
 	Predeploys["GovernanceToken"] = &Predeploy{
 		Address:       GovernanceTokenAddr,
 		ProxyDisabled: true,
