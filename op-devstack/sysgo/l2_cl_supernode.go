@@ -201,14 +201,17 @@ func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L
 		p := orch.P()
 		require := p.Require()
 
-		l1EL, ok := orch.l1ELs.Get(l1ELID)
+		l1ELComponent, ok := orch.registry.Get(stack.ConvertL1ELNodeID(l1ELID).ComponentID)
 		require.True(ok, "l1 EL node required")
-		l1CL, ok := orch.l1CLs.Get(l1CLID)
+		l1EL := l1ELComponent.(L1ELNode)
+		l1CLComponent, ok := orch.registry.Get(stack.ConvertL1CLNodeID(l1CLID).ComponentID)
 		require.True(ok, "l1 CL node required")
+		l1CL := l1CLComponent.(*L1CLNode)
 
 		// Get L1 network to access L1 chain config
-		l1Net, ok := orch.l1Nets.Get(l1ELID.ChainID())
+		l1NetComponent, ok := orch.registry.Get(stack.ConvertL1NetworkID(stack.L1NetworkID(l1ELID.ChainID())).ComponentID)
 		require.True(ok, "l1 network required")
+		l1Net := l1NetComponent.(*L1Network)
 
 		_, jwtSecret := orch.writeDefaultJWT()
 
@@ -256,9 +259,10 @@ func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L
 		vnCfgs := make(map[eth.ChainID]*config.Config)
 		chainIDs := make([]uint64, 0, len(cls))
 		for _, a := range cls {
-			l2Net, ok := orch.l2Nets.Get(a.CLID.ChainID())
+			l2NetComponent, ok := orch.registry.Get(stack.ConvertL2NetworkID(stack.L2NetworkID(a.CLID.ChainID())).ComponentID)
 			require.True(ok, "l2 network required")
-			l2ELNode, ok := orch.l2ELs.Get(a.ELID)
+			l2Net := l2NetComponent.(*L2Network)
+			l2ELNode, ok := orch.GetL2EL(a.ELID)
 			require.True(ok, "l2 EL node required")
 			cfg := makeNodeCfg(l2Net, l2ELNode, true)
 			id := eth.EvilChainIDToUInt64(a.CLID.ChainID())
@@ -321,7 +325,9 @@ func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L
 				interopJwtSecret: jwtSecret,
 				el:               &a.ELID,
 			}
-			require.True(orch.l2CLs.SetIfMissing(a.CLID, proxy), fmt.Sprintf("must not already exist: %s", a.CLID))
+			cid := stack.ConvertL2CLNodeID(a.CLID).ComponentID
+			require.False(orch.registry.Has(cid), fmt.Sprintf("must not already exist: %s", a.CLID))
+			orch.registry.Register(cid, proxy)
 		}
 	})
 }

@@ -41,15 +41,17 @@ func WithSuperRoots(l1ChainID eth.ChainID, l1ELID stack.L1ELNodeID, l2CLID stack
 			require.NotNil(o.wb, "must have a world builder")
 			require.NotEmpty(o.wb.output.ImplementationsDeployment.OpcmImpl, "must have an OPCM implementation")
 
-			l1EL, ok := o.l1ELs.Get(l1ELID)
+			l1ELComponent, ok := o.registry.Get(stack.ConvertL1ELNodeID(l1ELID).ComponentID)
 			require.True(ok, "must have L1 EL node")
+			l1EL := l1ELComponent.(L1ELNode)
 			rpcClient, err := rpc.DialContext(t.Ctx(), l1EL.UserRPC())
 			require.NoError(err)
 			client := ethclient.NewClient(rpcClient)
 			w3Client := w3.NewClient(rpcClient)
 
-			l2CL, ok := o.l2CLs.Get(l2CLID)
+			l2CLComponent, ok := o.registry.Get(stack.ConvertL2CLNodeID(l2CLID).ComponentID)
 			require.True(ok, "must have L2 CL node")
+			l2CL := l2CLComponent.(L2CLNode)
 			rollupClientProvider, err := dial.NewStaticL2RollupProvider(t.Ctx(), t.Logger(), l2CL.UserRPC())
 			require.NoError(err)
 			rollupClient, err := rollupClientProvider.RollupClient(t.Ctx())
@@ -205,8 +207,9 @@ func deployDelegateCallProxy(t devtest.CommonT, transactOpts *bind.TransactOpts,
 }
 
 func getSuperRoot(t devtest.CommonT, o *Orchestrator, timestamp uint64, supervisorID stack.SupervisorID) eth.Bytes32 {
-	supervisor, ok := o.supervisors.Get(supervisorID)
+	supervisorComponent, ok := o.registry.Get(stack.ConvertSupervisorID(supervisorID).ComponentID)
 	t.Require().True(ok, "must have supervisor")
+	supervisor := supervisorComponent.(Supervisor)
 
 	client, err := dial.DialSupervisorClientWithTimeout(t.Ctx(), t.Logger(), supervisor.UserRPC())
 	t.Require().NoError(err)

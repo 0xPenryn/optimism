@@ -65,7 +65,8 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 	p := orch.P().WithCtx(ctx)
 
 	require := p.Require()
-	require.False(orch.challengers.Has(challengerID), "challenger must not already exist")
+	challengerCID := stack.ConvertL2ChallengerID(challengerID).ComponentID
+	require.False(orch.registry.Has(challengerCID), "challenger must not already exist")
 
 	challengerSecret, err := orch.keys.Secret(devkeys.ChallengerRole.Key(challengerID.ChainID().ToBig()))
 	require.NoError(err)
@@ -73,10 +74,12 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 	logger := p.Logger()
 	logger.Info("Challenger key acquired", "addr", crypto.PubkeyToAddress(challengerSecret.PublicKey))
 
-	l1EL, ok := orch.l1ELs.Get(l1ELID)
+	l1ELComponent, ok := orch.registry.Get(stack.ConvertL1ELNodeID(l1ELID).ComponentID)
 	require.True(ok)
-	l1CL, ok := orch.l1CLs.Get(l1CLID)
+	l1EL := l1ELComponent.(L1ELNode)
+	l1CLComponent, ok := orch.registry.Get(stack.ConvertL1CLNodeID(l1CLID).ComponentID)
 	require.True(ok)
+	l1CL := l1CLComponent.(*L1CLNode)
 
 	l2Geneses := make([]*core.Genesis, 0, len(l2ELIDs))
 	rollupCfgs := make([]*rollup.Config, 0, len(l2ELIDs))
@@ -92,8 +95,9 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 	}
 	for _, l2ELID := range l2ELIDs {
 		chainID := l2ELID.ChainID()
-		l2Net, ok := orch.l2Nets.Get(chainID)
+		l2NetComponent, ok := orch.registry.Get(stack.ConvertL2NetworkID(stack.L2NetworkID(chainID)).ComponentID)
 		require.Truef(ok, "l2Net %s not found", chainID)
+		l2Net := l2NetComponent.(*L2Network)
 		factory := l2Net.deployment.DisputeGameFactoryProxyAddr()
 		if disputeGameFactoryAddr == (common.Address{}) {
 			disputeGameFactoryAddr = factory
@@ -107,10 +111,11 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 		l2NetIDs = append(l2NetIDs, l2Net.id)
 	}
 
-	l1Net, ok := orch.l1Nets.Get(l1ELID.ChainID())
+	l1NetComponent, ok := orch.registry.Get(stack.ConvertL1NetworkID(stack.L1NetworkID(l1ELID.ChainID())).ComponentID)
 	if !ok {
 		require.Fail("l1 network not found")
 	}
+	l1Net := l1NetComponent.(*L1Network)
 	l1Genesis := l1Net.genesis
 
 	if orch.l2ChallengerOpts.useCannonKonaConfig {
@@ -123,16 +128,19 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 	if interopScheduled || l2CLID == nil || useSuperRoots {
 		require.NotNil(supervisorID, "need supervisor to connect to in interop")
 		require.NotNil(clusterID, "need cluster in interop")
-		supervisorNode, ok := orch.supervisors.Get(*supervisorID)
+		supervisorComponent, ok := orch.registry.Get(stack.ConvertSupervisorID(*supervisorID).ComponentID)
 		require.True(ok)
+		supervisorNode := supervisorComponent.(Supervisor)
 		l2ELRPCs := make([]string, len(l2ELIDs))
 		for i, l2ELID := range l2ELIDs {
-			l2EL, ok := orch.l2ELs.Get(l2ELID)
+			l2ELComponent, ok := orch.registry.Get(stack.ConvertL2ELNodeID(l2ELID).ComponentID)
 			require.True(ok)
+			l2EL := l2ELComponent.(L2ELNode)
 			l2ELRPCs[i] = l2EL.UserRPC()
 		}
-		cluster, ok := orch.clusters.Get(*clusterID)
+		clusterComponent, ok := orch.registry.Get(stack.ConvertClusterID(*clusterID).ComponentID)
 		require.True(ok)
+		cluster := clusterComponent.(*Cluster)
 		prestateVariant := shared.InteropVariant
 		options := []shared.Option{
 			shared.WithFactoryAddress(disputeGameFactoryAddr),
@@ -161,9 +169,10 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 			}
 		}
 		require.NotZero(l2ELID, "need single L2 EL to connect to pre-interop")
-		l2CL, ok := orch.l2CLs.Get(*l2CLID)
+		l2CLComponent, ok := orch.registry.Get(stack.ConvertL2CLNodeID(*l2CLID).ComponentID)
 		require.True(ok)
-		l2EL, ok := orch.l2ELs.Get(l2ELID)
+		l2CL := l2CLComponent.(L2CLNode)
+		l2EL, ok := orch.GetL2EL(l2ELID)
 		require.True(ok)
 		prestateVariant := shared.MTCannonVariant
 		options := []shared.Option{
@@ -202,5 +211,5 @@ func WithL2ChallengerPostDeploy(orch *Orchestrator, challengerID stack.L2Challen
 		l2NetIDs: l2NetIDs,
 		config:   cfg,
 	}
-	orch.challengers.Set(challengerID, c)
+	orch.registry.Register(stack.ConvertL2ChallengerID(challengerID).ComponentID, c)
 }
