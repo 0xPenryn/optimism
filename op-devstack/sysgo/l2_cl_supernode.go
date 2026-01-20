@@ -31,7 +31,7 @@ import (
 type SuperNode struct {
 	mu sync.Mutex
 
-	id               stack.L2CLNodeID
+	id               stack.ComponentID
 	sn               *supernode.Supernode
 	cancel           context.CancelFunc
 	userRPC          string
@@ -39,7 +39,7 @@ type SuperNode struct {
 	interopJwtSecret eth.Bytes32
 	p                devtest.P
 	logger           log.Logger
-	el               *stack.L2ELNodeID // Optional: nil when using SyncTester
+	el               *stack.ComponentID // Optional: nil when using SyncTester
 	l1UserRPC        string
 	l1BeaconAddr     string
 }
@@ -61,10 +61,10 @@ func (n *SuperNode) hydrate(system stack.ExtensibleSystem) {
 		InteropJwtSecret: n.interopJwtSecret,
 	})
 	sysL2CL.SetLabel(match.LabelVendor, string(match.OpNode))
-	l2Net := system.L2Network(stack.L2NetworkID(n.id.ChainID()))
+	l2Net := system.L2Network(stack.ByID[stack.L2Network](stack.NewL2NetworkID(n.id.ChainID())))
 	l2Net.(stack.ExtensibleL2Network).AddL2CLNode(sysL2CL)
 	if n.el != nil {
-		sysL2CL.(stack.LinkableL2CLNode).LinkEL(l2Net.L2ELNode(n.el))
+		sysL2CL.(stack.LinkableL2CLNode).LinkEL(l2Net.L2ELNode(stack.ByID[stack.L2ELNode](*n.el)))
 	}
 }
 
@@ -143,20 +143,20 @@ func (n *SuperNode) Stop() {
 }
 
 // WithSuperNode constructs a Supernode-based L2 CL node
-func WithSuperNode(l2CLID stack.L2CLNodeID, l1CLID stack.L1CLNodeID, l1ELID stack.L1ELNodeID, l2ELID stack.L2ELNodeID, opts ...L2CLOption) stack.Option[*Orchestrator] {
+func WithSuperNode(l2CLID stack.ComponentID, l1CLID stack.ComponentID, l1ELID stack.ComponentID, l2ELID stack.ComponentID, opts ...L2CLOption) stack.Option[*Orchestrator] {
 	args := []L2CLs{{CLID: l2CLID, ELID: l2ELID}}
 	return WithSharedSupernodeCLs(args, l1CLID, l1ELID)
 }
 
 // SuperNodeProxy is a thin wrapper that points to a shared supernode instance.
 type SuperNodeProxy struct {
-	id               stack.L2CLNodeID
+	id               stack.ComponentID
 	p                devtest.P
 	logger           log.Logger
 	userRPC          string
 	interopEndpoint  string
 	interopJwtSecret eth.Bytes32
-	el               *stack.L2ELNodeID
+	el               *stack.ComponentID
 }
 
 var _ L2CLNode = (*SuperNodeProxy)(nil)
@@ -176,10 +176,10 @@ func (n *SuperNodeProxy) hydrate(system stack.ExtensibleSystem) {
 		InteropJwtSecret: n.interopJwtSecret,
 	})
 	sysL2CL.SetLabel(match.LabelVendor, string(match.OpNode))
-	l2Net := system.L2Network(stack.L2NetworkID(n.id.ChainID()))
+	l2Net := system.L2Network(stack.ByID[stack.L2Network](stack.NewL2NetworkID(n.id.ChainID())))
 	l2Net.(stack.ExtensibleL2Network).AddL2CLNode(sysL2CL)
 	if n.el != nil {
-		sysL2CL.(stack.LinkableL2CLNode).LinkEL(l2Net.L2ELNode(n.el))
+		sysL2CL.(stack.LinkableL2CLNode).LinkEL(l2Net.L2ELNode(stack.ByID[stack.L2ELNode](*n.el)))
 	}
 }
 
@@ -191,25 +191,25 @@ func (n *SuperNodeProxy) InteropRPC() (endpoint string, jwtSecret eth.Bytes32) {
 }
 
 type L2CLs struct {
-	CLID stack.L2CLNodeID
-	ELID stack.L2ELNodeID
+	CLID stack.ComponentID
+	ELID stack.ComponentID
 }
 
 // WithSharedSupernodeCLs starts one supernode for N L2 chains and registers thin L2CL wrappers.
-func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L1ELNodeID) stack.Option[*Orchestrator] {
+func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.ComponentID, l1ELID stack.ComponentID) stack.Option[*Orchestrator] {
 	return stack.AfterDeploy(func(orch *Orchestrator) {
 		p := orch.P()
 		require := p.Require()
 
-		l1ELComponent, ok := orch.registry.Get(stack.ConvertL1ELNodeID(l1ELID).ComponentID)
+		l1ELComponent, ok := orch.registry.Get(l1ELID)
 		require.True(ok, "l1 EL node required")
 		l1EL := l1ELComponent.(L1ELNode)
-		l1CLComponent, ok := orch.registry.Get(stack.ConvertL1CLNodeID(l1CLID).ComponentID)
+		l1CLComponent, ok := orch.registry.Get(l1CLID)
 		require.True(ok, "l1 CL node required")
 		l1CL := l1CLComponent.(*L1CLNode)
 
 		// Get L1 network to access L1 chain config
-		l1NetComponent, ok := orch.registry.Get(stack.ConvertL1NetworkID(stack.L1NetworkID(l1ELID.ChainID())).ComponentID)
+		l1NetComponent, ok := orch.registry.Get(stack.NewL1NetworkID(l1ELID.ChainID()))
 		require.True(ok, "l1 network required")
 		l1Net := l1NetComponent.(*L1Network)
 
@@ -259,7 +259,7 @@ func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L
 		vnCfgs := make(map[eth.ChainID]*config.Config)
 		chainIDs := make([]uint64, 0, len(cls))
 		for _, a := range cls {
-			l2NetComponent, ok := orch.registry.Get(stack.ConvertL2NetworkID(stack.L2NetworkID(a.CLID.ChainID())).ComponentID)
+			l2NetComponent, ok := orch.registry.Get(stack.NewL2NetworkID(a.CLID.ChainID()))
 			require.True(ok, "l2 network required")
 			l2Net := l2NetComponent.(*L2Network)
 			l2ELNode, ok := orch.GetL2EL(a.ELID)
@@ -325,7 +325,7 @@ func WithSharedSupernodeCLs(cls []L2CLs, l1CLID stack.L1CLNodeID, l1ELID stack.L
 				interopJwtSecret: jwtSecret,
 				el:               &a.ELID,
 			}
-			cid := stack.ConvertL2CLNodeID(a.CLID).ComponentID
+			cid := a.CLID
 			require.False(orch.registry.Has(cid), fmt.Sprintf("must not already exist: %s", a.CLID))
 			orch.registry.Register(cid, proxy)
 		}

@@ -33,7 +33,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func WithSuperRoots(l1ChainID eth.ChainID, l1ELID stack.L1ELNodeID, l2CLID stack.L2CLNodeID, supervisorID stack.SupervisorID, primaryL2 eth.ChainID) stack.Option[*Orchestrator] {
+func WithSuperRoots(l1ChainID eth.ChainID, l1ELID stack.ComponentID, l2CLID stack.ComponentID, supervisorID stack.ComponentID, primaryL2 eth.ChainID) stack.Option[*Orchestrator] {
 	return stack.FnOption[*Orchestrator]{
 		FinallyFn: func(o *Orchestrator) {
 			t := o.P()
@@ -41,7 +41,7 @@ func WithSuperRoots(l1ChainID eth.ChainID, l1ELID stack.L1ELNodeID, l2CLID stack
 			require.NotNil(o.wb, "must have a world builder")
 			require.NotEmpty(o.wb.output.ImplementationsDeployment.OpcmImpl, "must have an OPCM implementation")
 
-			l1ELComponent, ok := o.registry.Get(stack.ConvertL1ELNodeID(l1ELID).ComponentID)
+			l1ELComponent, ok := o.registry.Get(l1ELID)
 			require.True(ok, "must have L1 EL node")
 			l1EL := l1ELComponent.(L1ELNode)
 			rpcClient, err := rpc.DialContext(t.Ctx(), l1EL.UserRPC())
@@ -49,7 +49,7 @@ func WithSuperRoots(l1ChainID eth.ChainID, l1ELID stack.L1ELNodeID, l2CLID stack
 			client := ethclient.NewClient(rpcClient)
 			w3Client := w3.NewClient(rpcClient)
 
-			l2CLComponent, ok := o.registry.Get(stack.ConvertL2CLNodeID(l2CLID).ComponentID)
+			l2CLComponent, ok := o.registry.Get(l2CLID)
 			require.True(ok, "must have L2 CL node")
 			l2CL := l2CLComponent.(L2CLNode)
 			rollupClientProvider, err := dial.NewStaticL2RollupProvider(t.Ctx(), t.Logger(), l2CL.UserRPC())
@@ -206,8 +206,8 @@ func deployDelegateCallProxy(t devtest.CommonT, transactOpts *bind.TransactOpts,
 	return deployAddress, proxyContract
 }
 
-func getSuperRoot(t devtest.CommonT, o *Orchestrator, timestamp uint64, supervisorID stack.SupervisorID) eth.Bytes32 {
-	supervisorComponent, ok := o.registry.Get(stack.ConvertSupervisorID(supervisorID).ComponentID)
+func getSuperRoot(t devtest.CommonT, o *Orchestrator, timestamp uint64, supervisorID stack.ComponentID) eth.Bytes32 {
+	supervisorComponent, ok := o.registry.Get(supervisorID)
 	t.Require().True(ok, "must have supervisor")
 	supervisor := supervisorComponent.(Supervisor)
 
