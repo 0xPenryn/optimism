@@ -487,10 +487,10 @@ mod tests {
         let mainnet: Vec<CombinedPublicKey> = mainnet
             .iter()
             .filter_map(|node| {
-                if let BootNode::Enr(enr) = node {
-                    if EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid() {
-                        return None;
-                    }
+                if let BootNode::Enr(enr) = node &&
+                    EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid()
+                {
+                    return None;
                 }
                 let node_contact =
                     NodeContact::try_from_multiaddr(node.to_multiaddr().unwrap()).unwrap();

@@ -158,7 +158,7 @@ where
     /// - **Reset**: Reorg detected, pipeline reset and derivation continues
     /// - **Other Critical**: Fatal pipeline errors that stop derivation
     ///
-    /// ## Execution Errors  
+    /// ## Execution Errors
     /// - **Pre-Holocene**: Block execution failures cause block to be discarded
     /// - **Holocene+**: Failed blocks are retried as deposit-only blocks
     ///   - Strips non-deposit transactions and flushes invalidated channel
@@ -199,7 +199,7 @@ where
     ///     .advance_to_target(&rollup_config, Some(100))
     ///     .await?;
     ///
-    /// // Derive until data exhausted  
+    /// // Derive until data exhausted
     /// let (final_head, output_root) = driver
     ///     .advance_to_target(&rollup_config, None)
     ///     .await?;
@@ -219,11 +219,11 @@ where
             // Check if we have reached the target block number.
             let pipeline_cursor = self.cursor.read();
             let tip_cursor = pipeline_cursor.tip();
-            if let Some(tb) = target {
-                if tip_cursor.l2_safe_head.block_info.number >= tb {
-                    info!(target: "client", "Derivation complete, reached L2 safe head.");
-                    return Ok((tip_cursor.l2_safe_head, tip_cursor.l2_safe_head_output_root));
-                }
+            if let Some(tb) = target &&
+                tip_cursor.l2_safe_head.block_info.number >= tb
+            {
+                info!(target: "client", "Derivation complete, reached L2 safe head.");
+                return Ok((tip_cursor.l2_safe_head, tip_cursor.l2_safe_head_output_root));
             }
 
             let mut attributes = match self.pipeline.produce_payload(tip_cursor.l2_safe_head).await

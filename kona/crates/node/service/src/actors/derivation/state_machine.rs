@@ -194,10 +194,10 @@ impl DerivationStateMachine {
         &mut self,
         state_update: &DerivationStateUpdate,
     ) -> Result<(), DerivationStateTransitionError> {
-        if let DerivationStateUpdate::NewAttributesConfirmed(safe_head) = state_update {
-            if safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash {
-                info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
-            }
+        if let DerivationStateUpdate::NewAttributesConfirmed(safe_head) = state_update &&
+            safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash
+        {
+            info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
         }
 
         info!(target: "derivation", state=?self.state, ?state_update, "Executing derivation state update.");

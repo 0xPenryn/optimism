@@ -63,10 +63,10 @@ impl<P: L1OriginSelectorProvider + Send + Sync> OriginSelector for L1OriginSelec
 
         // Start building on the next L1 origin block if the next L2 block's timestamp is
         // greater than or equal to the next L1 origin's timestamp.
-        if let Some(next) = self.next {
-            if unsafe_head.block_info.timestamp + self.cfg.block_time >= next.timestamp {
-                return Ok(next);
-            }
+        if let Some(next) = self.next &&
+            unsafe_head.block_info.timestamp + self.cfg.block_time >= next.timestamp
+        {
+            return Ok(next);
         }
 
         let Some(current) = self.current else {

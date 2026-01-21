@@ -192,15 +192,14 @@ where
         match self.swarm.listen_on(self.addr.clone()) {
             Ok(id) => loop {
                 if let SwarmEvent::NewListenAddr { address, listener_id } =
-                    self.swarm.select_next_some().await
+                    self.swarm.select_next_some().await &&
+                    id == listener_id
                 {
-                    if id == listener_id {
-                        info!(target: "gossip", "Swarm now listening on: {address}");
+                    info!(target: "gossip", "Swarm now listening on: {address}");
 
-                        self.addr = address.clone();
+                    self.addr = address.clone();
 
-                        return Ok(address);
-                    }
+                    return Ok(address);
                 }
             },
             Err(err) => {

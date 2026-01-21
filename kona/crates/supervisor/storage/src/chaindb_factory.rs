@@ -158,15 +158,15 @@ impl FinalizedL1Storage for ChainDbFactory {
                     })?;
 
                 // Check if the new block number is greater than the current finalized block
-                if let Some(ref current) = *guard {
-                    if block.number <= current.number {
-                        error!(target: "supervisor::storage",
-                            current_block_number = current.number,
-                            new_block_number = block.number,
-                            "New finalized block number is not greater than current finalized block number",
-                        );
-                        return Err(StorageError::BlockOutOfOrder);
-                    }
+                if let Some(ref current) = *guard
+                    && block.number <= current.number
+                {
+                    error!(target: "supervisor::storage",
+                        current_block_number = current.number,
+                        new_block_number = block.number,
+                        "New finalized block number is not greater than current finalized block number",
+                    );
+                    return Err(StorageError::BlockOutOfOrder);
                 }
                 *guard = Some(block);
                 Ok(())

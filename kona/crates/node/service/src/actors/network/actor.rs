@@ -221,10 +221,10 @@ impl<NetworkEngineClient_: NetworkEngineClient + 'static> NodeActor
                         return Err(NetworkActorError::ChannelClosed);
                     };
 
-                    if let Some(payload) = handler.gossip.handle_event(event) {
-                        if unsafe_block_tx.send(payload.into()).is_err() {
-                            warn!(target: "node::p2p", "Failed to send unsafe block to network handler");
-                        }
+                    if let Some(payload) = handler.gossip.handle_event(event)
+                        && unsafe_block_tx.send(payload.into()).is_err()
+                    {
+                        warn!(target: "node::p2p", "Failed to send unsafe block to network handler");
                     }
                 },
                 enr = handler.enr_receiver.recv() => {

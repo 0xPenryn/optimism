@@ -1,7 +1,7 @@
 //! Reth's MDBX-backed abstraction of [`LogProvider`] for superchain state.
 //!
 //! This module provides the [`LogProvider`] struct, which uses the
-//! [`reth-db`] abstraction of reth to store execution logs
+//! `reth-db` abstraction of reth to store execution logs
 //! and block metadata required by the Optimism supervisor.
 //!
 //! It supports:

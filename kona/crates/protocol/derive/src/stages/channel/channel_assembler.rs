@@ -67,17 +67,17 @@ where
         let origin = self.origin().ok_or(PipelineError::MissingOrigin.crit())?;
 
         // Time out the channel if it has timed out.
-        if let Some(channel) = self.channel.as_ref() {
-            if self.is_timed_out()? {
-                warn!(
-                    target: "channel_assembler",
-                    "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
-                    hex::encode(channel.id()),
-                    origin.number,
-                    channel.open_block_number()
-                );
-                self.channel = None;
-            }
+        if let Some(channel) = self.channel.as_ref() &&
+            self.is_timed_out()?
+        {
+            warn!(
+                target: "channel_assembler",
+                "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
+                hex::encode(channel.id()),
+                origin.number,
+                channel.open_block_number()
+            );
+            self.channel = None;
         }
 
         // Grab the next frame from the previous stage.
