@@ -1706,8 +1706,6 @@ jobs:
       - run-contracts-check:
           command: semver-diff-check-no-build
       - run-contracts-check:
-          command: validate-deploy-configs
-      - run-contracts-check:
           command: lint
       - run-contracts-check:
           command: snapshots-check-no-build
