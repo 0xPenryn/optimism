@@ -4,6 +4,7 @@ import (
 	"math/big"
 
 	"github.com/ethereum-optimism/optimism/op-chain-ops/script"
+	"github.com/ethereum-optimism/optimism/op-deployer/pkg/deployer/forge"
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -27,4 +28,14 @@ type DeployAltDAScript script.DeployScriptWithOutput[DeployAltDAInput, DeployAlt
 // NewDeployAltDAScript loads and validates the DeployAltDA script contract
 func NewDeployAltDAScript(host *script.Host) (DeployAltDAScript, error) {
 	return script.NewDeployScriptWithOutputFromFile[DeployAltDAInput, DeployAltDAOutput](host, "DeployAltDA.s.sol", "DeployAltDA")
+}
+
+func NewDeployAltDAForgeCaller(client *forge.Client) forge.ScriptCaller[DeployAltDAInput, DeployAltDAOutput] {
+	return forge.NewScriptCaller(
+		client,
+		"scripts/deploy/DeployAltDA.s.sol:DeployAltDA",
+		"runWithBytes(bytes)",
+		&forge.BytesScriptEncoder[DeployAltDAInput]{TypeName: "DeployAltDAInput"},
+		&forge.BytesScriptDecoder[DeployAltDAOutput]{TypeName: "DeployAltDAOutput"},
+	)
 }
