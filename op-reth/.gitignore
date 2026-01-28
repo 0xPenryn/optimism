@@ -1,1 +1,5 @@
 target/
+
+docs/vocs/package-lock.json
+docs/vocs/node_modules
+docs/vocs/bun.lock
