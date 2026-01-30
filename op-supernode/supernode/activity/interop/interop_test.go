@@ -818,9 +818,10 @@ func TestProgressAndRecord_EmptyResult_SetsL1ToCollectedMinimum(t *testing.T) {
 	// Verify currentL1 starts empty
 	require.Equal(t, eth.BlockID{}, interop.currentL1)
 
-	err := interop.progressAndRecord()
+	verifiedAdvanced, err := interop.progressAndRecord()
 
 	require.NoError(t, err)
+	require.False(t, verifiedAdvanced, "empty result should not advance verified timestamp")
 	// When result is empty, currentL1 should be set to the collected minimum
 	require.Equal(t, uint64(100), interop.currentL1.Number)
 	require.Equal(t, common.HexToHash("0x1"), interop.currentL1.Hash)
@@ -855,9 +856,10 @@ func TestProgressAndRecord_ValidResult_SetsL1ToResultL1Head(t *testing.T) {
 	// Verify currentL1 starts empty
 	require.Equal(t, eth.BlockID{}, interop.currentL1)
 
-	err := interop.progressAndRecord()
+	verifiedAdvanced, err := interop.progressAndRecord()
 
 	require.NoError(t, err)
+	require.True(t, verifiedAdvanced, "valid result should advance verified timestamp")
 	// When result is valid (non-empty), currentL1 should be set to result.L1Head
 	require.Equal(t, expectedL1Head.Number, interop.currentL1.Number)
 	require.Equal(t, expectedL1Head.Hash, interop.currentL1.Hash)
@@ -894,9 +896,10 @@ func TestProgressAndRecord_InvalidResult_DoesNotUpdateL1(t *testing.T) {
 		}, nil
 	}
 
-	err := interop.progressAndRecord()
+	verifiedAdvanced, err := interop.progressAndRecord()
 
 	require.NoError(t, err)
+	require.False(t, verifiedAdvanced, "invalid result should not advance verified timestamp")
 	// When result is invalid, currentL1 should NOT be updated (remains at initial value)
 	require.Equal(t, initialL1.Number, interop.currentL1.Number)
 	require.Equal(t, initialL1.Hash, interop.currentL1.Hash)
@@ -914,9 +917,10 @@ func TestProgressAndRecord_CollectL1Error_ReturnsError(t *testing.T) {
 	require.NotNil(t, interop)
 	interop.ctx = context.Background()
 
-	err := interop.progressAndRecord()
+	verifiedAdvanced, err := interop.progressAndRecord()
 
 	require.Error(t, err)
+	require.False(t, verifiedAdvanced, "error should not advance verified timestamp")
 	require.Contains(t, err.Error(), "not ready")
 }
 
@@ -933,9 +937,10 @@ func TestProgressAndRecord_ProgressInteropError_ReturnsError(t *testing.T) {
 	require.NotNil(t, interop)
 	interop.ctx = context.Background()
 
-	err := interop.progressAndRecord()
+	verifiedAdvanced, err := interop.progressAndRecord()
 
 	require.Error(t, err)
+	require.False(t, verifiedAdvanced, "error should not advance verified timestamp")
 	require.Contains(t, err.Error(), "internal chain error")
 }
 

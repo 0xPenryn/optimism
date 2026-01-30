@@ -18,9 +18,11 @@ import (
 
 // Compile-time interface conformance assertions.
 var (
-	_            activity.RunnableActivity     = (*Interop)(nil)
-	_            activity.VerificationActivity = (*Interop)(nil)
-	tickerPeriod                               = 500 * time.Millisecond
+	_                  activity.RunnableActivity     = (*Interop)(nil)
+	_                  activity.VerificationActivity = (*Interop)(nil)
+	tickerPeriod                                     = 50 * time.Millisecond // aggressive base rate for rapid catch-up
+	backoffPeriod                                    = 1 * time.Second       // backoff when chains aren't ready
+	errorBackoffPeriod                               = 2 * time.Second       // backoff on errors
 )
 
 // InteropActivationTimestampFlag is the CLI flag for the interop activation timestamp.
@@ -102,12 +104,17 @@ func (i *Interop) Start(ctx context.Context) error {
 		case <-i.ctx.Done():
 			return i.ctx.Err()
 		case <-ticker.C:
-			err := i.progressAndRecord()
+			madeProgress, err := i.progressAndRecord()
 			if err != nil {
 				i.log.Error("failed to progress and record interop", "err", err)
-				time.Sleep(2 * time.Second)
+				time.Sleep(errorBackoffPeriod)
 				continue
 			}
+			if !madeProgress {
+				// Chains not ready, back off before next attempt
+				time.Sleep(backoffPeriod)
+			}
+			// Otherwise: immediately ready for next tick (aggressive catch-up)
 		}
 	}
 }
@@ -125,30 +132,32 @@ func (i *Interop) Stop(ctx context.Context) error {
 	return nil
 }
 
-func (i *Interop) progressAndRecord() error {
+// progressAndRecord attempts to progress interop and record the result.
+// Returns (madeProgress, error) where madeProgress indicates if we advanced the verified timestamp.
+func (i *Interop) progressAndRecord() (bool, error) {
 	// Check the L1s of each chain prior to performing interop
 	localCurrentL1, err := i.collectCurrentL1()
 	if err != nil {
 		i.log.Error("failed to collect current L1", "err", err)
-		return err
+		return false, err
 	}
 	// Perform the interop evaluation
 	result, err := i.progressInterop()
 	if err != nil {
 		i.log.Error("failed to progress interop", "err", err)
-		return err
+		return false, err
 	}
 
 	// Handle the result by committing verified results or invalidating blocks
 	err = i.handleResult(result)
 	if err != nil {
 		i.log.Error("failed to handle result", "err", err)
-		return err
+		return false, err
 	}
 	// if the result is invalid, exit without updating the current L1s
 	if !result.IsEmpty() && !result.IsValid() {
 		i.log.Warn("result is invalid, skipping current L1 update", "results", result)
-		return nil
+		return false, nil
 	}
 
 	// Once interop is complete and recorded, update the current L1s
@@ -157,8 +166,9 @@ func (i *Interop) progressAndRecord() error {
 	// - if interop ran but did not advance the verified timestamp, the CurrentL1 values collected are used directly
 	// - if interop ran and advanced the verified timestamp, the CurrentL1 is the L1 head at the verified timestamp
 	// this is because the individual chains may advance their CurrentL1, and if progress is being made, we might not be done using the collected L1s.
+	verifiedAdvanced := !result.IsEmpty()
 	i.mu.Lock()
-	if !result.IsEmpty() {
+	if verifiedAdvanced {
 		// the new CurrentL1 is the L1 head at the verified timestamp
 		i.currentL1 = result.L1Head
 	} else {
@@ -166,7 +176,7 @@ func (i *Interop) progressAndRecord() error {
 		i.currentL1 = localCurrentL1
 	}
 	i.mu.Unlock()
-	return nil
+	return verifiedAdvanced, nil
 }
 
 // collectCurrentL1 collects the current L1 head of all chains,
