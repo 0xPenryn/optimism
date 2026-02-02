@@ -3,7 +3,7 @@
 use crate::{DecodeError, L1BlockInfoTx};
 use alloc::vec::Vec;
 use alloy_consensus::{Block, Transaction, Typed2718};
-use alloy_eips::{BlockNumHash, eip2718::Eip2718Error, eip7685::EMPTY_REQUESTS_HASH};
+use alloy_eips::{eip2718::Eip2718Error, eip7685::EMPTY_REQUESTS_HASH, BlockNumHash};
 use alloy_primitives::B256;
 use alloy_rpc_types_engine::{CancunPayloadFields, PraguePayloadFields};
 use alloy_rpc_types_eth::Block as RpcBlock;
@@ -153,10 +153,10 @@ pub enum FromBlockError {
 impl PartialEq<Self> for FromBlockError {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (Self::InvalidGenesisHash, Self::InvalidGenesisHash) => true,
-            (Self::MissingL1InfoDeposit(a), Self::MissingL1InfoDeposit(b)) => a == b,
-            (Self::UnexpectedTxType(a), Self::UnexpectedTxType(b)) => a == b,
+            (Self::InvalidGenesisHash, Self::InvalidGenesisHash) |
             (Self::TxEnvelopeDecodeError(_), Self::TxEnvelopeDecodeError(_)) => true,
+            (Self::MissingL1InfoDeposit(a), Self::MissingL1InfoDeposit(b)) => a == b,
+            (Self::UnexpectedTxType(a), Self::UnexpectedTxType(b)) |
             (Self::FirstTxNonDeposit(a), Self::FirstTxNonDeposit(b)) => a == b,
             (Self::BlockInfoDecodeError(a), Self::BlockInfoDecodeError(b)) => a == b,
             _ => false,
@@ -239,7 +239,7 @@ impl L2BlockInfo {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::{string::ToString, vec};
+    use alloc::string::ToString;
     use alloy_consensus::{Header, TxEnvelope};
     use alloy_primitives::b256;
     use op_alloy_consensus::OpBlock;

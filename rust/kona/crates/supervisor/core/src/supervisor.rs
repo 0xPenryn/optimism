@@ -1,10 +1,10 @@
 use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, Bytes, ChainId, keccak256};
+use alloy_primitives::{keccak256, Bytes, ChainId, B256};
 use async_trait::async_trait;
 use core::fmt::Debug;
 use kona_interop::{
-    DependencySet, ExecutingDescriptor, InteropValidator, OutputRootWithChain, SUPER_ROOT_VERSION,
-    SafetyLevel, SuperRoot,
+    DependencySet, ExecutingDescriptor, InteropValidator, OutputRootWithChain, SafetyLevel,
+    SuperRoot, SUPER_ROOT_VERSION,
 };
 use kona_protocol::BlockInfo;
 use kona_supervisor_rpc::{ChainRootInfoRpc, SuperRootOutputRpc};
@@ -12,16 +12,16 @@ use kona_supervisor_storage::{
     ChainDb, ChainDbFactory, DerivationStorageReader, FinalizedL1Storage, HeadRefStorageReader,
     LogStorageReader,
 };
-use kona_supervisor_types::{SuperHead, parse_access_list};
+use kona_supervisor_types::{parse_access_list, SuperHead};
 use op_alloy_rpc_types::SuperchainDAError;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::RwLock;
 use tracing::{error, warn};
 
 use crate::{
-    SpecError, SupervisorError,
     config::Config,
     syncnode::{BlockProvider, ManagedNodeDataProvider},
+    SpecError, SupervisorError,
 };
 
 /// Defines the service for the Supervisor core logic.

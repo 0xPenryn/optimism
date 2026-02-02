@@ -14,8 +14,8 @@ use kona_protocol::BlockInfo;
 use lru::LruCache;
 use std::{boxed::Box, num::NonZeroUsize, vec::Vec};
 
-/// The [AlloyChainProvider] is a concrete implementation of the [ChainProvider] trait, providing
-/// data over Ethereum JSON-RPC using an alloy provider as the backend.
+/// The [`AlloyChainProvider`] is a concrete implementation of the [`ChainProvider`] trait,
+/// providing data over Ethereum JSON-RPC using an alloy provider as the backend.
 #[derive(Debug, Clone)]
 pub struct AlloyChainProvider {
     /// The inner Ethereum JSON-RPC provider.
@@ -31,7 +31,7 @@ pub struct AlloyChainProvider {
 }
 
 impl AlloyChainProvider {
-    /// Creates a new [AlloyChainProvider] with the given alloy provider.
+    /// Creates a new [`AlloyChainProvider`] with the given alloy provider.
     ///
     /// ## Panics
     /// - Panics if `cache_size` is zero.
@@ -39,7 +39,7 @@ impl AlloyChainProvider {
         Self::new_with_trust(inner, cache_size, true)
     }
 
-    /// Creates a new [AlloyChainProvider] with the given alloy provider and trust setting.
+    /// Creates a new [`AlloyChainProvider`] with the given alloy provider and trust setting.
     ///
     /// ## Panics
     /// - Panics if `cache_size` is zero.
@@ -55,7 +55,7 @@ impl AlloyChainProvider {
         }
     }
 
-    /// Creates a new [AlloyChainProvider] from the provided [reqwest::Url].
+    /// Creates a new [`AlloyChainProvider`] from the provided [`reqwest::Url`].
     pub fn new_http(url: reqwest::Url, cache_size: usize) -> Self {
         let inner = RootProvider::new_http(url);
         Self::new(inner, cache_size)
@@ -80,7 +80,7 @@ impl AlloyChainProvider {
         self.inner.get_chain_id().await
     }
 
-    /// Verifies that a header's hash matches the expected hash when trust_rpc is false.
+    /// Verifies that a header's hash matches the expected hash when `trust_rpc` is false.
     fn verify_header_hash(
         &self,
         header: &Header,
@@ -106,7 +106,7 @@ impl AlloyChainProvider {
     }
 }
 
-/// An error for the [AlloyChainProvider].
+/// An error for the [`AlloyChainProvider`].
 #[allow(clippy::enum_variant_names)]
 #[derive(Debug, thiserror::Error)]
 pub enum AlloyChainProviderError {

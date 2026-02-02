@@ -1,28 +1,28 @@
-//! [HintHandler] for the [SingleChainHost].
+//! [`HintHandler`] for the [`SingleChainHost`].
 
 use crate::{
-    HintHandler, OnlineHostBackendCfg, backend::util::store_ordered_trie, kv::SharedKeyValueStore,
-    single::cfg::SingleChainHost,
+    backend::util::store_ordered_trie, kv::SharedKeyValueStore, single::cfg::SingleChainHost,
+    HintHandler, OnlineHostBackendCfg,
 };
 use alloy_consensus::Header;
 use alloy_eips::{
     eip2718::Encodable2718,
-    eip4844::{BlobTransactionSidecarItem, FIELD_ELEMENTS_PER_BLOB, IndexedBlobHash},
+    eip4844::{BlobTransactionSidecarItem, IndexedBlobHash, FIELD_ELEMENTS_PER_BLOB},
 };
-use alloy_primitives::{Address, B256, Bytes, keccak256};
+use alloy_primitives::{keccak256, Address, Bytes, B256};
 use alloy_provider::Provider;
 use alloy_rlp::Decodable;
-use alloy_rpc_types::{Block, debug::ExecutionWitness};
-use anyhow::{Result, anyhow, ensure};
+use alloy_rpc_types::{debug::ExecutionWitness, Block};
+use anyhow::{anyhow, ensure, Result};
 use ark_ff::{BigInteger, PrimeField};
 use async_trait::async_trait;
 use kona_preimage::{PreimageKey, PreimageKeyType};
-use kona_proof::{Hint, HintType, l1::ROOTS_OF_UNITY};
+use kona_proof::{l1::ROOTS_OF_UNITY, Hint, HintType};
 use kona_protocol::{BlockInfo, OutputRoot, Predeploys};
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
 use tracing::warn;
 
-/// The [HintHandler] for the [SingleChainHost].
+/// The [`HintHandler`] for the [`SingleChainHost`].
 #[derive(Debug, Clone, Copy)]
 pub struct SingleChainHintHandler;
 
@@ -56,7 +56,7 @@ impl HintHandler for SingleChainHintHandler {
                     .get_block_by_hash(hash)
                     .full()
                     .await?
-                    .ok_or(anyhow!("Block not found"))?;
+                    .ok_or_else(|| anyhow!("Block not found"))?;
                 let encoded_transactions = transactions
                     .into_transactions()
                     .map(|tx| tx.inner.encoded_2718())
@@ -189,7 +189,7 @@ impl HintHandler for SingleChainHintHandler {
                     .get_block_by_hash(hash)
                     .full()
                     .await?
-                    .ok_or(anyhow!("Block not found."))?;
+                    .ok_or_else(|| anyhow!("Block not found."))?;
 
                 let encoded_transactions = transactions
                     .into_transactions()

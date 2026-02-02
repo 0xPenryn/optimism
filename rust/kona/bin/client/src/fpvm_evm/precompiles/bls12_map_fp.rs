@@ -10,8 +10,9 @@ use crate::fpvm_evm::precompiles::utils::precompile_run;
 use alloc::string::ToString;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use revm::precompile::{
-    PrecompileError, PrecompileOutput, PrecompileResult, bls12_381,
+    bls12_381,
     bls12_381_const::{MAP_FP_TO_G1_BASE_GAS_FEE, PADDED_FP_LENGTH},
+    PrecompileError, PrecompileOutput, PrecompileResult,
 };
 
 /// Performs an FPVM-accelerated BLS12-381 map fp check.

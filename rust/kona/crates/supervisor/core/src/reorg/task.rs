@@ -1,7 +1,7 @@
 use super::metrics::Metrics;
 use crate::ReorgHandlerError;
 use alloy_eips::BlockNumberOrTag;
-use alloy_primitives::{B256, ChainId};
+use alloy_primitives::{ChainId, B256};
 use alloy_rpc_client::RpcClient;
 use alloy_rpc_types_eth::Block;
 use derive_more::Constructor;
@@ -60,10 +60,9 @@ where
         // record metrics
         if let Some(rewound_state) = rewound_state {
             let l1_depth = latest_state.source.number - rewound_state.source.number;
-            let mut l2_depth = 0;
-            if let Some(derived) = rewound_state.derived {
-                l2_depth = latest_state.derived.number - derived.number;
-            }
+            let l2_depth = rewound_state
+                .derived
+                .map_or(0, |derived| latest_state.derived.number - derived.number);
             Metrics::record_block_depth(self.chain_id, l1_depth, l2_depth);
         }
         info!(
@@ -138,8 +137,8 @@ where
     /// Finds the rewind target for a chain during a reorg
     ///
     /// Returns `None` if no rewind is needed, or the target block to rewind to.
-    /// Returns ReorgHandlerError::RewindTargetPreInterop if the rewind target is before the interop
-    /// activation block.
+    /// Returns `ReorgHandlerError::RewindTargetPreInterop` if the rewind target is before the
+    /// interop activation block.
     async fn find_rewind_target(
         &self,
         latest_state: DerivedRefPair,
@@ -715,7 +714,6 @@ mod tests {
                 41 => Ok(latest_state.source),
                 40 => Ok(reorg_source_info),
                 39 => Ok(source_39_info),
-                38 => Ok(finalized_state.source),
                 _ => Ok(finalized_state.source),
             },
         );
@@ -853,7 +851,6 @@ mod tests {
                 41 => Ok(latest_state.source),
                 40 => Ok(reorg_source_info),
                 39 => Ok(source_39_info),
-                38 => Ok(activation_state.source),
                 _ => Ok(activation_state.source),
             },
         );

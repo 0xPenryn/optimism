@@ -14,11 +14,11 @@ use kona_protocol::SyncStatus;
 use std::fmt::Debug;
 
 use crate::{
-    EngineRpcClient, L1State, L1WatcherQueries, OutputResponse, RollupNodeApiServer,
-    SafeHeadResponse, l1_watcher::L1WatcherQuerySender,
+    l1_watcher::L1WatcherQuerySender, EngineRpcClient, L1State, L1WatcherQueries, OutputResponse,
+    RollupNodeApiServer, SafeHeadResponse,
 };
 
-/// RollupRpc
+/// `RollupRpc`
 ///
 /// This is a server implementation of [`crate::RollupNodeApiServer`].
 #[derive(Debug)]

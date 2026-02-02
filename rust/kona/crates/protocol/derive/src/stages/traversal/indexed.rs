@@ -38,11 +38,11 @@ impl<F: ChainProvider + Send> L1RetrievalProvider for IndexedTraversal<F> {
     }
 
     async fn next_l1_block(&mut self) -> PipelineResult<Option<BlockInfo>> {
-        if !self.done {
+        if self.done {
+            Err(PipelineError::Eof.temp())
+        } else {
             self.done = true;
             Ok(self.block)
-        } else {
-            Err(PipelineError::Eof.temp())
         }
     }
 }
@@ -157,7 +157,7 @@ mod tests {
     use crate::{errors::PipelineErrorKind, test_utils::TestChainProvider};
     use alloc::vec;
     use alloy_consensus::Receipt;
-    use alloy_primitives::{B256, Bytes, Log, LogData, address, b256, hex};
+    use alloy_primitives::{address, b256, hex, Bytes, Log, LogData, B256};
     use kona_genesis::{CONFIG_UPDATE_EVENT_VERSION_0, CONFIG_UPDATE_TOPIC};
 
     const L1_SYS_CONFIG_ADDR: Address = address!("1337000000000000000000000000000000000000");
@@ -228,15 +228,13 @@ mod tests {
         let mut traversal = new_test_managed(blocks, receipts);
         let cfg = SystemConfig::default();
         traversal.done = true;
-        assert!(
-            traversal
-                .signal(Signal::Activation(ActivationSignal {
-                    system_config: Some(cfg),
-                    ..Default::default()
-                }))
-                .await
-                .is_ok()
-        );
+        assert!(traversal
+            .signal(Signal::Activation(ActivationSignal {
+                system_config: Some(cfg),
+                ..Default::default()
+            }))
+            .await
+            .is_ok());
         assert_eq!(traversal.origin(), Some(BlockInfo::default()));
         assert_eq!(traversal.system_config, cfg);
         assert!(!traversal.done);
@@ -249,15 +247,10 @@ mod tests {
         let mut traversal = new_test_managed(blocks, receipts);
         let cfg = SystemConfig::default();
         traversal.done = true;
-        assert!(
-            traversal
-                .signal(Signal::Reset(ResetSignal {
-                    system_config: Some(cfg),
-                    ..Default::default()
-                }))
-                .await
-                .is_ok()
-        );
+        assert!(traversal
+            .signal(Signal::Reset(ResetSignal { system_config: Some(cfg), ..Default::default() }))
+            .await
+            .is_ok());
         assert_eq!(traversal.origin(), Some(BlockInfo::default()));
         assert_eq!(traversal.system_config, cfg);
         assert!(!traversal.done);

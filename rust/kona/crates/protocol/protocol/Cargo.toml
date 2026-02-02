@@ -96,6 +96,7 @@ std = [
 	"thiserror/std",
 	"tracing/std",
 	"unsigned-varint/std",
+	"tracing-subscriber?/std"
 ]
 test-utils = [ "dep:spin", "dep:tracing-subscriber" ]
 arbitrary = [

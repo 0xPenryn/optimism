@@ -1,13 +1,13 @@
 //! Frames
 
 use crate::{
-    FrameQueue, NextFrameProvider, OriginProvider, PipelineError, PipelineErrorKind,
-    test_utils::TestFrameQueueProvider,
+    test_utils::TestFrameQueueProvider, FrameQueue, NextFrameProvider, OriginProvider,
+    PipelineError, PipelineErrorKind,
 };
 use alloc::{sync::Arc, vec, vec::Vec};
 use alloy_primitives::Bytes;
 use kona_genesis::RollupConfig;
-use kona_protocol::{BlockInfo, DERIVATION_VERSION_0, Frame};
+use kona_protocol::{BlockInfo, Frame, DERIVATION_VERSION_0};
 
 /// A [`FrameQueue`] builder.
 #[derive(Debug, Default)]
@@ -22,7 +22,7 @@ pub struct FrameQueueBuilder {
 fn encode_frames(frames: &[Frame]) -> Bytes {
     let mut bytes = Vec::new();
     bytes.extend_from_slice(&[DERIVATION_VERSION_0]);
-    for frame in frames.iter() {
+    for frame in frames {
         bytes.extend_from_slice(&frame.encode());
     }
     Bytes::from(bytes)
@@ -107,10 +107,10 @@ impl FrameQueueAsserter {
     /// Asserts that holocene is active.
     pub fn holocene_active(&self, active: bool) {
         let holocene = self.inner.is_holocene_active(self.inner.origin().unwrap_or_default());
-        if !active {
-            assert!(!holocene);
-        } else {
+        if active {
             assert!(holocene);
+        } else {
+            assert!(!holocene);
         }
     }
 
@@ -122,7 +122,7 @@ impl FrameQueueAsserter {
 
     /// Asserts that the frame queue produces the expected frames.
     pub async fn next_frames(mut self) {
-        for eframe in self.expected_frames.into_iter() {
+        for eframe in self.expected_frames {
             let frame = self.inner.next_frame().await.expect("unexpected frame");
             assert_eq!(frame, eframe);
         }

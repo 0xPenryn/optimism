@@ -1,9 +1,9 @@
-//! Contains the concrete implementation of the [BlobProvider] trait for the client program.
+//! Contains the concrete implementation of the [`BlobProvider`] trait for the client program.
 
-use crate::{HintType, errors::OracleProviderError};
+use crate::{errors::OracleProviderError, HintType};
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use alloy_consensus::Blob;
-use alloy_eips::eip4844::{FIELD_ELEMENTS_PER_BLOB, IndexedBlobHash};
+use alloy_eips::eip4844::{IndexedBlobHash, FIELD_ELEMENTS_PER_BLOB};
 use alloy_primitives::keccak256;
 use ark_bls12_381::Fr;
 use ark_ff::{AdditiveGroup, BigInteger, BigInteger256, Field, PrimeField};
@@ -35,6 +35,7 @@ impl<T: CommsClient> OracleBlobProvider<T> {
     /// ## Returns
     /// - `Ok(blob)`: The blob.
     /// - `Err(e)`: The blob could not be retrieved.
+    #[allow(clippy::large_stack_frames)]
     async fn get_blob(
         &self,
         block_ref: &BlockInfo,
@@ -89,6 +90,7 @@ impl<T: CommsClient> OracleBlobProvider<T> {
 impl<T: CommsClient + Sync + Send> BlobProvider for OracleBlobProvider<T> {
     type Error = OracleProviderError;
 
+    #[allow(clippy::large_stack_frames)]
     async fn get_and_validate_blobs(
         &mut self,
         block_ref: &BlockInfo,
@@ -112,7 +114,7 @@ pub static ROOTS_OF_UNITY: Lazy<[Fr; FIELD_ELEMENTS_PER_BLOB as usize]> =
 /// points. To compute the field element at index i in a blob, the blob polynomial is evaluated at
 /// the i'th root of unity. Based on go-kzg-4844: <https://github.com/crate-crypto/go-kzg-4844/blob/8bcf6163d3987313a3194595cf1f33fd45d7301a/internal/kzg/domain.go#L44-L98>
 /// Also, see the consensus specs:
-///   - compute_roots_of_unity <https://github.com/ethereum/consensus-specs/blob/bf09edef17e2900258f7e37631e9452941c26e86/specs/deneb/polynomial-commitments.md#compute_roots_of_unity>
+///   - `compute_roots_of_unity` <https://github.com/ethereum/consensus-specs/blob/bf09edef17e2900258f7e37631e9452941c26e86/specs/deneb/polynomial-commitments.md#compute_roots_of_unity>
 ///   - bit-reversal permutation: <https://github.com/ethereum/consensus-specs/blob/bf09edef17e2900258f7e37631e9452941c26e86/specs/deneb/polynomial-commitments.md#bit-reversal-permutation>
 fn generate_roots_of_unity() -> [Fr; FIELD_ELEMENTS_PER_BLOB as usize] {
     const MAX_ORDER_ROOT: u64 = 32;
@@ -158,9 +160,9 @@ fn generate_roots_of_unity() -> [Fr; FIELD_ELEMENTS_PER_BLOB as usize] {
 #[cfg(test)]
 mod test {
     use super::ROOTS_OF_UNITY;
-    use alloy_eips::eip4844::{FIELD_ELEMENTS_PER_BLOB, env_settings::EnvKzgSettings};
+    use alloy_eips::eip4844::{env_settings::EnvKzgSettings, FIELD_ELEMENTS_PER_BLOB};
     use ark_ff::{BigInteger, PrimeField};
-    use c_kzg::{BYTES_PER_BLOB, Blob, Bytes32, Bytes48};
+    use c_kzg::{Blob, Bytes32, Bytes48, BYTES_PER_BLOB};
     use rand::Rng;
     use rayon::iter::{IntoParallelIterator, ParallelIterator};
 

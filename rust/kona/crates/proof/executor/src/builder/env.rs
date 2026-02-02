@@ -1,11 +1,11 @@
-//! Environment utility functions for [StatelessL2Builder].
+//! Environment utility functions for [`StatelessL2Builder`].
 
 use super::StatelessL2Builder;
 use crate::{
-    ExecutorError, ExecutorResult, TrieDBProvider,
     util::{
         decode_holocene_eip_1559_params_block_header, decode_jovian_eip_1559_params_block_header,
     },
+    ExecutorError, ExecutorResult, TrieDBProvider,
 };
 use alloy_consensus::{BlockHeader, Header};
 use alloy_eips::{calc_next_block_base_fee, eip1559::BaseFeeParams, eip7840::BlobParams};
@@ -49,7 +49,7 @@ where
         Ok(EvmEnv::new(cfg_env, block_env))
     }
 
-    /// Returns the active [CfgEnv] for the executor.
+    /// Returns the active [`CfgEnv`] for the executor.
     pub(crate) fn evm_cfg_env(&self, timestamp: u64) -> CfgEnv<OpSpecId> {
         CfgEnv::new()
             .with_chain_id(self.config.l2_chain_id.id())
@@ -91,7 +91,7 @@ where
         Some(next_block_base_fee)
     }
 
-    /// Prepares a [BlockEnv] with the given [OpPayloadAttributes].
+    /// Prepares a [`BlockEnv`] with the given [`OpPayloadAttributes`].
     pub(crate) fn prepare_block_env(
         &self,
         spec_id: OpSpecId,

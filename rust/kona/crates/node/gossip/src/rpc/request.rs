@@ -5,18 +5,18 @@ use std::{net::IpAddr, num::TryFromIntError, sync::Arc};
 use crate::{GossipDriver, GossipScores};
 use alloy_primitives::map::{HashMap, HashSet};
 use discv5::{
-    enr::{NodeId, k256::ecdsa},
+    enr::{k256::ecdsa, NodeId},
     multiaddr::Protocol,
 };
 use ipnet::IpNet;
 use kona_disc::Discv5Handler;
 use kona_peers::OpStackEnr;
-use libp2p::{Multiaddr, PeerId, gossipsub::TopicHash};
+use libp2p::{gossipsub::TopicHash, Multiaddr, PeerId};
 use tokio::sync::oneshot::Sender;
 
 use super::{
-    PeerDump, PeerStats,
     types::{Connectedness, Direction, PeerInfo, PeerScores},
+    PeerDump, PeerStats,
 };
 use crate::ConnectionGate;
 
@@ -236,14 +236,14 @@ impl P2pRpcRequest {
         };
 
         let peer_ids: Vec<PeerId> = if connected {
-            gossip.swarm.connected_peers().cloned().collect()
+            gossip.swarm.connected_peers().copied().collect()
         } else {
-            gossip.peerstore.keys().cloned().collect()
+            gossip.peerstore.keys().copied().collect()
         };
 
         // Get the set of actually connected peers from the swarm for accurate connectedness
         // reporting.
-        let actually_connected: HashSet<PeerId> = gossip.swarm.connected_peers().cloned().collect();
+        let actually_connected: HashSet<PeerId> = gossip.swarm.connected_peers().copied().collect();
 
         // Get connection gate information.
         let banned_subnets = gossip.connection_gate.list_blocked_subnets();
@@ -336,11 +336,7 @@ impl P2pRpcRequest {
                     gossip.handler.blocks_v4_topic.hash(),
                 ]);
 
-                if topics.iter().any(|topic| supported_topics.contains(topic)) {
-                    Some(*peer_id)
-                } else {
-                    None
-                }
+                topics.iter().any(|topic| supported_topics.contains(topic)).then_some(*peer_id)
             })
             .collect::<HashSet<_>>();
 
@@ -602,7 +598,7 @@ impl P2pRpcRequest {
                 Ok::<u32, TryFromIntError>(
                     topics
                         .get(topic)
-                        .cloned()
+                        .copied()
                         .map(|v| v.try_into())
                         .transpose()?
                         .unwrap_or_default(),

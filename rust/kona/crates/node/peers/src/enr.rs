@@ -123,7 +123,7 @@ impl Decodable for OpStackEnr {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_primitives::{Bytes, bytes};
+    use alloy_primitives::{bytes, Bytes};
     use discv5::enr::CombinedKey;
 
     #[test]
@@ -131,7 +131,7 @@ mod tests {
     fn roundtrip_op_stack_enr() {
         arbtest::arbtest(|u| {
             let op_stack_enr = OpStackEnr::from_chain_id(u.arbitrary()?);
-            let bytes = alloy_rlp::encode(op_stack_enr).to_vec();
+            let bytes = alloy_rlp::encode(op_stack_enr);
             let decoded = OpStackEnr::decode(&mut &bytes[..]).unwrap();
             assert_eq!(decoded, op_stack_enr);
             Ok(())
@@ -165,7 +165,7 @@ mod tests {
     #[test]
     fn test_op_mainnet_enr() {
         let op_enr = OpStackEnr::from_chain_id(10);
-        let bytes = alloy_rlp::encode(op_enr).to_vec();
+        let bytes = alloy_rlp::encode(op_enr);
         assert_eq!(Bytes::from(bytes.clone()), bytes!("820A00"));
         let decoded = OpStackEnr::decode(&mut &bytes[..]).unwrap();
         assert_eq!(decoded, op_enr);
@@ -174,7 +174,7 @@ mod tests {
     #[test]
     fn test_base_mainnet_enr() {
         let base_enr = OpStackEnr::from_chain_id(8453);
-        let bytes = alloy_rlp::encode(base_enr).to_vec();
+        let bytes = alloy_rlp::encode(base_enr);
         assert_eq!(Bytes::from(bytes.clone()), bytes!("83854200"));
         let decoded = OpStackEnr::decode(&mut &bytes[..]).unwrap();
         assert_eq!(decoded, base_enr);

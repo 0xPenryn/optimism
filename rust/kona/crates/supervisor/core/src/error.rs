@@ -41,7 +41,7 @@ pub enum SupervisorError {
     #[error(transparent)]
     ManagedNodeError(#[from] ManagedNodeError),
 
-    /// Indicates the error occurred while parsing the access_list
+    /// Indicates the error occurred while parsing the `access_list`
     #[error(transparent)]
     AccessListError(#[from] AccessListError),
 
@@ -65,10 +65,12 @@ pub enum SupervisorError {
 
 impl PartialEq for SupervisorError {
     fn eq(&self, other: &Self) -> bool {
-        use SupervisorError::*;
+        use SupervisorError::{
+            AccessListError, EmptyDependencySet, L1BlockMismatch, ManagedNodeError,
+            ManagedNodeMissing, SerdeJson, SpecError, StorageError, Unimplemented,
+        };
         match (self, other) {
-            (Unimplemented, Unimplemented) => true,
-            (EmptyDependencySet, EmptyDependencySet) => true,
+            (Unimplemented, Unimplemented) | (EmptyDependencySet, EmptyDependencySet) => true,
             (SpecError(a), SpecError(b)) => a == b,
             (StorageError(a), StorageError(b)) => a == b,
             (ManagedNodeMissing(a), ManagedNodeMissing(b)) => a == b,
@@ -100,7 +102,7 @@ pub enum SpecError {
 }
 
 impl SpecError {
-    /// Maps the proper error code from SuperchainDAError.
+    /// Maps the proper error code from `SuperchainDAError`.
     /// Introduced a new error code for errors not in the spec.
     pub const fn code(&self) -> i32 {
         match self {
@@ -143,7 +145,6 @@ impl From<StorageError> for SpecError {
             StorageError::EntryNotFound(_) => Self::from(SuperchainDAError::MissedData),
             StorageError::ConflictError => Self::from(SuperchainDAError::ConflictingData),
             StorageError::BlockOutOfOrder => Self::from(SuperchainDAError::OutOfOrder),
-            StorageError::DatabaseNotInitialised => Self::ErrorNotInSpec,
             _ => Self::ErrorNotInSpec,
         }
     }

@@ -1,4 +1,4 @@
-//! Mock testing utilities for the [ChannelBank] stage.
+//! Mock testing utilities for the [`ChannelBank`] stage.
 //!
 //! [ChannelBank]: crate::stages::ChannelBank
 

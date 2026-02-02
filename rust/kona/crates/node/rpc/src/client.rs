@@ -10,7 +10,7 @@ use std::fmt::Debug;
 use thiserror::Error;
 use tokio::sync::watch;
 
-/// Client trait wrapping RPC implementation for the EngineActor.
+/// Client trait wrapping RPC implementation for the `EngineActor`.
 #[async_trait]
 pub trait EngineRpcClient: Debug + Send + Sync + Clone {
     /// Request the current [`RollupConfig`].
@@ -85,8 +85,8 @@ pub enum SequencerAdminAPIError {
 
     /// Error receiving response.
     /// Note: this error message is not future-proof, in that it may not be a safe assumption that
-    /// communication is channel-based. If/when that changes the enum will likely need to be updated
-    /// to take a parameter, so we can change it then.
+    /// communication is channel-based. If/when that changes the enum will likely need to be
+    /// updated to take a parameter, so we can change it then.
     #[error("Error receiving response: response channel closed.")]
     ResponseError,
 

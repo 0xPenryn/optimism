@@ -1,4 +1,4 @@
-use alloy_primitives::{B256, ChainId};
+use alloy_primitives::{ChainId, B256};
 use kona_genesis::ChainGenesis;
 use kona_interop::DerivedRefPair;
 use kona_protocol::BlockInfo;
@@ -21,7 +21,7 @@ impl Genesis {
         Self { l1, l2 }
     }
 
-    /// Creates a new Genesis from a RollupConfig.
+    /// Creates a new Genesis from a `RollupConfig`.
     pub const fn new_from_rollup_genesis(genesis: ChainGenesis, l1_block: BlockInfo) -> Self {
         Self {
             l1: l1_block,
@@ -35,7 +35,7 @@ impl Genesis {
     }
 }
 
-/// RollupConfig contains the configuration for the Optimism rollup.
+/// `RollupConfig` contains the configuration for the Optimism rollup.
 #[derive(Debug, Default, Clone)]
 pub struct RollupConfig {
     /// Genesis anchor information for the rollup.
@@ -49,7 +49,7 @@ pub struct RollupConfig {
 }
 
 impl RollupConfig {
-    /// Creates a new RollupConfig with the given genesis and block time.
+    /// Creates a new `RollupConfig` with the given genesis and block time.
     pub const fn new(genesis: Genesis, block_time: u64, interop_time: Option<u64>) -> Self {
         Self { genesis, block_time, interop_time }
     }
@@ -106,7 +106,7 @@ impl RollupConfig {
     }
 }
 
-/// RollupConfigSet contains the configuration for multiple Optimism rollups.
+/// `RollupConfigSet` contains the configuration for multiple Optimism rollups.
 #[derive(Debug, Clone, Default)]
 pub struct RollupConfigSet {
     /// The rollup configurations for the Optimism rollups.
@@ -114,7 +114,7 @@ pub struct RollupConfigSet {
 }
 
 impl RollupConfigSet {
-    /// Creates a new RollupConfigSet with the given rollup configurations.
+    /// Creates a new `RollupConfigSet` with the given rollup configurations.
     pub const fn new(rollups: HashMap<u64, RollupConfig>) -> Self {
         Self { rollups }
     }
@@ -124,7 +124,7 @@ impl RollupConfigSet {
         self.rollups.get(&chain_id)
     }
 
-    /// adds a new rollup configuration to the set using the provided chain ID and RollupConfig.
+    /// adds a new rollup configuration to the set using the provided chain ID and `RollupConfig`.
     pub fn add_from_rollup_config(
         &mut self,
         chain_id: u64,

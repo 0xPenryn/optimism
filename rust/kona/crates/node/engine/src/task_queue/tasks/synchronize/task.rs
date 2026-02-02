@@ -1,9 +1,9 @@
 //! A task for the `engine_forkchoiceUpdated` method, with no attributes.
 
 use crate::{
-    EngineClient, EngineState, EngineTaskExt, SynchronizeTaskError, state::EngineSyncStateUpdate,
+    state::EngineSyncStateUpdate, EngineClient, EngineState, EngineTaskExt, SynchronizeTaskError,
 };
-use alloy_rpc_types_engine::{INVALID_FORK_CHOICE_STATE_ERROR, PayloadStatusEnum};
+use alloy_rpc_types_engine::{PayloadStatusEnum, INVALID_FORK_CHOICE_STATE_ERROR};
 use async_trait::async_trait;
 use derive_more::Constructor;
 use kona_genesis::RollupConfig;

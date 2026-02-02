@@ -94,7 +94,7 @@ pub enum HostError {
     #[error("RLP decoding error: {0}")]
     Rlp(#[from] RlpError),
 
-    /// TryFromSlice error.
+    /// `TryFromSlice` error.
     #[error("TryFromSlice error: {0}")]
     TryFromSlice(#[from] TryFromSliceError),
 
@@ -102,7 +102,7 @@ pub enum HostError {
     #[error("Serde JSON error: {0}")]
     SerdeJson(#[from] serde_json::Error),
 
-    /// RocksDB error.
+    /// `RocksDB` error.
     #[error("RocksDB error: {0}")]
     RocksDb(String),
 

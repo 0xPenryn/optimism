@@ -20,7 +20,8 @@ pub enum ChainEvent {
         derived_ref_pair: DerivedRefPair,
     },
 
-    /// A derivation origin update event, indicating that the origin for derived blocks has changed.
+    /// A derivation origin update event, indicating that the origin for derived blocks has
+    /// changed.
     DerivationOriginUpdate {
         /// The [`BlockInfo`] of the block that is the new derivation origin.
         origin: BlockInfo,

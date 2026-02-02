@@ -1,6 +1,6 @@
-//! Contains error types for the [crate::SynchronizeTask].
+//! Contains error types for the [`crate::SynchronizeTask`].
 
-use crate::{EngineTaskError, task_queue::tasks::task::EngineTaskErrorSeverity};
+use crate::{task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError};
 use alloy_rpc_types_engine::{PayloadId, PayloadStatusEnum};
 use alloy_transport::{RpcError, TransportErrorKind};
 use thiserror::Error;
@@ -42,7 +42,7 @@ pub enum EngineBuildError {
     EngineSyncing,
 }
 
-/// An error that occurs when running the [crate::BuildTask].
+/// An error that occurs when running the [`crate::BuildTask`].
 #[derive(Debug, Error)]
 pub enum BuildTaskError {
     /// An error occurred when building the payload attributes in the engine.
@@ -59,21 +59,13 @@ impl EngineTaskError for BuildTaskError {
             Self::EngineBuildError(EngineBuildError::FinalizedAheadOfUnsafe(_, _)) => {
                 EngineTaskErrorSeverity::Critical
             }
-            Self::EngineBuildError(EngineBuildError::AttributesInsertionFailed(_)) => {
-                EngineTaskErrorSeverity::Temporary
-            }
-            Self::EngineBuildError(EngineBuildError::InvalidPayload(_)) => {
-                EngineTaskErrorSeverity::Temporary
-            }
-            Self::EngineBuildError(EngineBuildError::UnexpectedPayloadStatus(_)) => {
-                EngineTaskErrorSeverity::Temporary
-            }
-            Self::EngineBuildError(EngineBuildError::MissingPayloadId) => {
-                EngineTaskErrorSeverity::Temporary
-            }
-            Self::EngineBuildError(EngineBuildError::EngineSyncing) => {
-                EngineTaskErrorSeverity::Temporary
-            }
+            Self::EngineBuildError(
+                EngineBuildError::AttributesInsertionFailed(_) |
+                EngineBuildError::InvalidPayload(_) |
+                EngineBuildError::UnexpectedPayloadStatus(_) |
+                EngineBuildError::MissingPayloadId |
+                EngineBuildError::EngineSyncing,
+            ) => EngineTaskErrorSeverity::Temporary,
             Self::MpscSend(_) => EngineTaskErrorSeverity::Critical,
         }
     }

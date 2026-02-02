@@ -3,7 +3,7 @@
 //! This module contains the addresses of various predeploy contracts in the OP Stack.
 //! See the complete set of predeploys at <https://specs.optimism.io/protocol/predeploys.html#predeploys>
 
-use alloy_primitives::{Address, address};
+use alloy_primitives::{address, Address};
 
 /// Container for all predeploy contract addresses
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -39,19 +39,19 @@ impl Predeploys {
         Self::L2_TO_L2_XDM,
     ];
 
-    /// The LegacyMessagePasser contract stores commitments to withdrawal transactions before the
+    /// The `LegacyMessagePasser` contract stores commitments to withdrawal transactions before the
     /// Bedrock upgrade.
     /// <https://specs.optimism.io/protocol/predeploys.html#legacymessagepasser>
     pub const LEGACY_MESSAGE_PASSER: Address =
         address!("0x4200000000000000000000000000000000000000");
 
-    /// The DeployerWhitelist was used to provide additional safety during initial phases of
+    /// The `DeployerWhitelist` was used to provide additional safety during initial phases of
     /// Optimism.
     /// <https://specs.optimism.io/protocol/predeploys.html#deployerwhitelist>
     pub const DEPLOYER_WHITELIST: Address = address!("0x4200000000000000000000000000000000000002");
 
-    /// The LegacyERC20ETH predeploy represented all ether in the system before the Bedrock upgrade.
-    /// <https://specs.optimism.io/protocol/predeploys.html#legacyerc20eth>
+    /// The `LegacyERC20ETH` predeploy represented all ether in the system before the Bedrock
+    /// upgrade. <https://specs.optimism.io/protocol/predeploys.html#legacyerc20eth>
     pub const LEGACY_ERC20_ETH: Address = address!("0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000");
 
     /// The WETH9 predeploy address.
@@ -133,9 +133,9 @@ impl Predeploys {
     /// The Operator Fee Vault proxy address.
     pub const OPERATOR_FEE_VAULT: Address = address!("0x420000000000000000000000000000000000001B");
 
-    /// The CrossL2Inbox proxy address.
+    /// The `CrossL2Inbox` proxy address.
     pub const CROSS_L2_INBOX: Address = address!("0x4200000000000000000000000000000000000022");
 
-    /// The L2ToL2CrossDomainMessenger proxy address.
+    /// The `L2ToL2CrossDomainMessenger` proxy address.
     pub const L2_TO_L2_XDM: Address = address!("0x4200000000000000000000000000000000000023");
 }

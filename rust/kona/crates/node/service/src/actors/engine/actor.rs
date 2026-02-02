@@ -1,8 +1,8 @@
 //! The [`EngineActor`].
 
 use crate::{
-    EngineActorRequest, EngineError, EngineProcessingRequest, EngineRequestReceiver,
-    EngineRpcRequestReceiver, NodeActor, actors::CancellableContext,
+    actors::CancellableContext, EngineActorRequest, EngineError, EngineProcessingRequest,
+    EngineRequestReceiver, EngineRpcRequestReceiver, NodeActor,
 };
 use async_trait::async_trait;
 use derive_more::Constructor;

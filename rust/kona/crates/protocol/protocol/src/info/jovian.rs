@@ -1,16 +1,16 @@
 //! Jovian L1 Block Info transaction types.
 
 use crate::{
-    DecodeError, L1BlockInfoIsthmus,
     info::{
-        L1BlockInfoBedrockBaseFields, L1BlockInfoEcotoneBaseFields,
         bedrock_base::ambassador_impl_L1BlockInfoBedrockBaseFields,
         ecotone_base::ambassador_impl_L1BlockInfoEcotoneBaseFields,
-        isthmus::{L1BlockInfoIsthmusBaseFields, ambassador_impl_L1BlockInfoIsthmusBaseFields},
+        isthmus::{ambassador_impl_L1BlockInfoIsthmusBaseFields, L1BlockInfoIsthmusBaseFields},
+        L1BlockInfoBedrockBaseFields, L1BlockInfoEcotoneBaseFields,
     },
+    DecodeError, L1BlockInfoIsthmus,
 };
 use alloc::vec::Vec;
-use alloy_primitives::{Address, B256, Bytes};
+use alloy_primitives::{Address, Bytes, B256};
 use ambassador::{self, Delegate};
 
 /// Represents the fields within an Jovian L1 block info transaction.
@@ -20,18 +20,18 @@ use ambassador::{self, Delegate};
 /// | Bytes   | Field                    |
 /// +---------+--------------------------+
 /// | 4       | Function signature       |
-/// | 4       | BaseFeeScalar            |
-/// | 4       | BlobBaseFeeScalar        |
-/// | 8       | SequenceNumber           |
+/// | 4       | `BaseFeeScalar`          |
+/// | 4       | `BlobBaseFeeScalar`      |
+/// | 8       | `SequenceNumber`         |
 /// | 8       | Timestamp                |
-/// | 8       | L1BlockNumber            |
-/// | 32      | BaseFee                  |
-/// | 32      | BlobBaseFee              |
-/// | 32      | BlockHash                |
-/// | 32      | BatcherHash              |
-/// | 4       | OperatorFeeScalar        |
-/// | 8       | OperatorFeeConstant      |
-/// | 2       | DAFootprintGasScalar     |
+/// | 8       | `L1BlockNumber`          |
+/// | 32      | `BaseFee`                |
+/// | 32      | `BlobBaseFee`            |
+/// | 32      | `BlockHash`              |
+/// | 32      | `BatcherHash`            |
+/// | 4       | `OperatorFeeScalar`      |
+/// | 8       | `OperatorFeeConstant`    |
+/// | 2       | `DAFootprintGasScalar`   |
 /// +---------+--------------------------+
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Default, Copy, Delegate)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -77,7 +77,7 @@ impl L1BlockInfoJovian {
     /// The length of an L1 info transaction in Jovian.
     pub const L1_INFO_TX_LEN: usize = 4 + 32 * 5 + 4 + 8 + 2;
 
-    /// The 4 byte selector of "setL1BlockValuesJovian()"
+    /// The 4 byte selector of "`setL1BlockValuesJovian()`"
     /// Those are the first 4 calldata bytes -> `<https://github.com/ethereum-optimism/specs/blob/main/specs/protocol/jovian/l1-attributes.md#overview>`
     pub const L1_INFO_TX_SELECTOR: [u8; 4] = [0x3d, 0xb6, 0xbe, 0x2b];
 

@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use kona_interop::InteropValidator;
-use kona_supervisor_core::{ChainProcessor, event::ChainEvent, syncnode::BlockProvider};
+use kona_supervisor_core::{event::ChainEvent, syncnode::BlockProvider, ChainProcessor};
 use kona_supervisor_storage::{
     DerivationStorage, HeadRefStorageWriter, LogStorage, StorageRewinder,
 };
@@ -91,12 +91,12 @@ mod tests {
     use super::*;
     use crate::SupervisorActor;
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{B256, ChainId};
+    use alloy_primitives::{ChainId, B256};
     use kona_interop::{DerivedRefPair, InteropValidationError};
     use kona_protocol::BlockInfo;
     use kona_supervisor_core::{
-        LogIndexer,
         syncnode::{BlockProvider, ManagedNodeCommand, ManagedNodeDataProvider, ManagedNodeError},
+        LogIndexer,
     };
     use kona_supervisor_storage::{
         DerivationStorageReader, DerivationStorageWriter, HeadRefStorageWriter, LogStorageReader,

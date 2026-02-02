@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 /// Compressor Writer
 ///
 /// A trait that expands the standard library `Write` trait to include
-/// compression-specific methods and return [CompressorResult] instead of
+/// compression-specific methods and return [`CompressorResult`] instead of
 /// standard library `Result`.
 #[allow(clippy::len_without_is_empty)]
 pub trait CompressorWriter {

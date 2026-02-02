@@ -30,8 +30,8 @@ async fn test_large_network_conn() -> anyhow::Result<()> {
         bootnodes.push(enr);
     }
 
-    for network in networks.iter() {
-        for other_network in networks.iter() {
+    for network in &networks {
+        for other_network in &networks {
             if network.peer_id().await? == other_network.peer_id().await? {
                 continue;
             }

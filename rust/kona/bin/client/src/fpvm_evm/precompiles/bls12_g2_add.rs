@@ -10,8 +10,9 @@ use crate::fpvm_evm::precompiles::utils::precompile_run;
 use alloc::string::ToString;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use revm::precompile::{
-    PrecompileError, PrecompileOutput, PrecompileResult, bls12_381,
+    bls12_381,
     bls12_381_const::{G2_ADD_BASE_GAS_FEE, G2_ADD_INPUT_LENGTH},
+    PrecompileError, PrecompileOutput, PrecompileResult,
 };
 
 /// Performs an FPVM-accelerated BLS12-381 G2 addition check.

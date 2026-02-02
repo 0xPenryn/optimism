@@ -1,11 +1,11 @@
-//! Native implementation of the [Channel] trait, backed by [async_channel]'s unbounded
+//! Native implementation of the [Channel] trait, backed by [`async_channel`]'s unbounded
 //! channel primitives.
 
 use crate::{
-    Channel,
     errors::{ChannelError, ChannelResult},
+    Channel,
 };
-use async_channel::{Receiver, Sender, unbounded};
+use async_channel::{unbounded, Receiver, Sender};
 use async_trait::async_trait;
 use std::io::Result;
 
@@ -19,7 +19,7 @@ pub struct BidirectionalChannel {
 }
 
 impl BidirectionalChannel {
-    /// Creates a [BidirectionalChannel] instance.
+    /// Creates a [`BidirectionalChannel`] instance.
     pub fn new() -> Result<Self> {
         let (bw, ar) = unbounded();
         let (aw, br) = unbounded();

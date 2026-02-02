@@ -9,11 +9,11 @@ use rollup_boost::{GetExecutionModeResponse, SetExecutionModeRequest, SetExecuti
 use std::fmt::Debug;
 use tokio::sync::{mpsc, oneshot};
 
-/// [`RollupBoostHealthzApiServer`] implementation to send the request to EngineActor's request
+/// [`RollupBoostHealthzApiServer`] implementation to send the request to `EngineActor`'s request
 /// channel.
 #[derive(Debug)]
 pub struct RollupBoostHealthRpcClient {
-    /// A channel to use to send the EngineActor requests.
+    /// A channel to use to send the `EngineActor` requests.
     pub engine_actor_request_tx: mpsc::Sender<EngineActorRequest>,
 }
 
@@ -38,10 +38,11 @@ impl RollupBoostHealthzApiServer for RollupBoostHealthRpcClient {
     }
 }
 
-/// [`RollupBoostAdminClient`] implementation to send the request to EngineActor's request channel.
+/// [`RollupBoostAdminClient`] implementation to send the request to `EngineActor`'s request
+/// channel.
 #[derive(Debug)]
 pub struct RollupBoostAdminApiClient {
-    /// A channel to use to send the EngineActor requests.
+    /// A channel to use to send the `EngineActor` requests.
     pub engine_actor_request_tx: mpsc::Sender<EngineActorRequest>,
 }
 

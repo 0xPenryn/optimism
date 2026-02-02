@@ -1,9 +1,9 @@
 //! Stages pertaining to the reading and decoding of channels.
 //!
-//! Sitting after the [FrameQueue] stage, the [ChannelBank] and [ChannelAssembler] stages are
-//! responsible for reading and decoding the [Frame]s into [Channel]s. The [ChannelReader] stage
+//! Sitting after the [`FrameQueue`] stage, the [`ChannelBank`] and [`ChannelAssembler`] stages are
+//! responsible for reading and decoding the [Frame]s into [Channel]s. The [`ChannelReader`] stage
 //! is responsible for decoding the [Channel]s into [Batch]es, forwarding the [Batch]es to the
-//! [BatchQueue] stage.
+//! [`BatchQueue`] stage.
 //!
 //! [Frame]: kona_protocol::Frame
 //! [Channel]: kona_protocol::Channel

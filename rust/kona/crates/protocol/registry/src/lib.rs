@@ -41,13 +41,13 @@ lazy_static::lazy_static! {
     pub static ref L1_CONFIGS: HashMap<u64, L1ChainConfig> = _INIT.l1_configs.clone();
 }
 
-/// Returns a [RollupConfig] by its identifier.
+/// Returns a [`RollupConfig`] by its identifier.
 pub fn scr_rollup_config_by_ident(ident: &str) -> Option<&RollupConfig> {
     let chain_id = CHAINS.get_chain_by_ident(ident)?.chain_id;
     ROLLUP_CONFIGS.get(&chain_id)
 }
 
-/// Returns a [RollupConfig] by its identifier.
+/// Returns a [`RollupConfig`] by its identifier.
 pub fn scr_rollup_config_by_alloy_ident(chain: &alloy_chains::Chain) -> Option<&RollupConfig> {
     ROLLUP_CONFIGS.get(&chain.id())
 }
@@ -152,12 +152,14 @@ mod tests {
         if CUSTOM_CONFIGS_TEST_ENABLED != Some("true") {
             return;
         };
-        if CUSTOM_CONFIGS != Some("true") {
-            panic!("KONA_CUSTOM_CONFIGS is required when KONA_CUSTOM_CONFIGS_TEST is set");
-        }
-        if CUSTOM_CONFIGS_DIR.is_none() {
-            panic!("KONA_CUSTOM_CONFIGS_DIR is required when KONA_CUSTOM_CONFIGS_TEST is set");
-        }
+        assert!(
+            CUSTOM_CONFIGS == Some("true"),
+            "KONA_CUSTOM_CONFIGS is required when KONA_CUSTOM_CONFIGS_TEST is set"
+        );
+        assert!(
+            CUSTOM_CONFIGS_DIR.is_some(),
+            "KONA_CUSTOM_CONFIGS_DIR is required when KONA_CUSTOM_CONFIGS_TEST is set"
+        );
 
         let test1_chain_id = 123999119;
         let test2_chain_id = 223999119;

@@ -16,7 +16,7 @@ pub mod global_allocator {
     #[global_allocator]
     static ALLOCATOR: LockedHeap<HEAP_ORDER> = LockedHeap::empty();
 
-    /// Initialize the [SpinLockedAllocator] with the following parameters:
+    /// Initialize the [`SpinLockedAllocator`] with the following parameters:
     /// * `heap_start_addr` is the starting address of the heap memory region,
     /// * `heap_size` is the size of the heap memory region in bytes.
     ///
@@ -36,7 +36,7 @@ pub mod global_allocator {
 /// # Safety
 #[cfg_attr(
     any(target_arch = "mips64", target_arch = "riscv64"),
-    doc = "See [global_allocator::init_allocator] safety comment."
+    doc = "See [`global_allocator::init_allocator`] safety comment."
 )]
 #[cfg_attr(
     not(any(target_arch = "mips64", target_arch = "riscv64")),

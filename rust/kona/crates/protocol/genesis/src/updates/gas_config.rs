@@ -1,7 +1,7 @@
 //! The gas config update type.
 
 use alloy_primitives::{LogData, U256};
-use alloy_sol_types::{SolType, sol};
+use alloy_sol_types::{sol, SolType};
 
 use crate::{GasConfigUpdateError, RollupConfig, SystemConfig, SystemConfigLog};
 
@@ -76,7 +76,7 @@ mod tests {
     use super::*;
     use crate::{CONFIG_UPDATE_EVENT_VERSION_0, CONFIG_UPDATE_TOPIC};
     use alloc::vec;
-    use alloy_primitives::{Address, B256, Bytes, Log, LogData, hex, uint};
+    use alloy_primitives::{hex, uint, Address, Bytes, Log, LogData, B256};
 
     #[test]
     fn test_gas_config_update_try_from() {

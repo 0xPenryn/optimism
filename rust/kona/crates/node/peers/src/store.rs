@@ -73,7 +73,7 @@ impl TryInto<PathBuf> for BootStoreFile {
         match self {
             Self::Default { chain_id } => {
                 let mut path = dirs::home_dir()
-                    .ok_or(std::io::Error::other("Failed to get home directory"))?;
+                    .ok_or_else(|| std::io::Error::other("Failed to get home directory"))?;
                 path.push(".kona");
                 path.push(chain_id.to_string());
                 path.push("bootstore.json");

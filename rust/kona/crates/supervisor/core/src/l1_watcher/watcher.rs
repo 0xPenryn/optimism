@@ -233,8 +233,8 @@ where
 mod tests {
     use super::*;
     use crate::{
-        SupervisorError,
         syncnode::{ManagedNodeController, ManagedNodeError},
+        SupervisorError,
     };
     use alloy_primitives::B256;
     use alloy_transport::mock::*;
@@ -329,7 +329,7 @@ mod tests {
     #[tokio::test]
     async fn test_handle_new_finalized_block_updates_and_broadcasts() {
         let (tx, mut rx) = mpsc::channel(1);
-        let event_txs = [(1, tx)].into_iter().collect();
+        let event_txs = std::iter::once((1, tx)).collect();
 
         let mut mock_storage = Mockfinalized_l1_storage::new();
         mock_storage.expect_update_finalized_l1().returning(|_block| Ok(()));
@@ -376,7 +376,7 @@ mod tests {
     #[tokio::test]
     async fn test_handle_new_finalized_block_storage_error() {
         let (tx, mut rx) = mpsc::channel(1);
-        let event_txs = [(1, tx)].into_iter().collect();
+        let event_txs = std::iter::once((1, tx)).collect();
 
         let mut mock_storage = Mockfinalized_l1_storage::new();
         mock_storage
@@ -415,7 +415,7 @@ mod tests {
     #[tokio::test]
     async fn test_handle_new_latest_block_updates() {
         let (tx, mut rx) = mpsc::channel(1);
-        let event_txs = [(1, tx)].into_iter().collect();
+        let event_txs = std::iter::once((1, tx)).collect();
 
         let watcher = L1Watcher {
             rpc_client: mock_rpc_client(),
@@ -448,7 +448,7 @@ mod tests {
     #[tokio::test]
     async fn test_trigger_reorg_handler() {
         let (tx, mut rx) = mpsc::channel(1);
-        let event_txs = [(1, tx)].into_iter().collect();
+        let event_txs = std::iter::once((1, tx)).collect();
 
         let watcher = L1Watcher {
             rpc_client: mock_rpc_client(),

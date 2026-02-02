@@ -1,5 +1,5 @@
-//! Contains a concrete implementation of the [KeyValueStore] trait that stores data on disk,
-//! using the [SingleChainHost] config.
+//! Contains a concrete implementation of the [`KeyValueStore`] trait that stores data on disk,
+//! using the [`SingleChainHost`] config.
 
 use super::SingleChainHost;
 use crate::{KeyValueStore, Result};
@@ -10,14 +10,14 @@ use kona_proof::boot::{
     L2_OUTPUT_ROOT_KEY, L2_ROLLUP_CONFIG_KEY,
 };
 
-/// A simple, synchronous key-value store that returns data from a [SingleChainHost] config.
+/// A simple, synchronous key-value store that returns data from a [`SingleChainHost`] config.
 #[derive(Debug)]
 pub struct SingleChainLocalInputs {
     cfg: SingleChainHost,
 }
 
 impl SingleChainLocalInputs {
-    /// Create a new [SingleChainLocalInputs] with the given [SingleChainHost] config.
+    /// Create a new [`SingleChainLocalInputs`] with the given [`SingleChainHost`] config.
     pub const fn new(cfg: SingleChainHost) -> Self {
         Self { cfg }
     }

@@ -23,8 +23,11 @@ async fn test_sequencer_network_conn() -> anyhow::Result<()> {
 
     sequencer_network.inbound_data.gossip_payload_tx.send(envelope.clone()).await?;
 
-    let block =
-        validator_network.blocks_rx.recv().await.ok_or(anyhow::anyhow!("No block received"))?;
+    let block = validator_network
+        .blocks_rx
+        .recv()
+        .await
+        .ok_or_else(|| anyhow::anyhow!("No block received"))?;
 
     assert_eq!(block.parent_beacon_block_root, envelope.parent_beacon_block_root);
     assert_eq!(block.execution_payload, envelope.execution_payload);
@@ -55,7 +58,7 @@ async fn test_sequencer_network_propagation() -> anyhow::Result<()> {
     }
 
     // Check that all networks are connected to the sequencer.
-    for network in validator_networks.iter() {
+    for network in &validator_networks {
         network.is_connected_to_with_retries(&sequencer_network).await?;
     }
 
@@ -67,8 +70,9 @@ async fn test_sequencer_network_propagation() -> anyhow::Result<()> {
     sequencer_network.inbound_data.gossip_payload_tx.send(envelope.clone()).await?;
 
     // Check that the block propagates to all networks.
-    for network in validator_networks.iter_mut() {
-        let block = network.blocks_rx.recv().await.ok_or(anyhow::anyhow!("No block received"))?;
+    for network in &mut validator_networks {
+        let block =
+            network.blocks_rx.recv().await.ok_or_else(|| anyhow::anyhow!("No block received"))?;
 
         assert_eq!(block.parent_beacon_block_root, envelope.parent_beacon_block_root);
         assert_eq!(block.execution_payload, envelope.execution_payload);

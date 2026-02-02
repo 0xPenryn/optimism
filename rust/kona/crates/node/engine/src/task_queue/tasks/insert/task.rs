@@ -1,8 +1,8 @@
 //! A task to insert an unsafe payload into the execution engine.
 
 use crate::{
-    EngineClient, EngineState, EngineTaskExt, InsertTaskError, SynchronizeTask,
-    state::EngineSyncStateUpdate,
+    state::EngineSyncStateUpdate, EngineClient, EngineState, EngineTaskExt, InsertTaskError,
+    SynchronizeTask,
 };
 use alloy_eips::eip7685::EMPTY_REQUESTS_HASH;
 use alloy_rpc_types_engine::{

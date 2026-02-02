@@ -1,4 +1,4 @@
-//! This module contains the [ChannelAssembler] stage.
+//! This module contains the [`ChannelAssembler`] stage.
 
 use super::{ChannelReaderProvider, NextFrameProvider};
 use crate::{
@@ -7,11 +7,11 @@ use crate::{
     types::{PipelineResult, Signal},
 };
 use alloc::{boxed::Box, sync::Arc};
-use alloy_primitives::{Bytes, hex};
+use alloy_primitives::{hex, Bytes};
 use async_trait::async_trait;
 use core::fmt::Debug;
 use kona_genesis::{
-    MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD, RollupConfig,
+    RollupConfig, MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD,
 };
 use kona_protocol::{BlockInfo, Channel};
 
@@ -46,13 +46,9 @@ where
     /// Returns whether or not the channel currently being assembled has timed out.
     pub fn is_timed_out(&self) -> PipelineResult<bool> {
         let origin = self.origin().ok_or(PipelineError::MissingOrigin.crit())?;
-        let is_timed_out = self
-            .channel
-            .as_ref()
-            .map(|c| {
-                c.open_block_number() + self.cfg.channel_timeout(origin.timestamp) < origin.number
-            })
-            .unwrap_or_default();
+        let is_timed_out = self.channel.as_ref().is_some_and(|c| {
+            c.open_block_number() + self.cfg.channel_timeout(origin.timestamp) < origin.number
+        });
 
         Ok(is_timed_out)
     }
@@ -67,17 +63,19 @@ where
         let origin = self.origin().ok_or(PipelineError::MissingOrigin.crit())?;
 
         // Time out the channel if it has timed out.
-        if let Some(channel) = self.channel.as_ref() {
-            if self.is_timed_out()? {
-                warn!(
-                    target: "channel_assembler",
-                    "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
-                    hex::encode(channel.id()),
-                    origin.number,
-                    channel.open_block_number()
-                );
-                self.channel = None;
-            }
+        if let Some(channel) = self.channel.as_ref() &&
+            self.is_timed_out()?
+        {
+            let channel_id = hex::encode(channel.id());
+            let open_block = channel.open_block_number();
+            warn!(
+                target: "channel_assembler",
+                "Channel (ID: {}) timed out at L1 origin #{}, open block #{}. Discarding channel.",
+                channel_id,
+                origin.number,
+                open_block
+            );
+            self.channel = None;
         }
 
         // Grab the next frame from the previous stage.
@@ -204,13 +202,13 @@ where
 mod test {
     use super::ChannelAssembler;
     use crate::{
-        ChannelReaderProvider, PipelineError,
         test_utils::{CollectingLayer, TestNextFrameProvider, TraceStorage},
+        ChannelReaderProvider, PipelineError,
     };
     use alloc::{sync::Arc, vec};
     use kona_genesis::{
-        HardForkConfig, MAX_RLP_BYTES_PER_CHANNEL_BEDROCK, MAX_RLP_BYTES_PER_CHANNEL_FJORD,
-        RollupConfig,
+        HardForkConfig, RollupConfig, MAX_RLP_BYTES_PER_CHANNEL_BEDROCK,
+        MAX_RLP_BYTES_PER_CHANNEL_FJORD,
     };
     use kona_protocol::BlockInfo;
     use tracing::Level;

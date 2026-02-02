@@ -2,7 +2,7 @@ use std::{io, net::SocketAddr};
 
 use async_trait::async_trait;
 use derive_more::Constructor;
-use jsonrpsee::{RpcModule, server::ServerBuilder};
+use jsonrpsee::{server::ServerBuilder, RpcModule};
 use thiserror::Error;
 use tokio_util::sync::CancellationToken;
 use tracing::{error, info};
@@ -79,7 +79,7 @@ pub enum SupervisorRpcActorError {
 mod tests {
     use super::*;
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{B256, ChainId};
+    use alloy_primitives::{ChainId, B256};
     use async_trait::async_trait;
     use kona_interop::{DependencySet, ExecutingDescriptor, SafetyLevel};
     use kona_protocol::BlockInfo;

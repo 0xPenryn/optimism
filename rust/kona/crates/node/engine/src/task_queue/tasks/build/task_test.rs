@@ -1,12 +1,12 @@
-//! Tests for BuildTask::execute
+//! Tests for `BuildTask::execute`
 
 use crate::{
+    test_utils::{
+        test_block_info, test_engine_client_builder, MockEngineClientBuilder,
+        TestAttributesBuilder, TestEngineStateBuilder,
+    },
     BuildTask, BuildTaskError, EngineBuildError, EngineClient, EngineForkchoiceVersion,
     EngineState, EngineTaskExt,
-    test_utils::{
-        MockEngineClientBuilder, TestAttributesBuilder, TestEngineStateBuilder, test_block_info,
-        test_engine_client_builder,
-    },
 };
 use alloy_primitives::FixedBytes;
 use alloy_rpc_types_engine::{ForkchoiceUpdated, PayloadId, PayloadStatus, PayloadStatusEnum};
@@ -64,7 +64,7 @@ enum TestErr {
 
 // Wraps real errors, ignoring details so we can easily match on results.
 async fn wrapped_execute<EngineClient_: EngineClient>(
-    task: &mut BuildTask<EngineClient_>,
+    task: &BuildTask<EngineClient_>,
     state: &mut EngineState,
 ) -> Result<PayloadId, TestErr> {
     match task.execute(state).await {
@@ -87,7 +87,7 @@ async fn wrapped_execute<EngineClient_: EngineClient>(
 #[case::success(Some(PayloadStatusEnum::Valid), true, None)]
 #[case::missing_id(Some(PayloadStatusEnum::Valid), false, Some(TestErr::MissingPayloadId))]
 #[case::fcu_fail(None, false, Some(TestErr::AttributesInsertionFailed))]
-#[case::fcu_status_fail(Some(PayloadStatusEnum::Invalid{validation_error: "".to_string()}), false, Some(TestErr::InvalidPayload))]
+#[case::fcu_status_fail(Some(PayloadStatusEnum::Invalid{validation_error: String::new()}), false, Some(TestErr::InvalidPayload))]
 #[case::fcu_status_fail(Some(PayloadStatusEnum::Syncing), false, Some(TestErr::EngineSyncing))]
 #[case::fcu_status_fail(Some(PayloadStatusEnum::Accepted), false, Some(TestErr::Unexpected))]
 #[tokio::test]
@@ -102,7 +102,7 @@ async fn test_execute_variants(
     #[values(EngineForkchoiceVersion::V2, EngineForkchoiceVersion::V3)]
     fcu_version: EngineForkchoiceVersion,
 ) {
-    let payload_id = if payload_id_present { Some(PayloadId::new([1u8; 8])) } else { None };
+    let payload_id = payload_id_present.then(|| PayloadId::new([1u8; 8]));
 
     let parent_block = test_block_info(0);
     let unsafe_block = test_block_info(1);
@@ -112,7 +112,7 @@ async fn test_execute_variants(
 
     // Configure client with FCU response. If none, it will err on call, which is also a test case.
     let engine_client = fcu_status
-        .map_or(test_engine_client_builder(), |status| {
+        .map_or_else(test_engine_client_builder, |status| {
             configure_fcu(
                 test_engine_client_builder(),
                 fcu_version,
@@ -130,11 +130,11 @@ async fn test_execute_variants(
 
     let (tx, mut rx) = mpsc::channel(1);
 
-    let mut task = BuildTask::new(
+    let task = BuildTask::new(
         Arc::new(engine_client.clone()),
         Arc::new(cfg),
         attributes.clone(),
-        if with_channel { Some(tx) } else { None },
+        with_channel.then_some(tx),
     );
 
     let mut state = TestEngineStateBuilder::new()
@@ -144,7 +144,7 @@ async fn test_execute_variants(
         .build();
 
     // Execute: Call execute
-    let result = wrapped_execute(&mut task, &mut state).await;
+    let result = wrapped_execute(&task, &mut state).await;
 
     if expected_err.is_some() {
         assert_eq!(expected_err, result.err());

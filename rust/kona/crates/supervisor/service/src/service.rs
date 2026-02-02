@@ -1,19 +1,19 @@
 //! Contains the main Supervisor service runner.
 
 use alloy_primitives::ChainId;
-use alloy_provider::{RootProvider, network::Ethereum};
+use alloy_provider::{network::Ethereum, RootProvider};
 use alloy_rpc_client::RpcClient;
 use anyhow::Result;
 use futures::future;
 use jsonrpsee::client_transport::ws::Url;
 use kona_supervisor_core::{
-    ChainProcessor, CrossSafetyCheckerJob, LogIndexer, ReorgHandler, Supervisor,
     config::Config,
     event::ChainEvent,
     l1_watcher::L1Watcher,
     rpc::{AdminError, AdminRequest, AdminRpc, SupervisorRpc},
     safety_checker::{CrossSafePromoter, CrossUnsafePromoter},
     syncnode::{Client, ClientConfig, ManagedNode, ManagedNodeClient, ManagedNodeCommand},
+    ChainProcessor, CrossSafetyCheckerJob, LogIndexer, ReorgHandler, Supervisor,
 };
 use kona_supervisor_rpc::{SupervisorAdminApiServer, SupervisorApiServer};
 use kona_supervisor_storage::{ChainDb, ChainDbFactory, DerivationStorageWriter, LogStorageWriter};

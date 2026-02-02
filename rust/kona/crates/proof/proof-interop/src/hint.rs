@@ -1,10 +1,10 @@
-//! This module contains the [HintType] enum.
+//! This module contains the [`HintType`] enum.
 
 use alloc::{string::ToString, vec::Vec};
 use core::{fmt::Display, str::FromStr};
-use kona_proof::{Hint, errors::HintParsingError};
+use kona_proof::{errors::HintParsingError, Hint};
 
-/// The [HintType] enum is used to specify the type of hint that was received.
+/// The [`HintType`] enum is used to specify the type of hint that was received.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HintType {
     /// A hint that specifies the block header of a layer 1 block.

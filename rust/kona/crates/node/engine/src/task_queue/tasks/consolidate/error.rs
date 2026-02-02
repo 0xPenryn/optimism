@@ -1,8 +1,8 @@
 //! Contains error types for the [`crate::ConsolidateTask`].
 
 use crate::{
+    task_queue::tasks::{task::EngineTaskErrorSeverity, BuildAndSealError},
     BuildTaskError, EngineTaskError, SealTaskError, SynchronizeTaskError,
-    task_queue::tasks::{BuildAndSealError, task::EngineTaskErrorSeverity},
 };
 use thiserror::Error;
 

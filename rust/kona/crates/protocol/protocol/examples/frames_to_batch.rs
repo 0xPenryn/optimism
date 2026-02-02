@@ -1,10 +1,10 @@
-//! This example decodes raw [Frame]s and reads them into a [Channel] and into a [SingleBatch].
+//! This example decodes raw [Frame]s and reads them into a [Channel] and into a [`SingleBatch`].
 
 use alloy_consensus::{SignableTransaction, TxEip1559, TxEnvelope};
 use alloy_eips::eip2718::{Decodable2718, Encodable2718};
-use alloy_primitives::{Address, BlockHash, Bytes, Signature, U256, hex};
+use alloy_primitives::{hex, Address, BlockHash, Bytes, Signature, U256};
 use kona_genesis::RollupConfig;
-use kona_protocol::{Batch, BlockInfo, Channel, Frame, SingleBatch, decompress_brotli};
+use kona_protocol::{decompress_brotli, Batch, BlockInfo, Channel, Frame, SingleBatch};
 
 fn main() {
     // Raw frame data taken from the `encode_channel` example.

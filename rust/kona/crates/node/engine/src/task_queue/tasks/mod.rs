@@ -24,4 +24,4 @@ mod finalize;
 pub use finalize::{FinalizeTask, FinalizeTaskError};
 
 mod util;
-pub(super) use util::{BuildAndSealError, build_and_seal};
+pub(super) use util::{build_and_seal, BuildAndSealError};

@@ -9,11 +9,11 @@ use alloy_op_hardforks::{
 };
 use alloy_primitives::{address, b256, uint};
 use kona_genesis::{
-    ChainGenesis, DEFAULT_INTEROP_MESSAGE_EXPIRY_WINDOW, HardForkConfig,
-    OP_MAINNET_BASE_FEE_CONFIG, RollupConfig, SystemConfig,
+    ChainGenesis, HardForkConfig, RollupConfig, SystemConfig,
+    DEFAULT_INTEROP_MESSAGE_EXPIRY_WINDOW, OP_MAINNET_BASE_FEE_CONFIG,
 };
 
-/// The [RollupConfig] for OP Mainnet.
+/// The [`RollupConfig`] for OP Mainnet.
 pub const OP_MAINNET_CONFIG: RollupConfig = RollupConfig {
     genesis: ChainGenesis {
         l1: BlockNumHash {

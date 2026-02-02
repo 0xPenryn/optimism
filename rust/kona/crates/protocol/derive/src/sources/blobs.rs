@@ -6,7 +6,7 @@ use crate::{
 };
 use alloc::{boxed::Box, string::ToString, vec::Vec};
 use alloy_consensus::{
-    Transaction, TxEip4844Variant, TxEnvelope, TxType, transaction::SignerRecoverable,
+    transaction::SignerRecoverable, Transaction, TxEip4844Variant, TxEnvelope, TxType,
 };
 use alloy_eips::eip4844::IndexedBlobHash;
 use alloy_primitives::{Address, Bytes};
@@ -147,7 +147,7 @@ where
 
         // Fill the blob pointers.
         let mut blob_index = 0;
-        for blob in data.iter_mut() {
+        for blob in &mut data {
             match blob.fill(&blobs, blob_index) {
                 Ok(should_increment) => {
                     if should_increment {

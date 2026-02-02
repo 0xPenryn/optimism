@@ -1,4 +1,4 @@
-//! This module contains the [FrameQueue] stage of the derivation pipeline.
+//! This module contains the [`FrameQueue`] stage of the derivation pipeline.
 
 use crate::{
     NextFrameProvider, OriginAdvancer, OriginProvider, PipelineError, PipelineResult, Signal,

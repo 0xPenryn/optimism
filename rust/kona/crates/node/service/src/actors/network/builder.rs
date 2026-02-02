@@ -7,12 +7,12 @@ use kona_genesis::RollupConfig;
 use kona_gossip::{GaterConfig, GossipDriverBuilder};
 use kona_peers::{BootNodes, BootStoreFile, PeerMonitoring, PeerScoreLevel};
 use kona_sources::BlockSigner;
-use libp2p::{Multiaddr, identity::Keypair};
+use libp2p::{identity::Keypair, Multiaddr};
 use std::time::Duration;
 
 use crate::{
-    NetworkBuilderError,
     actors::network::{NetworkConfig, NetworkDriver},
+    NetworkBuilderError,
 };
 
 /// Constructs a [`NetworkDriver`] for the OP Stack Consensus Layer.
@@ -177,7 +177,7 @@ impl NetworkBuilder {
 mod tests {
     use super::*;
     use alloy_chains::Chain;
-    use discv5::{ConfigBuilder, ListenConfig, enr::CombinedKey};
+    use discv5::{enr::CombinedKey, ConfigBuilder, ListenConfig};
     use libp2p::gossipsub::IdentTopic;
     use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 

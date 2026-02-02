@@ -66,7 +66,7 @@ mod transactions;
 pub use transactions::SpanBatchTransactions;
 
 mod element;
-pub use element::{MAX_SPAN_BATCH_ELEMENTS, SpanBatchElement};
+pub use element::{SpanBatchElement, MAX_SPAN_BATCH_ELEMENTS};
 
 mod validity;
 pub use validity::{BatchDropReason, BatchValidity};

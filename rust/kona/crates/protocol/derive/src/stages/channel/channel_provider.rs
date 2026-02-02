@@ -1,4 +1,4 @@
-//! This module contains the [ChannelProvider] stage.
+//! This module contains the [`ChannelProvider`] stage.
 
 use super::{ChannelAssembler, ChannelBank, ChannelReaderProvider, NextFrameProvider};
 use crate::{
@@ -156,8 +156,8 @@ where
 #[cfg(test)]
 mod test {
     use crate::{
-        ChannelProvider, ChannelReaderProvider, OriginProvider, PipelineError, ResetSignal,
-        SignalReceiver, test_utils::TestNextFrameProvider,
+        test_utils::TestNextFrameProvider, ChannelProvider, ChannelReaderProvider, OriginProvider,
+        PipelineError, ResetSignal, SignalReceiver,
     };
     use alloc::{sync::Arc, vec};
     use kona_genesis::{HardForkConfig, RollupConfig};

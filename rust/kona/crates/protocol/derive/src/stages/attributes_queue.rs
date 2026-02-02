@@ -63,7 +63,7 @@ where
             self.batch = Some(batch);
             self.is_last_in_span = self.prev.is_last_in_span();
         }
-        self.batch.as_ref().cloned().ok_or(PipelineError::Eof.temp())
+        self.batch.clone().ok_or(PipelineError::Eof.temp())
     }
 
     /// Returns the next [`OpAttributesWithParent`] from the current batch.
@@ -187,7 +187,7 @@ where
 {
     async fn signal(&mut self, signal: Signal) -> PipelineResult<()> {
         match signal {
-            s @ Signal::Reset(_) | s @ Signal::Activation(_) => {
+            s @ (Signal::Reset(_) | Signal::Activation(_)) => {
                 self.prev.signal(s).await?;
                 self.batch = None;
                 self.is_last_in_span = false;
@@ -209,11 +209,11 @@ mod tests {
     use super::*;
     use crate::{
         errors::{BuilderError, PipelineErrorKind},
-        test_utils::{TestAttributesBuilder, TestAttributesProvider, new_test_attributes_provider},
+        test_utils::{new_test_attributes_provider, TestAttributesBuilder, TestAttributesProvider},
         types::ResetSignal,
     };
     use alloc::{sync::Arc, vec, vec::Vec};
-    use alloy_primitives::{Address, B256, Bytes, b256};
+    use alloy_primitives::{b256, Address, Bytes, B256};
     use alloy_rpc_types_engine::PayloadAttributes;
 
     fn default_optimism_payload_attributes() -> OpPayloadAttributes {

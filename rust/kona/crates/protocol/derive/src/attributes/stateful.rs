@@ -6,15 +6,15 @@ use crate::{
 };
 use alloc::{boxed::Box, fmt::Debug, string::ToString, sync::Arc, vec, vec::Vec};
 use alloy_consensus::{Eip658Value, Receipt};
-use alloy_eips::{BlockNumHash, eip2718::Encodable2718};
-use alloy_primitives::{Address, B256, Bytes};
+use alloy_eips::{eip2718::Encodable2718, BlockNumHash};
+use alloy_primitives::{Address, Bytes, B256};
 use alloy_rlp::Encodable;
 use alloy_rpc_types_engine::PayloadAttributes;
 use async_trait::async_trait;
 use kona_genesis::{L1ChainConfig, RollupConfig};
 use kona_hardforks::{Hardfork, Hardforks};
 use kona_protocol::{
-    DEPOSIT_EVENT_ABI_HASH, L1BlockInfoTx, L2BlockInfo, Predeploys, decode_deposit,
+    decode_deposit, L1BlockInfoTx, L2BlockInfo, Predeploys, DEPOSIT_EVENT_ABI_HASH,
 };
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
 
@@ -79,7 +79,20 @@ where
         // If the L1 origin changed in this block, then we are in the first block of the epoch.
         // In this case we need to fetch all transaction receipts from the L1 origin block so
         // we can scan for user deposits.
-        let sequence_number = if l2_parent.l1_origin.number != epoch.number {
+        let sequence_number = if l2_parent.l1_origin.number == epoch.number {
+            #[allow(clippy::collapsible_else_if)]
+            if l2_parent.l1_origin.hash != epoch.hash {
+                return Err(PipelineErrorKind::Reset(
+                    BuilderError::BlockMismatch(epoch, l2_parent.l1_origin).into(),
+                ));
+            }
+
+            let header =
+                self.receipts_fetcher.header_by_hash(epoch.hash).await.map_err(Into::into)?;
+            l1_header = header;
+            deposit_transactions = vec![];
+            l2_parent.seq_num + 1
+        } else {
             let header =
                 self.receipts_fetcher.header_by_hash(epoch.hash).await.map_err(Into::into)?;
             if l2_parent.l1_origin.hash != header.parent_hash {
@@ -108,19 +121,6 @@ where
             l1_header = header;
             deposit_transactions = deposits;
             0
-        } else {
-            #[allow(clippy::collapsible_else_if)]
-            if l2_parent.l1_origin.hash != epoch.hash {
-                return Err(PipelineErrorKind::Reset(
-                    BuilderError::BlockMismatch(epoch, l2_parent.l1_origin).into(),
-                ));
-            }
-
-            let header =
-                self.receipts_fetcher.header_by_hash(epoch.hash).await.map_err(Into::into)?;
-            l1_header = header;
-            deposit_transactions = vec![];
-            l2_parent.seq_num + 1
         };
 
         // Sanity check the L1 origin was correctly selected to maintain the time invariant
@@ -138,12 +138,14 @@ where
             ));
         }
 
-        let mut upgrade_transactions: Vec<Bytes> = vec![];
-        if self.rollup_cfg.is_ecotone_active(next_l2_time) &&
-            !self.rollup_cfg.is_ecotone_active(l2_parent.block_info.timestamp)
-        {
-            upgrade_transactions = Hardforks::ECOTONE.txs().collect();
-        }
+        let mut upgrade_transactions: Vec<Bytes> =
+            if self.rollup_cfg.is_ecotone_active(next_l2_time) &&
+                !self.rollup_cfg.is_ecotone_active(l2_parent.block_info.timestamp)
+            {
+                Hardforks::ECOTONE.txs().collect()
+            } else {
+                vec![]
+            };
         if self.rollup_cfg.is_fjord_active(next_l2_time) &&
             !self.rollup_cfg.is_fjord_active(l2_parent.block_info.timestamp)
         {
@@ -186,16 +188,12 @@ where
         txs.extend(deposit_transactions);
         txs.extend(upgrade_transactions);
 
-        let mut withdrawals = None;
-        if self.rollup_cfg.is_canyon_active(next_l2_time) {
-            withdrawals = Some(Vec::default());
-        }
+        let withdrawals = self.rollup_cfg.is_canyon_active(next_l2_time).then(Vec::default);
 
-        let mut parent_beacon_root = None;
-        if self.rollup_cfg.is_ecotone_active(next_l2_time) {
-            // if the parent beacon root is not available, default to zero hash
-            parent_beacon_root = Some(l1_header.parent_beacon_block_root.unwrap_or_default());
-        }
+        let parent_beacon_root = self
+            .rollup_cfg
+            .is_ecotone_active(next_l2_time)
+            .then(|| l1_header.parent_beacon_block_root.unwrap_or_default());
 
         Ok(OpPayloadAttributes {
             payload_attributes: PayloadAttributes {
@@ -236,11 +234,11 @@ async fn derive_deposits(
 ) -> Result<Vec<Bytes>, PipelineEncodingError> {
     let mut global_index = 0;
     let mut res = Vec::new();
-    for r in receipts.iter() {
+    for r in receipts {
         if Eip658Value::Eip658(false) == r.status {
             continue;
         }
-        for l in r.logs.iter() {
+        for l in &r.logs {
             let curr_index = global_index;
             global_index += 1;
             if l.data.topics().first().is_none_or(|i| *i != DEPOSIT_EVENT_ABI_HASH) {
@@ -265,7 +263,7 @@ mod tests {
     };
     use alloc::vec;
     use alloy_consensus::Header;
-    use alloy_primitives::{B256, Log, LogData, U64, U256, address};
+    use alloy_primitives::{address, Log, LogData, B256, U256, U64};
     use kona_genesis::{HardForkConfig, SystemConfig};
     use kona_protocol::{BlockInfo, DepositError};
     use kona_registry::L1Config;

@@ -1,18 +1,18 @@
-//! [Header] assembly logic for the [StatelessL2Builder].
+//! [Header] assembly logic for the [`StatelessL2Builder`].
 
 use super::StatelessL2Builder;
 use crate::{
-    ExecutorError, ExecutorResult, TrieDBError, TrieDBProvider,
     util::{encode_holocene_eip_1559_params, encode_jovian_eip_1559_params},
+    ExecutorError, ExecutorResult, TrieDBError, TrieDBProvider,
 };
 use alloc::vec::Vec;
-use alloy_consensus::{EMPTY_OMMER_ROOT_HASH, Header, Sealed};
-use alloy_eips::{Encodable2718, eip7685::EMPTY_REQUESTS_HASH};
-use alloy_evm::{EvmFactory, block::BlockExecutionResult};
-use alloy_primitives::{B256, Sealable, U256, logs_bloom};
+use alloy_consensus::{Header, Sealed, EMPTY_OMMER_ROOT_HASH};
+use alloy_eips::{eip7685::EMPTY_REQUESTS_HASH, Encodable2718};
+use alloy_evm::{block::BlockExecutionResult, EvmFactory};
+use alloy_primitives::{logs_bloom, Sealable, B256, U256};
 use alloy_trie::EMPTY_ROOT_HASH;
 use kona_genesis::RollupConfig;
-use kona_mpt::{TrieHinter, ordered_trie_with_encoder};
+use kona_mpt::{ordered_trie_with_encoder, TrieHinter};
 use kona_protocol::{OutputRoot, Predeploys};
 use op_alloy_consensus::OpReceiptEnvelope;
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
@@ -24,8 +24,8 @@ where
     H: TrieHinter,
     Evm: EvmFactory,
 {
-    /// Seals the block executed from the given [OpPayloadAttributes] and [BlockEnv], returning the
-    /// computed [Header].
+    /// Seals the block executed from the given [`OpPayloadAttributes`] and [`BlockEnv`], returning
+    /// the computed [Header].
     pub(crate) fn seal_block(
         &mut self,
         attrs: &OpPayloadAttributes,

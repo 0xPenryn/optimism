@@ -44,12 +44,12 @@ impl GlobalArgs {
         let id = self.l2_chain_id;
         OPCHAINS
             .get(&id.id())
-            .ok_or(anyhow::anyhow!("No chain config found for chain ID: {id}"))?
+            .ok_or_else(|| anyhow::anyhow!("No chain config found for chain ID: {id}"))?
             .roles
             .as_ref()
-            .ok_or(anyhow::anyhow!("No roles found for chain ID: {id}"))?
+            .ok_or_else(|| anyhow::anyhow!("No roles found for chain ID: {id}"))?
             .unsafe_block_signer
-            .ok_or(anyhow::anyhow!("No unsafe block signer found for chain ID: {id}"))
+            .ok_or_else(|| anyhow::anyhow!("No unsafe block signer found for chain ID: {id}"))
     }
 }
 

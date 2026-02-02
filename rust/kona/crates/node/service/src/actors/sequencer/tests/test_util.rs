@@ -1,8 +1,8 @@
 use crate::{
-    SequencerActor,
     actors::{
         MockConductor, MockOriginSelector, MockSequencerEngineClient, MockUnsafePayloadGossipClient,
     },
+    SequencerActor,
 };
 use kona_derive::test_utils::TestAttributesBuilder;
 use kona_genesis::RollupConfig;

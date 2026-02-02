@@ -10,9 +10,10 @@ use crate::fpvm_evm::precompiles::utils::precompile_run;
 use alloc::string::ToString;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use revm::precompile::{
-    PrecompileError, PrecompileOutput, PrecompileResult, bls12_381,
+    bls12_381,
     bls12_381_const::{DISCOUNT_TABLE_G2_MSM, G2_MSM_BASE_GAS_FEE, G2_MSM_INPUT_LENGTH},
     bls12_381_utils::msm_required_gas,
+    PrecompileError, PrecompileOutput, PrecompileResult,
 };
 
 /// The maximum input size for the BLS12-381 g2 msm operation after the Isthmus Hardfork.

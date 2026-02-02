@@ -13,7 +13,7 @@ use kona_cli::LogConfig;
 /// ```sh
 /// kona-node registry [FLAGS] [OPTIONS]
 /// ```
-#[derive(Parser, Default, PartialEq, Debug, Clone)]
+#[derive(Parser, Default, PartialEq, Eq, Debug, Clone)]
 #[command(about = "Lists the OP Stack chains available in the superchain-registry")]
 pub struct RegistryCommand;
 

@@ -6,7 +6,7 @@ use alloy_consensus::{Header, Sealed};
 use alloy_eips::Encodable2718;
 use alloy_evm::{EvmFactory, FromRecoveredTx, FromTxWithEncoded};
 use alloy_op_evm::block::OpTxEnv;
-use alloy_primitives::{Address, B256, Bytes, Sealable, TxKind, U256, address};
+use alloy_primitives::{address, Address, Bytes, Sealable, TxKind, B256, U256};
 use alloy_rpc_types_engine::PayloadAttributes;
 use core::fmt::Debug;
 use kona_executor::{Eip1559ValidationError, ExecutorError, StatelessL2Builder};
@@ -23,7 +23,7 @@ use revm::context::BlockEnv;
 use thiserror::Error;
 use tracing::{error, info};
 
-/// The [SuperchainConsolidator] holds a [MessageGraph] and is responsible for recursively
+/// The [`SuperchainConsolidator`] holds a [`MessageGraph`] and is responsible for recursively
 /// consolidating the blocks within the graph, per [message validity rules].
 ///
 /// [message validity rules]: https://specs.optimism.io/interop/messaging.html#invalid-messages
@@ -32,11 +32,11 @@ pub struct SuperchainConsolidator<'a, C, Evm>
 where
     C: CommsClient,
 {
-    /// The [BootInfo] of the program.
+    /// The [`BootInfo`] of the program.
     boot_info: &'a mut BootInfo,
-    /// The [OracleInteropProvider] used for the message graph.
+    /// The [`OracleInteropProvider`] used for the message graph.
     interop_provider: OracleInteropProvider<C>,
-    /// The [OracleL2ChainProvider]s used for re-execution of invalid blocks, keyed by chain ID.
+    /// The [`OracleL2ChainProvider`]s used for re-execution of invalid blocks, keyed by chain ID.
     l2_providers: HashMap<u64, OracleL2ChainProvider<C>>,
     /// The inner [`EvmFactory`] to create EVM instances for re-execution of bad blocks.
     evm_factory: Evm,
@@ -49,7 +49,7 @@ where
     <Evm as EvmFactory>::Tx:
         FromTxWithEncoded<OpTxEnvelope> + FromRecoveredTx<OpTxEnvelope> + OpTxEnv,
 {
-    /// Creates a new [SuperchainConsolidator] with the given providers and [Header]s.
+    /// Creates a new [`SuperchainConsolidator`] with the given providers and [Header]s.
     ///
     /// [Header]: alloy_consensus::Header
     pub const fn new(
@@ -61,7 +61,7 @@ where
         Self { boot_info, interop_provider, l2_providers, evm_factory }
     }
 
-    /// Recursively consolidates the dependencies of the blocks within the [MessageGraph].
+    /// Recursively consolidates the dependencies of the blocks within the [`MessageGraph`].
     ///
     /// This method will recurse until all invalid cross-chain dependencies have been resolved,
     /// re-executing deposit-only blocks for chains with invalid dependencies as needed.
@@ -76,7 +76,6 @@ where
                 }
                 Err(ConsolidationError::MessageGraph(MessageGraphError::InvalidMessages(_))) => {
                     // If invalid messages are still present in the graph, continue the loop.
-                    continue;
                 }
                 Err(e) => {
                     error!(target: "superchain_consolidator", "Error consolidating superchain: {:?}", e);
@@ -89,8 +88,8 @@ where
     /// Performs a single iteration of the consolidation process.
     ///
     /// Step-wise:
-    /// 1. Derive a new [MessageGraph] from the current set of local safe [Header]s.
-    /// 2. Resolve the [MessageGraph].
+    /// 1. Derive a new [`MessageGraph`] from the current set of local safe [Header]s.
+    /// 2. Resolve the [`MessageGraph`].
     /// 3. If any invalid messages are found, re-execute the bad block(s) only deposit transactions,
     ///    and bubble up the error.
     ///
@@ -279,7 +278,7 @@ where
     }
 }
 
-/// An error type for the [SuperchainConsolidator] struct.
+/// An error type for the [`SuperchainConsolidator`] struct.
 #[derive(Debug, Error)]
 pub enum ConsolidationError {
     /// An invalid pre-state variant was passed to the consolidator.

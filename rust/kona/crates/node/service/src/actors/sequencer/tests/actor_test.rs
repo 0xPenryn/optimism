@@ -1,18 +1,18 @@
 #[cfg(test)]
 use crate::{
-    SequencerActorError,
     actors::{
-        MockOriginSelector, MockSequencerEngineClient, sequencer::tests::test_util::test_actor,
+        sequencer::tests::test_util::test_actor, MockOriginSelector, MockSequencerEngineClient,
     },
+    SequencerActorError,
 };
-use kona_derive::{BuilderError, PipelineErrorKind, test_utils::TestAttributesBuilder};
+use kona_derive::{test_utils::TestAttributesBuilder, BuilderError, PipelineErrorKind};
 use kona_protocol::{BlockInfo, L2BlockInfo};
 use rstest::rstest;
 
 #[rstest]
-#[case::temp(PipelineErrorKind::Temporary(BuilderError::Custom("".into()).into()), false)]
-#[case::reset(PipelineErrorKind::Reset(BuilderError::Custom("".into()).into()), false)]
-#[case::critical(PipelineErrorKind::Critical(BuilderError::Custom("".into()).into()), true)]
+#[case::temp(PipelineErrorKind::Temporary(BuilderError::Custom(String::new()).into()), false)]
+#[case::reset(PipelineErrorKind::Reset(BuilderError::Custom(String::new()).into()), false)]
+#[case::critical(PipelineErrorKind::Critical(BuilderError::Custom(String::new()).into()), true)]
 #[tokio::test]
 async fn test_build_unsealed_payload_prepare_payload_attributes_error(
     #[case] forced_error: PipelineErrorKind,

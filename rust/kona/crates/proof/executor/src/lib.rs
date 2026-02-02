@@ -16,7 +16,7 @@ mod db;
 pub use db::{NoopTrieDBProvider, TrieDB, TrieDBProvider};
 
 mod builder;
-pub use builder::{BlockBuildingOutcome, StatelessL2Builder, compute_receipts_root};
+pub use builder::{compute_receipts_root, BlockBuildingOutcome, StatelessL2Builder};
 
 mod errors;
 pub use errors::{

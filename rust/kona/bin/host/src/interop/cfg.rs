@@ -2,11 +2,11 @@
 
 use super::{InteropHintHandler, InteropLocalInputs};
 use crate::{
-    DiskKeyValueStore, MemoryKeyValueStore, OfflineHostBackend, OnlineHostBackend,
-    OnlineHostBackendCfg, PreimageServer, SharedKeyValueStore, SplitKeyValueStore,
-    eth::rpc_provider, server::PreimageServerError,
+    eth::rpc_provider, server::PreimageServerError, DiskKeyValueStore, MemoryKeyValueStore,
+    OfflineHostBackend, OnlineHostBackend, OnlineHostBackendCfg, PreimageServer,
+    SharedKeyValueStore, SplitKeyValueStore,
 };
-use alloy_primitives::{B256, Bytes};
+use alloy_primitives::{Bytes, B256};
 use alloy_provider::{Provider, RootProvider};
 use clap::Parser;
 use kona_cli::cli_styles;
@@ -33,7 +33,7 @@ pub struct InteropHost {
     /// L1 chain.
     #[arg(long, env)]
     pub l1_head: B256,
-    /// Agreed [PreState] to start from.
+    /// Agreed [`PreState`] to start from.
     ///
     /// [PreState]: kona_proof_interop::PreState
     #[arg(long, visible_alias = "l2-pre-state", value_parser = Bytes::from_str, env)]
@@ -130,7 +130,7 @@ pub enum InteropHostError {
 }
 
 impl InteropHost {
-    /// Starts the [InteropHost] application.
+    /// Starts the [`InteropHost`] application.
     pub async fn start(self) -> Result<(), InteropHostError> {
         if self.server {
             let hint = FileChannel::new(FileDescriptor::HintRead, FileDescriptor::HintWrite);
@@ -216,8 +216,8 @@ impl InteropHost {
             self.data_dir.is_some()
     }
 
-    /// Reads the [RollupConfig]s from the file system and returns a map of L2 chain ID ->
-    /// [RollupConfig]s.
+    /// Reads the [`RollupConfig`]s from the file system and returns a map of L2 chain ID ->
+    /// [`RollupConfig`]s.
     pub fn read_rollup_configs(
         &self,
     ) -> Option<Result<HashMap<u64, RollupConfig>, InteropHostError>> {
@@ -312,7 +312,7 @@ pub struct InteropProviders {
 }
 
 impl InteropProviders {
-    /// Returns the L2 [RootProvider] for the given chain ID.
+    /// Returns the L2 [`RootProvider`] for the given chain ID.
     pub fn l2(&self, chain_id: &u64) -> Result<&RootProvider<Optimism>, InteropHostError> {
         self.l2s.get(chain_id).ok_or_else(|| InteropHostError::RootProviderError(*chain_id))
     }

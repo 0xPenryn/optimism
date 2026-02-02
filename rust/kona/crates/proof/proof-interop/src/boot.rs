@@ -1,14 +1,14 @@
 //! This module contains the prologue phase of the client program, pulling in the boot information
 //! through the `PreimageOracle` ABI as local keys.
 
-use crate::{HintType, INVALID_TRANSITION, INVALID_TRANSITION_HASH, PreState};
+use crate::{HintType, PreState, INVALID_TRANSITION, INVALID_TRANSITION_HASH};
 use alloc::{string::ToString, vec::Vec};
-use alloy_primitives::{B256, Bytes, U256};
+use alloy_primitives::{Bytes, B256, U256};
 use alloy_rlp::Decodable;
 use kona_genesis::{L1ChainConfig, RollupConfig};
 use kona_preimage::{
-    CommsClient, HintWriterClient, PreimageKey, PreimageKeyType, PreimageOracleClient,
-    errors::PreimageOracleError,
+    errors::PreimageOracleError, CommsClient, HintWriterClient, PreimageKey, PreimageKeyType,
+    PreimageOracleClient,
 };
 use kona_proof::errors::OracleProviderError;
 use kona_registry::{HashMap, L1_CONFIGS, ROLLUP_CONFIGS};
@@ -103,9 +103,8 @@ impl BootInfo {
 
             if l2_post == INVALID_TRANSITION_HASH {
                 return Err(BootstrapError::InvalidToInvalid);
-            } else {
-                return Err(BootstrapError::InvalidPostState(l2_post));
             }
+            return Err(BootstrapError::InvalidPostState(l2_post));
         }
 
         let agreed_pre_state =
@@ -178,19 +177,19 @@ impl BootInfo {
         })
     }
 
-    /// Returns the [RollupConfig] corresponding to the [PreState::active_l2_chain_id].
+    /// Returns the [`RollupConfig`] corresponding to the [`PreState::active_l2_chain_id`].
     pub fn active_rollup_config(&self) -> Option<RollupConfig> {
         let active_l2_chain_id = self.agreed_pre_state.active_l2_chain_id()?;
         self.rollup_configs.get(&active_l2_chain_id).cloned()
     }
 
-    /// Returns the [L1ChainConfig] corresponding to the [PreState::active_l2_chain_id] through the
-    /// l2 [RollupConfig].
+    /// Returns the [`L1ChainConfig`] corresponding to the [`PreState::active_l2_chain_id`] through
+    /// the l2 [`RollupConfig`].
     pub fn active_l1_config(&self) -> L1ChainConfig {
         self.l1_config.clone()
     }
 
-    /// Returns the [RollupConfig] corresponding to the given `chain_id`.
+    /// Returns the [`RollupConfig`] corresponding to the given `chain_id`.
     pub fn rollup_config(&self, chain_id: u64) -> Option<RollupConfig> {
         self.rollup_configs.get(&chain_id).cloned()
     }

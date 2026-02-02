@@ -38,11 +38,11 @@ impl<F: ChainProvider + Send> L1RetrievalProvider for PollingTraversal<F> {
     }
 
     async fn next_l1_block(&mut self) -> PipelineResult<Option<BlockInfo>> {
-        if !self.done {
+        if self.done {
+            Err(PipelineError::Eof.temp())
+        } else {
             self.done = true;
             Ok(self.block)
-        } else {
-            Err(PipelineError::Eof.temp())
         }
     }
 }
@@ -206,14 +206,10 @@ pub(crate) mod tests {
         assert!(traversal.advance_origin().await.is_ok());
         let cfg = SystemConfig::default();
         traversal.done = true;
-        assert!(
-            traversal
-                .signal(
-                    ActivationSignal { system_config: Some(cfg), ..Default::default() }.signal()
-                )
-                .await
-                .is_ok()
-        );
+        assert!(traversal
+            .signal(ActivationSignal { system_config: Some(cfg), ..Default::default() }.signal())
+            .await
+            .is_ok());
         assert_eq!(traversal.origin(), Some(BlockInfo::default()));
         assert_eq!(traversal.system_config, cfg);
         assert!(!traversal.done);
@@ -227,12 +223,10 @@ pub(crate) mod tests {
         assert!(traversal.advance_origin().await.is_ok());
         let cfg = SystemConfig::default();
         traversal.done = true;
-        assert!(
-            traversal
-                .signal(ResetSignal { system_config: Some(cfg), ..Default::default() }.signal())
-                .await
-                .is_ok()
-        );
+        assert!(traversal
+            .signal(ResetSignal { system_config: Some(cfg), ..Default::default() }.signal())
+            .await
+            .is_ok());
         assert_eq!(traversal.origin(), Some(BlockInfo::default()));
         assert_eq!(traversal.system_config, cfg);
         assert!(!traversal.done);

@@ -5,9 +5,9 @@
 
 use async_trait::async_trait;
 use jsonrpsee::{
-    PendingSubscriptionSink, SubscriptionSink,
     core::{RpcResult, SubscriptionResult},
     types::ErrorCode,
+    PendingSubscriptionSink, SubscriptionSink,
 };
 
 use crate::{DevEngineApiServer, EngineRpcClient};

@@ -3,8 +3,8 @@
 use crate::{StatelessL2Builder, TrieDBProvider};
 use alloy_consensus::Header;
 use alloy_op_evm::OpEvmFactory;
-use alloy_primitives::{B256, Bytes, Sealable};
-use alloy_provider::{Provider, RootProvider, network::primitives::BlockTransactions};
+use alloy_primitives::{Bytes, Sealable, B256};
+use alloy_provider::{network::primitives::BlockTransactions, Provider, RootProvider};
 use alloy_rlp::Decodable;
 use alloy_rpc_client::RpcClient;
 use alloy_rpc_types_engine::PayloadAttributes;
@@ -13,12 +13,12 @@ use kona_genesis::RollupConfig;
 use kona_mpt::{NoopTrieHinter, TrieNode, TrieProvider};
 use kona_registry::ROLLUP_CONFIGS;
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
-use rocksdb::{DB, Options};
+use rocksdb::{Options, DB};
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, sync::Arc};
 use tokio::{fs, runtime::Handle, sync::Mutex};
 
-/// Executes a [ExecutorTestFixture] stored at the passed `fixture_path` and asserts that the
+/// Executes a [`ExecutorTestFixture`] stored at the passed `fixture_path` and asserts that the
 /// produced block hash matches the expected block hash.
 pub async fn run_test_fixture(fixture_path: PathBuf) {
     // First, untar the fixture.

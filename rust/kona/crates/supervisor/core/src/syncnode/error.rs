@@ -54,7 +54,7 @@ pub enum ClientError {
 
 impl PartialEq for ClientError {
     fn eq(&self, other: &Self) -> bool {
-        use ClientError::*;
+        use ClientError::{Authentication, ChainIdParseError, Client};
         match (self, other) {
             (Client(a), Client(b)) => a.to_string() == b.to_string(),
             (Authentication(a), Authentication(b)) => a == b,

@@ -145,7 +145,8 @@ pub(super) mod serde_bincode_compat {
             // // ensure we don't have an invalid poststate variant
             data.receipt.as_receipt_mut().status = success.into();
 
-            let encoded = bincode::serde::encode_to_vec(&data, bincode::config::standard()).unwrap();
+            let encoded =
+                bincode::serde::encode_to_vec(&data, bincode::config::standard()).unwrap();
             let (decoded, _): (Data, _) =
                 bincode::serde::decode_from_slice(&encoded, bincode::config::standard()).unwrap();
             assert_eq!(decoded, data);

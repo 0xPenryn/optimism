@@ -1,4 +1,4 @@
-use crate::{BasicKernelInterface, FileDescriptor, errors::IOResult, riscv64::syscall};
+use crate::{errors::IOResult, riscv64::syscall, BasicKernelInterface, FileDescriptor};
 
 /// Concrete implementation of the [`KernelIO`] trait for the `riscv64` target architecture.
 #[derive(Debug)]

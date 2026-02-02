@@ -17,6 +17,7 @@ pub enum BrotliDecompressionError {
 
 /// Decompresses the given bytes data using the Brotli decompressor implemented
 /// in the [`brotli`](https://crates.io/crates/brotli) crate.
+#[allow(clippy::large_stack_frames)]
 pub fn decompress_brotli(
     data: &[u8],
     max_rlp_bytes_per_channel: usize,
@@ -40,8 +41,8 @@ pub fn decompress_brotli(
     let mut written = 0;
 
     // Decompress the data stream until success or failure
-    loop {
-        match brotli::BrotliDecompressStream(
+    while matches!(
+        brotli::BrotliDecompressStream(
             &mut available_in,
             &mut input_offset,
             data,
@@ -50,23 +51,20 @@ pub fn decompress_brotli(
             &mut output,
             &mut written,
             &mut brotli_state,
-        ) {
-            brotli::BrotliResult::ResultSuccess => break,
-            brotli::BrotliResult::NeedsMoreOutput => {
-                // Resize the output buffer to double the size, following standard
-                // practice for buffer resizing in streams.
-                let old_len = output.len();
-                let new_len = old_len * 2;
+        ),
+        brotli::BrotliResult::NeedsMoreOutput
+    ) {
+        // Resize the output buffer to double the size, following standard
+        // practice for buffer resizing in streams.
+        let old_len = output.len();
+        let new_len = old_len * 2;
 
-                if new_len > max_rlp_bytes_per_channel {
-                    return Err(BrotliDecompressionError::BatchTooLarge);
-                }
-
-                output.resize(new_len, 0);
-                available_out += old_len;
-            }
-            _ => break,
+        if new_len > max_rlp_bytes_per_channel {
+            return Err(BrotliDecompressionError::BatchTooLarge);
         }
+
+        output.resize(new_len, 0);
+        available_out += old_len;
     }
 
     // Truncate the output buffer to the written bytes

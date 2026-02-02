@@ -1,7 +1,7 @@
 //! Supervisor RPC response types.
 
 use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, Bytes, ChainId, map::HashMap};
+use alloy_primitives::{map::HashMap, Bytes, ChainId, B256};
 use kona_protocol::BlockInfo;
 use kona_supervisor_types::SuperHead;
 use serde::{Deserialize, Serialize, Serializer};

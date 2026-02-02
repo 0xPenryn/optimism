@@ -25,7 +25,7 @@ pub use secrets::{KeypairError, ParseKeyError, SecretKeyLoader};
 pub mod backtrace;
 
 mod tracing;
-pub use tracing::{LogFormat, init_test_tracing};
+pub use tracing::{init_test_tracing, LogFormat};
 
 mod prometheus;
 pub use prometheus::init_prometheus_server;

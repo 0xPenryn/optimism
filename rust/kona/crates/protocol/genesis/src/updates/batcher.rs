@@ -1,11 +1,11 @@
 //! The batcher update type.
 
 use alloy_primitives::{Address, LogData};
-use alloy_sol_types::{SolType, sol};
+use alloy_sol_types::{sol, SolType};
 
 use crate::{
+    updates::common::{validate_update_data, ValidationError},
     BatcherUpdateError, SystemConfig, SystemConfigLog,
-    updates::common::{ValidationError, validate_update_data},
 };
 
 /// The batcher update type.
@@ -56,7 +56,7 @@ mod tests {
     use super::*;
     use crate::{CONFIG_UPDATE_EVENT_VERSION_0, CONFIG_UPDATE_TOPIC};
     use alloc::vec;
-    use alloy_primitives::{B256, Bytes, Log, LogData, address, hex};
+    use alloy_primitives::{address, hex, Bytes, Log, LogData, B256};
 
     #[test]
     fn test_batcher_update_try_from() {

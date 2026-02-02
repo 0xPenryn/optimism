@@ -1,8 +1,8 @@
 //! A task for building a new block and importing it.
 use super::BuildTaskError;
 use crate::{
-    EngineClient, EngineForkchoiceVersion, EngineState, EngineTaskExt,
-    state::EngineSyncStateUpdate, task_queue::tasks::build::error::EngineBuildError,
+    state::EngineSyncStateUpdate, task_queue::tasks::build::error::EngineBuildError, EngineClient,
+    EngineForkchoiceVersion, EngineState, EngineTaskExt,
 };
 use alloy_rpc_types_engine::{PayloadId, PayloadStatusEnum};
 use async_trait::async_trait;
@@ -38,9 +38,9 @@ pub struct BuildTask<EngineClient_: EngineClient> {
 }
 
 impl<EngineClient_: EngineClient> BuildTask<EngineClient_> {
-    /// Validates the provided [PayloadStatusEnum] according to the rules listed below.
+    /// Validates the provided [`PayloadStatusEnum`] according to the rules listed below.
     ///
-    /// ## Observed [PayloadStatusEnum] Variants
+    /// ## Observed [`PayloadStatusEnum`] Variants
     /// - `VALID`: Returns Ok(()) - forkchoice update was successful
     /// - `INVALID`: Returns error with validation details
     /// - `SYNCING`: Returns temporary error - EL is syncing
@@ -71,11 +71,11 @@ impl<EngineClient_: EngineClient> BuildTask<EngineClient_> {
     /// the payload attributes to build.
     ///
     /// ### Success (`VALID`)
-    /// If the build is successful, the [PayloadId] is returned for sealing and the successful
+    /// If the build is successful, the [`PayloadId`] is returned for sealing and the successful
     /// forkchoice update identifier is relayed via the stored `payload_id_tx` sender.
     ///
     /// ### Failure (`INVALID`)
-    /// If the forkchoice update fails, the [BuildTaskError].
+    /// If the forkchoice update fails, the [`BuildTaskError`].
     ///
     /// ### Syncing (`SYNCING`)
     /// If the EL is syncing, the payload attributes are buffered and the function returns early.

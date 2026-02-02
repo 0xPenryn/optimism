@@ -1,12 +1,12 @@
 use crate::{
-    Channel, HintReaderServer,
     errors::{PreimageOracleError, PreimageOracleResult},
     traits::{HintRouter, HintWriterClient},
+    Channel, HintReaderServer,
 };
 use alloc::{boxed::Box, format, string::String, vec};
 use async_trait::async_trait;
 
-/// A [HintWriter] is a high-level interface to the hint channel. It provides a way to write hints
+/// A [`HintWriter`] is a high-level interface to the hint channel. It provides a way to write hints
 /// to the host.
 #[derive(Debug, Clone, Copy)]
 pub struct HintWriter<C> {
@@ -14,7 +14,7 @@ pub struct HintWriter<C> {
 }
 
 impl<C> HintWriter<C> {
-    /// Create a new [HintWriter] from a [Channel].
+    /// Create a new [`HintWriter`] from a [`Channel`].
     pub const fn new(channel: C) -> Self {
         Self { channel }
     }
@@ -47,7 +47,7 @@ where
     }
 }
 
-/// A [HintReader] is a router for hints sent by the [HintWriter] from the client program. It
+/// A [`HintReader`] is a router for hints sent by the [`HintWriter`] from the client program. It
 /// provides a way for the host to prepare preimages for reading.
 #[derive(Debug, Clone, Copy)]
 pub struct HintReader<C> {
@@ -58,7 +58,7 @@ impl<C> HintReader<C>
 where
     C: Channel,
 {
-    /// Create a new [HintReader] from a [Channel].
+    /// Create a new [`HintReader`] from a [`Channel`].
     pub const fn new(channel: C) -> Self {
         Self { channel }
     }

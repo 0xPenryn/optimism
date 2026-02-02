@@ -4,7 +4,7 @@ use crate::errors::OracleProviderError;
 use alloc::string::ToString;
 use alloy_consensus::Header;
 use alloy_eips::eip2935::HISTORY_STORAGE_ADDRESS;
-use alloy_primitives::{B256, U256, b256, keccak256};
+use alloy_primitives::{b256, keccak256, B256, U256};
 use alloy_rlp::Decodable;
 use alloy_trie::TrieAccount;
 use kona_mpt::{Nibbles, TrieHinter, TrieNode, TrieNodeError, TrieProvider};
@@ -66,7 +66,7 @@ mod tests {
     use alloc::{vec, vec::Vec};
     use alloy_primitives::Bytes;
     use alloy_rlp::Encodable;
-    use alloy_trie::{HashBuilder, proof::ProofRetainer};
+    use alloy_trie::{proof::ProofRetainer, HashBuilder};
     use kona_mpt::NoopTrieHinter;
     use kona_registry::HashMap;
     use rstest::rstest;

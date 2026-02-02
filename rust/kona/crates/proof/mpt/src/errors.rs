@@ -3,10 +3,10 @@
 use alloc::string::String;
 use thiserror::Error;
 
-/// A [Result] type alias where the error is [TrieNodeError].
+/// A [Result] type alias where the error is [`TrieNodeError`].
 pub type TrieNodeResult<T> = Result<T, TrieNodeError>;
 
-/// An error type for [TrieNode] operations.
+/// An error type for [`TrieNode`] operations.
 ///
 /// [TrieNode]: crate::TrieNode
 #[derive(Error, Debug, PartialEq, Eq)]
@@ -28,10 +28,10 @@ pub enum TrieNodeError {
     Provider(String),
 }
 
-/// A [Result] type alias where the error is [OrderedListWalkerError].
+/// A [Result] type alias where the error is [`OrderedListWalkerError`].
 pub type OrderedListWalkerResult<T> = Result<T, OrderedListWalkerError>;
 
-/// An error type for [OrderedListWalker] operations.
+/// An error type for [`OrderedListWalker`] operations.
 ///
 /// [OrderedListWalker]: crate::OrderedListWalker
 #[derive(Error, Debug, PartialEq, Eq)]

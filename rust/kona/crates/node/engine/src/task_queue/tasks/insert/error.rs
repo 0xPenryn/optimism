@@ -1,16 +1,16 @@
-//! Contains the error types for the [InsertTask].
+//! Contains the error types for the [`InsertTask`].
 //!
 //! [InsertTask]: crate::InsertTask
 
 use crate::{
-    EngineTaskError, SynchronizeTaskError, task_queue::tasks::task::EngineTaskErrorSeverity,
+    task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError, SynchronizeTaskError,
 };
 use alloy_rpc_types_engine::PayloadStatusEnum;
 use alloy_transport::{RpcError, TransportErrorKind};
 use kona_protocol::FromBlockError;
 use op_alloy_rpc_types_engine::OpPayloadError;
 
-/// An error that occurs when running the [InsertTask].
+/// An error that occurs when running the [`InsertTask`].
 ///
 /// [InsertTask]: crate::InsertTask
 #[derive(Debug, thiserror::Error)]
@@ -35,10 +35,12 @@ pub enum InsertTaskError {
 impl EngineTaskError for InsertTaskError {
     fn severity(&self) -> EngineTaskErrorSeverity {
         match self {
-            Self::FromBlockError(_) => EngineTaskErrorSeverity::Critical,
-            Self::InsertFailed(_) => EngineTaskErrorSeverity::Temporary,
-            Self::UnexpectedPayloadStatus(_) => EngineTaskErrorSeverity::Temporary,
-            Self::L2BlockInfoConstruction(_) => EngineTaskErrorSeverity::Critical,
+            Self::FromBlockError(_) | Self::L2BlockInfoConstruction(_) => {
+                EngineTaskErrorSeverity::Critical
+            }
+            Self::InsertFailed(_) | Self::UnexpectedPayloadStatus(_) => {
+                EngineTaskErrorSeverity::Temporary
+            }
             Self::ForkchoiceUpdateFailed(inner) => inner.severity(),
         }
     }

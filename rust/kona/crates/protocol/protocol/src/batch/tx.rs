@@ -4,7 +4,7 @@ use crate::Frame;
 use alloc::vec::Vec;
 use alloy_primitives::Bytes;
 
-/// BatchTransaction is a set of [`Frame`]s that can be [Into::into] [`Bytes`].
+/// `BatchTransaction` is a set of [`Frame`]s that can be [`Into::into`] [`Bytes`].
 /// if the size exceeds the desired threshold.
 #[derive(Debug, Clone)]
 pub struct BatchTransaction {
@@ -47,8 +47,10 @@ mod test {
         let frame = Frame { id: [0xFF; 16], number: 0xEE, data: vec![0xDD; 50], is_last: true };
         let batch = BatchTransaction { frames: vec![frame.clone(); 5], size: 5 * frame.size() };
         let bytes: Bytes = batch.to_bytes();
-        let bytes =
-            [crate::DERIVATION_VERSION_0].iter().chain(bytes.iter()).copied().collect::<Vec<_>>();
+        let bytes = std::iter::once(&crate::DERIVATION_VERSION_0)
+            .chain(bytes.iter())
+            .copied()
+            .collect::<Vec<_>>();
         let frames = Frame::parse_frames(&bytes).unwrap();
         assert_eq!(frames, vec![frame; 5]);
     }

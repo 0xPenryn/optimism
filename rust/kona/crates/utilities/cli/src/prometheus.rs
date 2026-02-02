@@ -20,11 +20,9 @@ pub fn init_prometheus_server(addr: IpAddr, metrics_port: u16) -> Result<(), Bui
     let collector = Collector::default();
     collector.describe();
 
-    thread::spawn(move || {
-        loop {
-            collector.collect();
-            sleep(Duration::from_secs(60));
-        }
+    thread::spawn(move || loop {
+        collector.collect();
+        sleep(Duration::from_secs(60));
     });
 
     info!(

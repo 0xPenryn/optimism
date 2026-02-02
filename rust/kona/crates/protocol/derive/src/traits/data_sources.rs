@@ -9,7 +9,7 @@ use async_trait::async_trait;
 use core::fmt::Display;
 use kona_protocol::BlockInfo;
 
-/// The BlobProvider trait specifies the functionality of a data source that can provide blobs.
+/// The `BlobProvider` trait specifies the functionality of a data source that can provide blobs.
 #[async_trait]
 pub trait BlobProvider {
     /// The error type for the [`BlobProvider`].

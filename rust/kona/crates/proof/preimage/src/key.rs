@@ -1,7 +1,7 @@
-//! Contains the [PreimageKey] type, which is used to identify preimages that may be fetched from
+//! Contains the [`PreimageKey`] type, which is used to identify preimages that may be fetched from
 //! the preimage oracle.
 
-use alloy_primitives::{B256, Keccak256, U256};
+use alloy_primitives::{Keccak256, B256, U256};
 #[cfg(feature = "rkyv")]
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 #[cfg(feature = "serde")]
@@ -26,7 +26,7 @@ pub enum PreimageKeyType {
     /// low-order 31 bytes of the preimage's `keccak256` digest to the preimage itself.
     #[default]
     Keccak256 = 2,
-    /// GlobalGeneric key types are reserved for future use.
+    /// `GlobalGeneric` key types are reserved for future use.
     GlobalGeneric = 3,
     /// Sha256 key types are global and context independent. Preimages are mapped from the
     /// low-order 31 bytes of the preimage's `sha256` digest to the preimage itself.
@@ -79,31 +79,31 @@ pub struct PreimageKey {
 }
 
 impl PreimageKey {
-    /// Creates a new [PreimageKey] from a 32-byte value and a [PreimageKeyType]. The 32-byte value
-    /// will be truncated to 31 bytes by taking the low-order 31 bytes.
+    /// Creates a new [`PreimageKey`] from a 32-byte value and a [`PreimageKeyType`]. The 32-byte
+    /// value will be truncated to 31 bytes by taking the low-order 31 bytes.
     pub fn new(key: [u8; 32], key_type: PreimageKeyType) -> Self {
         let mut data = [0u8; 31];
         data.copy_from_slice(&key[1..]);
         Self { data, key_type }
     }
 
-    /// Creates a new local [PreimageKey] from a 64-bit local identifier. The local identifier will
-    /// be written into the low-order 8 bytes of the big-endian 31-byte data field.
+    /// Creates a new local [`PreimageKey`] from a 64-bit local identifier. The local identifier
+    /// will be written into the low-order 8 bytes of the big-endian 31-byte data field.
     pub fn new_local(local_ident: u64) -> Self {
         let mut data = [0u8; 31];
         data[23..].copy_from_slice(&local_ident.to_be_bytes());
         Self { data, key_type: PreimageKeyType::Local }
     }
 
-    /// Creates a new keccak256 [PreimageKey] from a 32-byte keccak256 digest. The digest will be
+    /// Creates a new keccak256 [`PreimageKey`] from a 32-byte keccak256 digest. The digest will be
     /// truncated to 31 bytes by taking the low-order 31 bytes.
     pub fn new_keccak256(digest: [u8; 32]) -> Self {
         Self::new(digest, PreimageKeyType::Keccak256)
     }
 
-    /// Creates a new precompile [PreimageKey] from a precompile address and input. The key will be
-    /// constructed as `keccak256(precompile_addr ++ input)`, and then the high-order byte of the
-    /// digest will be set to the type byte.
+    /// Creates a new precompile [`PreimageKey`] from a precompile address and input. The key will
+    /// be constructed as `keccak256(precompile_addr ++ input)`, and then the high-order byte of
+    /// the digest will be set to the type byte.
     pub fn new_precompile(precompile_addr: [u8; 20], input: &[u8]) -> Self {
         let mut data = [0u8; 31];
 
@@ -115,12 +115,12 @@ impl PreimageKey {
         Self { data, key_type: PreimageKeyType::Precompile }
     }
 
-    /// Returns the [PreimageKeyType] for the [PreimageKey].
+    /// Returns the [`PreimageKeyType`] for the [`PreimageKey`].
     pub const fn key_type(&self) -> PreimageKeyType {
         self.key_type
     }
 
-    /// Returns the value of the [PreimageKey] as a [U256].
+    /// Returns the value of the [`PreimageKey`] as a [`U256`].
     pub const fn key_value(&self) -> U256 {
         U256::from_be_slice(self.data.as_slice())
     }

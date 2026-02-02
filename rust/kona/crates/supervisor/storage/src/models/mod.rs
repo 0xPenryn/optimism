@@ -7,9 +7,8 @@
 //! [`reth_db_api::TableSet`] for database initialization via Reth's storage-api.
 
 use reth_db_api::{
-    TableSet, TableType, TableViewer,
     table::{DupSort, TableInfo},
-    tables,
+    tables, TableSet, TableType, TableViewer,
 };
 use std::fmt;
 

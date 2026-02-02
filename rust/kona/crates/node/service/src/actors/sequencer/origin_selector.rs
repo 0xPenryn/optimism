@@ -63,10 +63,10 @@ impl<P: L1OriginSelectorProvider + Send + Sync> OriginSelector for L1OriginSelec
 
         // Start building on the next L1 origin block if the next L2 block's timestamp is
         // greater than or equal to the next L1 origin's timestamp.
-        if let Some(next) = self.next {
-            if unsafe_head.block_info.timestamp + self.cfg.block_time >= next.timestamp {
-                return Ok(next);
-            }
+        if let Some(next) = self.next &&
+            unsafe_head.block_info.timestamp + self.cfg.block_time >= next.timestamp
+        {
+            return Ok(next);
         }
 
         let Some(current) = self.current else {
@@ -473,16 +473,15 @@ mod test {
         };
 
         if next_available {
+            let next = selector.next_l1_origin(unsafe_head, false).await.unwrap();
             if next_ahead_of_unsafe {
                 // If the next L1 origin is available and ahead of the unsafe head, the L1 origin
                 // should not change.
-                let next = selector.next_l1_origin(unsafe_head, false).await.unwrap();
                 assert_eq!(next.hash, B256::ZERO);
                 assert_eq!(next.number, 0);
             } else {
                 // If the next L1 origin is available and behind the unsafe head, the L1 origin
                 // should advance.
-                let next = selector.next_l1_origin(unsafe_head, false).await.unwrap();
                 assert_eq!(next.hash, B256::with_last_byte(1));
                 assert_eq!(next.number, 1);
             }

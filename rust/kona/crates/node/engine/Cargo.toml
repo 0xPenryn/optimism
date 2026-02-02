@@ -69,4 +69,6 @@ rstest.workspace = true
 
 [features]
 metrics = [ "dep:metrics" ]
-test-utils = []
+test-utils = [
+	"kona-protocol/test-utils"
+]

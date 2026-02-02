@@ -15,7 +15,7 @@ use jsonrpsee::{
 use kona_gossip::{P2pRpcRequest, PeerCount, PeerDump, PeerInfo, PeerStats};
 use std::{net::IpAddr, str::FromStr, time::Duration};
 
-use crate::{OpP2PApiServer, net::P2pRpc};
+use crate::{net::P2pRpc, OpP2PApiServer};
 
 #[async_trait]
 impl OpP2PApiServer for P2pRpc {

@@ -2,7 +2,7 @@
 
 use crate::errors::{IOError, IOResult};
 
-/// Converts a return value from a syscall into a [IOResult] type.
+/// Converts a return value from a syscall into a [`IOResult`] type.
 #[inline(always)]
 #[allow(unused)]
 pub(crate) const fn from_ret(value: usize) -> IOResult<usize> {

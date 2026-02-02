@@ -5,7 +5,7 @@
 //! [op-node]: https://github.com/ethereum-optimism/optimism/blob/develop/op-node/flags/p2p_flags.go
 
 use crate::flags::{GlobalArgs, SignerArgs};
-use alloy_primitives::{B256, b256};
+use alloy_primitives::{b256, B256};
 use alloy_provider::Provider;
 use alloy_signer_local::PrivateKeySigner;
 use anyhow::Result;
@@ -31,7 +31,7 @@ use url::Url;
 /// Resolves a hostname or IP address string to an [`IpAddr`].
 ///
 /// Accepts either:
-/// - A valid IP address string (e.g., "127.0.0.1", "::1")
+/// - A valid IP address string (e.g., "127.0.0.1", "`::1`")
 /// - A DNS hostname (e.g., "node1.example.com")
 ///
 /// For DNS hostnames, this performs synchronous DNS resolution and returns the first
@@ -93,7 +93,7 @@ pub struct P2PArgs {
     /// "node1.example.com"). DNS hostnames are resolved to IP addresses at startup.
     #[arg(long = "p2p.listen.ip", default_value = "0.0.0.0", env = "KONA_NODE_P2P_LISTEN_IP", value_parser = resolve_host)]
     pub listen_ip: IpAddr,
-    /// TCP port to bind LibP2P to. Any available system port if set to 0.
+    /// TCP port to bind `LibP2P` to. Any available system port if set to 0.
     #[arg(long = "p2p.listen.tcp", default_value = "9222", env = "KONA_NODE_P2P_LISTEN_TCP_PORT")]
     pub listen_tcp_port: u16,
     /// UDP port to bind Discv5 to. Same as TCP port if left 0.
@@ -115,15 +115,15 @@ pub struct P2PArgs {
         value_parser = |arg: &str| -> Result<Duration, ParseIntError> {Ok(Duration::from_secs(arg.parse()?))}
     )]
     pub peers_grace: Duration,
-    /// Configure GossipSub topic stable mesh target count.
+    /// Configure `GossipSub` topic stable mesh target count.
     /// Aka: The desired outbound degree (numbers of peers to gossip to).
     #[arg(long = "p2p.gossip.mesh.d", default_value = "8", env = "KONA_NODE_P2P_GOSSIP_MESH_D")]
     pub gossip_mesh_d: usize,
-    /// Configure GossipSub topic stable mesh low watermark.
+    /// Configure `GossipSub` topic stable mesh low watermark.
     /// Aka: The lower bound of outbound degree.
     #[arg(long = "p2p.gossip.mesh.lo", default_value = "6", env = "KONA_NODE_P2P_GOSSIP_MESH_DLO")]
     pub gossip_mesh_dlo: usize,
-    /// Configure GossipSub topic stable mesh high watermark.
+    /// Configure `GossipSub` topic stable mesh high watermark.
     /// Aka: The upper bound of outbound degree (additional peers will not receive gossip).
     #[arg(
         long = "p2p.gossip.mesh.dhi",
@@ -131,7 +131,7 @@ pub struct P2PArgs {
         env = "KONA_NODE_P2P_GOSSIP_MESH_DHI"
     )]
     pub gossip_mesh_dhi: usize,
-    /// Configure GossipSub gossip target.
+    /// Configure `GossipSub` gossip target.
     /// Aka: The target degree for gossip only (not messaging like p2p.gossip.mesh.d, just
     /// announcements of IHAVE).
     #[arg(
@@ -140,7 +140,7 @@ pub struct P2PArgs {
         env = "KONA_NODE_P2P_GOSSIP_MESH_DLAZY"
     )]
     pub gossip_mesh_dlazy: usize,
-    /// Configure GossipSub to publish messages to all known peers on the topic, outside of the
+    /// Configure `GossipSub` to publish messages to all known peers on the topic, outside of the
     /// mesh. Also see Dlazy as less aggressive alternative.
     #[arg(
         long = "p2p.gossip.mesh.floodpublish",
@@ -297,16 +297,16 @@ impl P2PArgs {
             }
         }
 
-        if let Some(path) = self.priv_path.as_ref() {
-            if path.exists() {
-                let contents = std::fs::read_to_string(path).ok()?;
-                let decoded = B256::from_str(&contents).ok()?;
-                match PrivateKeySigner::from_bytes(&decoded) {
-                    Ok(signer) => return Some(signer),
-                    Err(e) => {
-                        tracing::error!(target: "p2p::flags", "Failed to parse private key from file: {}", e);
-                        return None;
-                    }
+        if let Some(path) = self.priv_path.as_ref() &&
+            path.exists()
+        {
+            let contents = std::fs::read_to_string(path).ok()?;
+            let decoded = B256::from_str(&contents).ok()?;
+            match PrivateKeySigner::from_bytes(&decoded) {
+                Ok(signer) => return Some(signer),
+                Err(e) => {
+                    tracing::error!(target: "p2p::flags", "Failed to parse private key from file: {}", e);
+                    return None;
                 }
             }
         }
@@ -349,7 +349,8 @@ impl P2PArgs {
 
         // Otherwise use the genesis signer or the configured unsafe block signer.
         args.genesis_signer().or_else(|_| {
-            self.unsafe_block_signer.ok_or(anyhow::anyhow!("Unsafe block signer not provided"))
+            self.unsafe_block_signer
+                .ok_or_else(|| anyhow::anyhow!("Unsafe block signer not provided"))
         })
     }
 
@@ -430,8 +431,8 @@ impl P2PArgs {
         let bootstore = if self.disable_bootstore {
             None
         } else {
-            Some(self.bootstore.map_or(
-                BootStoreFile::Default { chain_id: args.l2_chain_id.into() },
+            Some(self.bootstore.map_or_else(
+                || BootStoreFile::Default { chain_id: args.l2_chain_id.into() },
                 BootStoreFile::Custom,
             ))
         };
@@ -502,7 +503,7 @@ mod tests {
     use clap::Parser;
     use kona_peers::NodeRecord;
 
-    /// A mock command that uses the P2PArgs.
+    /// A mock command that uses the `P2PArgs`.
     #[derive(Parser, Debug, Clone)]
     #[command(about = "Mock command")]
     struct MockCommand {

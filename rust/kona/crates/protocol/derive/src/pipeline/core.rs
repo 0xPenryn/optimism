@@ -81,7 +81,7 @@ where
     /// Signals the pipeline by calling the [`SignalReceiver::signal`] method.
     ///
     /// During a [`Signal::Reset`], each stage is recursively called from the top-level
-    /// [crate::stages::AttributesQueue] to the bottom [crate::PollingTraversal]
+    /// [`crate::stages::AttributesQueue`] to the bottom [`crate::PollingTraversal`]
     /// with a head-recursion pattern. This effectively clears the internal state
     /// of each stage in the pipeline from bottom on up.
     ///
@@ -93,8 +93,8 @@ where
     /// The `signal` is contains the signal variant with any necessary parameters.
     async fn signal(&mut self, signal: Signal) -> PipelineResult<()> {
         match signal {
-            mut s @ Signal::Reset(ResetSignal { l2_safe_head, .. }) |
-            mut s @ Signal::Activation(ActivationSignal { l2_safe_head, .. }) => {
+            mut s @ (Signal::Reset(ResetSignal { l2_safe_head, .. }) |
+            Signal::Activation(ActivationSignal { l2_safe_head, .. })) => {
                 let system_config = self
                     .l2_chain_provider
                     .system_config_by_number(
@@ -107,7 +107,7 @@ where
                 match self.attributes.signal(s).await {
                     Ok(()) => trace!(target: "pipeline", "Stages reset"),
                     Err(err) => {
-                        if let PipelineErrorKind::Temporary(PipelineError::Eof) = err {
+                        if err == PipelineErrorKind::Temporary(PipelineError::Eof) {
                             trace!(target: "pipeline", "Stages reset with EOF");
                         } else {
                             error!(target: "pipeline", "Stage reset errored: {:?}", err);
@@ -116,10 +116,7 @@ where
                     }
                 }
             }
-            Signal::FlushChannel => {
-                self.attributes.signal(signal).await?;
-            }
-            Signal::ProvideBlock(_) => {
+            Signal::FlushChannel | Signal::ProvideBlock(_) => {
                 self.attributes.signal(signal).await?;
             }
         }
@@ -163,12 +160,12 @@ where
     ///
     /// ## Returns
     ///
-    /// A [PipelineError::Eof] is returned if the pipeline is blocked by waiting for new L1 data.
+    /// A [`PipelineError::Eof`] is returned if the pipeline is blocked by waiting for new L1 data.
     /// Any other error is critical and the derivation pipeline should be reset.
     /// An error is expected when the underlying source closes.
     ///
-    /// When [DerivationPipeline::step] returns [Ok(())], it should be called again, to continue the
-    /// derivation process.
+    /// When [`DerivationPipeline::step`] returns [Ok(())], it should be called again, to continue
+    /// the derivation process.
     ///
     /// [`PipelineError`]: crate::errors::PipelineError
     async fn step(&mut self, cursor: L2BlockInfo) -> StepResult {
@@ -190,14 +187,14 @@ where
                     crate::metrics::Metrics::PIPELINE_LATEST_PAYLOAD_TX_COUNT,
                     a.attributes.transactions.as_ref().map_or(0.0, |txs| txs.len() as f64)
                 );
-                if !a.is_last_in_span {
-                    kona_macros::inc!(gauge, crate::metrics::Metrics::PIPELINE_DERIVED_SPAN_SIZE);
-                } else {
+                if a.is_last_in_span {
                     kona_macros::set!(
                         gauge,
                         crate::metrics::Metrics::PIPELINE_DERIVED_SPAN_SIZE,
                         0
                     );
+                } else {
+                    kona_macros::inc!(gauge, crate::metrics::Metrics::PIPELINE_DERIVED_SPAN_SIZE);
                 }
                 self.prepared.push_back(a);
                 kona_macros::inc!(gauge, crate::metrics::Metrics::PIPELINE_PREPARED_ATTRIBUTES);
@@ -227,7 +224,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{DerivationPipeline, test_utils::*};
+    use crate::{test_utils::*, DerivationPipeline};
     use alloc::{string::ToString, sync::Arc};
     use alloy_rpc_types_engine::PayloadAttributes;
     use kona_genesis::{RollupConfig, SystemConfig};

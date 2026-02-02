@@ -1,13 +1,13 @@
 //! Contains a utility method to check if attributes match a block.
 
-use alloy_eips::{Decodable2718, eip1559::BaseFeeParams};
+use alloy_eips::{eip1559::BaseFeeParams, Decodable2718};
 use alloy_network::TransactionResponse;
-use alloy_primitives::{Address, B256, Bytes};
+use alloy_primitives::{Address, Bytes, B256};
 use alloy_rpc_types_eth::{Block, BlockTransactions, Withdrawals};
 use kona_genesis::RollupConfig;
 use kona_protocol::OpAttributesWithParent;
 use op_alloy_consensus::{
-    EIP1559ParamError, OpTxEnvelope, decode_holocene_extra_data, decode_jovian_extra_data,
+    decode_holocene_extra_data, decode_jovian_extra_data, EIP1559ParamError, OpTxEnvelope,
 };
 use op_alloy_rpc_types::Transaction;
 
@@ -57,7 +57,7 @@ impl AttributesMatch {
         block: &Block<Transaction>,
     ) -> Self {
         let attr_withdrawals = attributes.attributes().payload_attributes.withdrawals.as_ref();
-        let attr_withdrawals = attr_withdrawals.map(|w| Withdrawals::new(w.to_vec()));
+        let attr_withdrawals = attr_withdrawals.map(|w| Withdrawals::new(w.clone()));
         let block_withdrawals = block.withdrawals.as_ref();
 
         if config.is_canyon_active(block.header.timestamp) {
@@ -288,11 +288,7 @@ impl AttributesMatch {
 
         // Let's extract the list of attribute transactions
         let default_vec = vec![];
-        let attributes_txs = attributes
-            .attributes()
-            .transactions
-            .as_ref()
-            .map_or_else(|| &default_vec, |attrs| attrs);
+        let attributes_txs = attributes.attributes().transactions.as_ref().unwrap_or(&default_vec);
 
         // Check transactions
         if let mismatch @ Self::Mismatch(_) = Self::check_transactions(attributes_txs, block) {
@@ -403,7 +399,7 @@ mod tests {
     use super::*;
     use crate::AttributesMismatch::EIP1559Parameters;
     use alloy_consensus::EMPTY_ROOT_HASH;
-    use alloy_primitives::{Bytes, FixedBytes, address, b256};
+    use alloy_primitives::{address, b256, Bytes, FixedBytes};
     use alloy_rpc_types_eth::BlockTransactions;
     use arbitrary::{Arbitrary, Unstructured};
     use kona_protocol::{BlockInfo, L2BlockInfo};

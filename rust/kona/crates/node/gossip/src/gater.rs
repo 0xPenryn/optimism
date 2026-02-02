@@ -277,7 +277,7 @@ impl ConnectionGate for ConnectionGater {
     }
 
     fn connectedness(&self, peer_id: &PeerId) -> Connectedness {
-        self.connectedness.get(peer_id).cloned().unwrap_or(Connectedness::NotConnected)
+        self.connectedness.get(peer_id).copied().unwrap_or(Connectedness::NotConnected)
     }
 
     fn list_protected_peers(&self) -> Vec<PeerId> {
@@ -297,7 +297,7 @@ impl ConnectionGate for ConnectionGater {
         let dial_info = self
             .dialed_peers
             .entry(addr.clone())
-            .or_insert(DialInfo { num_dials: 0, last_dial: Instant::now() });
+            .or_insert_with(|| DialInfo { num_dials: 0, last_dial: Instant::now() });
 
         // If the last dial was longer than the dial period, reset the number of dials.
         if dial_info.last_dial.elapsed() > self.config.dial_period {
@@ -354,7 +354,7 @@ impl ConnectionGate for ConnectionGater {
     }
 
     fn list_blocked_addrs(&self) -> Vec<IpAddr> {
-        self.blocked_addrs.iter().cloned().collect()
+        self.blocked_addrs.iter().copied().collect()
     }
 
     fn block_subnet(&mut self, subnet: IpNet) {

@@ -1,16 +1,16 @@
 //! Contains the `ChannelOut` primitive for Optimism.
 
 use crate::{ChannelCompressor, CompressorError};
-use alloc::{vec, vec::Vec};
+use alloc::vec;
 use kona_genesis::RollupConfig;
 use kona_protocol::{Batch, ChannelId, Frame};
-use rand::{RngCore, SeedableRng, rngs::SmallRng};
+use rand::{rngs::SmallRng, RngCore, SeedableRng};
 
 /// The frame overhead.
 const FRAME_V0_OVERHEAD: usize = 23;
 
-/// An error returned by the [ChannelOut] when adding single batches.
-#[derive(Debug, Clone, PartialEq, thiserror::Error)]
+/// An error returned by the [`ChannelOut`] when adding single batches.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ChannelOutError {
     /// The channel is closed.
     #[error("The channel is already closed")]
@@ -32,7 +32,7 @@ pub enum ChannelOutError {
     ExceedsMaxRlpBytesPerChannel,
 }
 
-/// [ChannelOut] constructs a channel from compressed, encoded batch data.
+/// [`ChannelOut`] constructs a channel from compressed, encoded batch data.
 #[allow(missing_debug_implementations)]
 pub struct ChannelOut<'a, C>
 where
@@ -40,7 +40,7 @@ where
 {
     /// The unique identifier for the channel.
     pub id: ChannelId,
-    /// A reference to the [RollupConfig] used to
+    /// A reference to the [`RollupConfig`] used to
     /// check the max RLP bytes per channel when
     /// encoding and accepting the batch.
     pub config: &'a RollupConfig,
@@ -58,12 +58,12 @@ impl<'a, C> ChannelOut<'a, C>
 where
     C: ChannelCompressor,
 {
-    /// Creates a new [ChannelOut] with the given [ChannelId].
+    /// Creates a new [`ChannelOut`] with the given [`ChannelId`].
     pub const fn new(id: ChannelId, config: &'a RollupConfig, compressor: C) -> Self {
         Self { id, config, rlp_length: 0, frame_number: 0, closed: false, compressor }
     }
 
-    /// Resets the [ChannelOut] to its initial state.
+    /// Resets the [`ChannelOut`] to its initial state.
     pub fn reset(&mut self) {
         self.rlp_length = 0;
         self.frame_number = 0;
@@ -76,7 +76,7 @@ where
         SmallRng::fill_bytes(&mut small_rng, &mut self.id);
     }
 
-    /// Accepts the given [Batch] data into the [ChannelOut], compressing it
+    /// Accepts the given [Batch] data into the [`ChannelOut`], compressing it
     /// into frames.
     pub fn add_batch(&mut self, batch: Batch) -> Result<(), ChannelOutError> {
         if self.closed {
@@ -120,7 +120,7 @@ where
         self.closed = true;
     }
 
-    /// Outputs a [Frame] from the [ChannelOut].
+    /// Outputs a [Frame] from the [`ChannelOut`].
     pub fn output_frame(&mut self, max_size: usize) -> Result<Frame, ChannelOutError> {
         if max_size < FRAME_V0_OVERHEAD {
             return Err(ChannelOutError::MaxFrameSizeTooSmall);
@@ -136,7 +136,7 @@ where
         }
 
         // Read `max_size` bytes from the compressed data.
-        let mut data = Vec::with_capacity(max_size);
+        let mut data = vec![0u8; max_size];
         self.compressor.read(&mut data).map_err(ChannelOutError::Compression)?;
         frame.data.extend_from_slice(data.as_slice());
 
@@ -149,7 +149,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{CompressorWriter, test_utils::MockCompressor};
+    use crate::{test_utils::MockCompressor, CompressorWriter};
     use alloy_primitives::Bytes;
     use kona_protocol::{SingleBatch, SpanBatch};
 

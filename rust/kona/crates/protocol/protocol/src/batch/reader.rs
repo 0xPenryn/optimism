@@ -1,6 +1,6 @@
 //! Contains the [`BatchReader`] which is used to iteratively consume batches from raw data.
 
-use crate::{Batch, BrotliDecompressionError, decompress_brotli};
+use crate::{decompress_brotli, Batch, BrotliDecompressionError};
 use alloc::vec::Vec;
 use alloy_primitives::Bytes;
 use alloy_rlp::Decodable;
@@ -28,7 +28,7 @@ pub enum DecompressionError {
 }
 
 /// Batch Reader provides a function that iteratively consumes batches from the reader.
-/// The L1Inclusion block is also provided at creation time.
+/// The `L1Inclusion` block is also provided at creation time.
 /// Warning: the batch reader can read every batch-type.
 /// The caller of the batch-reader should filter the results.
 #[derive(Debug)]

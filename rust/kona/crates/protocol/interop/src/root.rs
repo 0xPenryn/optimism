@@ -1,14 +1,14 @@
-//! The [SuperRoot] type.
+//! The [`SuperRoot`] type.
 //!
 //! Represents a snapshot of the state of the superchain at a given integer timestamp.
 
-use crate::{SUPER_ROOT_VERSION, SuperRootError, SuperRootResult};
+use crate::{SuperRootError, SuperRootResult, SUPER_ROOT_VERSION};
 use alloc::vec::Vec;
 use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, Bytes, U256, keccak256};
+use alloy_primitives::{keccak256, Bytes, B256, U256};
 use alloy_rlp::{Buf, BufMut};
 
-/// The [SuperRoot] is the snapshot of the superchain at a given timestamp.
+/// The [`SuperRoot`] is the snapshot of the superchain at a given timestamp.
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -20,14 +20,14 @@ pub struct SuperRoot {
 }
 
 impl SuperRoot {
-    /// Create a new [SuperRoot] with the given timestamp and output roots.
+    /// Create a new [`SuperRoot`] with the given timestamp and output roots.
     pub fn new(timestamp: u64, mut output_roots: Vec<OutputRootWithChain>) -> Self {
         // Guarantee that the output roots are sorted by chain ID.
         output_roots.sort_by_key(|r| r.chain_id);
         Self { timestamp, output_roots }
     }
 
-    /// Decodes a [SuperRoot] from the given buffer.
+    /// Decodes a [`SuperRoot`] from the given buffer.
     pub fn decode(buf: &mut &[u8]) -> SuperRootResult<Self> {
         if buf.is_empty() {
             return Err(SuperRootError::UnexpectedLength);
@@ -61,7 +61,7 @@ impl SuperRoot {
         Ok(Self { timestamp, output_roots })
     }
 
-    /// Encode the [SuperRoot] into the given buffer.
+    /// Encode the [`SuperRoot`] into the given buffer.
     pub fn encode(&self, out: &mut dyn BufMut) {
         out.put_u8(SUPER_ROOT_VERSION);
 
@@ -72,12 +72,12 @@ impl SuperRoot {
         }
     }
 
-    /// Returns the encoded length of the [SuperRoot].
+    /// Returns the encoded length of the [`SuperRoot`].
     pub const fn encoded_length(&self) -> usize {
         1 + 8 + 64 * self.output_roots.len()
     }
 
-    /// Hashes the encoded [SuperRoot] using [keccak256].
+    /// Hashes the encoded [`SuperRoot`] using [keccak256].
     pub fn hash(&self) -> B256 {
         let mut rlp_buf = Vec::with_capacity(self.encoded_length());
         self.encode(&mut rlp_buf);
@@ -135,7 +135,7 @@ pub struct OutputRootWithChain {
 }
 
 impl OutputRootWithChain {
-    /// Create a new [OutputRootWithChain] with the given chain ID and output root hash.
+    /// Create a new [`OutputRootWithChain`] with the given chain ID and output root hash.
     pub const fn new(chain_id: u64, output_root: B256) -> Self {
         Self { chain_id, output_root }
     }
@@ -143,10 +143,10 @@ impl OutputRootWithChain {
 
 #[cfg(test)]
 mod test {
-    use crate::{SUPER_ROOT_VERSION, errors::SuperRootError};
+    use crate::{errors::SuperRootError, SUPER_ROOT_VERSION};
 
     use super::{OutputRootWithChain, SuperRoot};
-    use alloy_primitives::{B256, b256};
+    use alloy_primitives::{b256, B256};
 
     #[test]
     fn test_super_root_sorts_outputs() {

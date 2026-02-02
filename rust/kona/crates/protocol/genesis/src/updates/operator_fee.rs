@@ -3,8 +3,8 @@
 use alloy_primitives::LogData;
 
 use crate::{
+    updates::common::{validate_update_data, ValidationError},
     OperatorFeeUpdateError, SystemConfig, SystemConfigLog,
-    updates::common::{ValidationError, validate_update_data},
 };
 
 /// The Operator Fee update type.
@@ -72,7 +72,7 @@ mod tests {
     use super::*;
     use crate::{CONFIG_UPDATE_EVENT_VERSION_0, CONFIG_UPDATE_TOPIC};
     use alloc::vec;
-    use alloy_primitives::{Address, B256, Bytes, Log, LogData, hex};
+    use alloy_primitives::{hex, Address, Bytes, Log, LogData, B256};
 
     #[test]
     fn test_operator_fee_update_try_from() {

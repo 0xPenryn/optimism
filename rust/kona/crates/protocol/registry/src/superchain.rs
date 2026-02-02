@@ -71,7 +71,7 @@ mod tests {
         OP_SEPOLIA_JOVIAN_TIMESTAMP,
     };
     use alloy_primitives::address;
-    use kona_genesis::{AddressList, OP_MAINNET_BASE_FEE_CONFIG, Roles, SuperchainLevel};
+    use kona_genesis::{AddressList, Roles, SuperchainLevel, OP_MAINNET_BASE_FEE_CONFIG};
 
     #[test]
     fn test_read_chain_configs() {

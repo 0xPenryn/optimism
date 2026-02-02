@@ -84,6 +84,7 @@ std = [
 	"thiserror/std",
 	"tracing/std",
 	"unsigned-varint/std",
+	"tracing-subscriber?/std"
 ]
 test-utils = [ "kona-protocol/test-utils" ]
 serde = [

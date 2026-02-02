@@ -1,12 +1,12 @@
 use crate::{
-    PreimageKey,
     errors::{ChannelResult, PreimageOracleResult},
+    PreimageKey,
 };
 use alloc::{boxed::Box, string::String, vec::Vec};
 use async_trait::async_trait;
 
-/// A [PreimageOracleClient] is a high-level interface to read data from the host, keyed by a
-/// [PreimageKey].
+/// A [`PreimageOracleClient`] is a high-level interface to read data from the host, keyed by a
+/// [`PreimageKey`].
 #[async_trait]
 pub trait PreimageOracleClient {
     /// Get the data corresponding to the currently set key from the host. Return the data in a new
@@ -26,7 +26,7 @@ pub trait PreimageOracleClient {
     async fn get_exact(&self, key: PreimageKey, buf: &mut [u8]) -> PreimageOracleResult<()>;
 }
 
-/// A [HintWriterClient] is a high-level interface to the hint pipe. It provides a way to write
+/// A [`HintWriterClient`] is a high-level interface to the hint pipe. It provides a way to write
 /// hints to the host.
 #[async_trait]
 pub trait HintWriterClient {
@@ -39,13 +39,13 @@ pub trait HintWriterClient {
     async fn write(&self, hint: &str) -> PreimageOracleResult<()>;
 }
 
-/// A [CommsClient] is a trait that combines the [PreimageOracleClient] and [HintWriterClient]
+/// A [`CommsClient`] is a trait that combines the [`PreimageOracleClient`] and [`HintWriterClient`]
 pub trait CommsClient: PreimageOracleClient + Clone + HintWriterClient {}
 
 // Implement the super trait for any type that satisfies the bounds
 impl<T: PreimageOracleClient + Clone + HintWriterClient> CommsClient for T {}
 
-/// A [PreimageOracleServer] is a high-level interface to accept read requests from the client and
+/// A [`PreimageOracleServer`] is a high-level interface to accept read requests from the client and
 /// write the preimage data to the client pipe.
 #[async_trait]
 pub trait PreimageOracleServer {
@@ -59,8 +59,8 @@ pub trait PreimageOracleServer {
         F: PreimageFetcher + Send + Sync;
 }
 
-/// A [HintReaderServer] is a high-level interface to read preimage hints from the
-/// [HintWriterClient] and prepare them for consumption by the client program.
+/// A [`HintReaderServer`] is a high-level interface to read preimage hints from the
+/// [`HintWriterClient`] and prepare them for consumption by the client program.
 #[async_trait]
 pub trait HintReaderServer {
     /// Get the next hint request and return the acknowledgement to the client.
@@ -74,7 +74,7 @@ pub trait HintReaderServer {
         R: HintRouter + Send + Sync;
 }
 
-/// A [HintRouter] is a high-level interface to route hints to the appropriate handler.
+/// A [`HintRouter`] is a high-level interface to route hints to the appropriate handler.
 #[async_trait]
 pub trait HintRouter {
     /// Routes a hint to the appropriate handler.
@@ -88,7 +88,7 @@ pub trait HintRouter {
     async fn route_hint(&self, hint: String) -> PreimageOracleResult<()>;
 }
 
-/// A [PreimageFetcher] is a high-level interface to fetch preimages during preimage requests.
+/// A [`PreimageFetcher`] is a high-level interface to fetch preimages during preimage requests.
 #[async_trait]
 pub trait PreimageFetcher {
     /// Get the preimage corresponding to the given key.
@@ -102,14 +102,14 @@ pub trait PreimageFetcher {
     async fn get_preimage(&self, key: PreimageKey) -> PreimageOracleResult<Vec<u8>>;
 }
 
-/// A [PreimageServerBackend] is a trait that combines the [PreimageFetcher] and [HintRouter]
+/// A [`PreimageServerBackend`] is a trait that combines the [`PreimageFetcher`] and [`HintRouter`]
 /// traits.
 pub trait PreimageServerBackend: PreimageFetcher + HintRouter {}
 
 // Implement the super trait for any type that satisfies the bounds
 impl<T: PreimageFetcher + HintRouter> PreimageServerBackend for T {}
 
-/// A [Channel] is a high-level interface to read and write data to a counterparty.
+/// A [`Channel`] is a high-level interface to read and write data to a counterparty.
 #[async_trait]
 pub trait Channel {
     /// Asynchronously read data from the channel into the provided buffer.

@@ -1,9 +1,7 @@
 //! The [`SequencerActor`].
 
 use crate::{
-    CancellableContext, NodeActor, SequencerAdminQuery, UnsafePayloadGossipClient,
     actors::{
-        SequencerEngineClient,
         engine::EngineClientError,
         sequencer::{
             conductor::Conductor,
@@ -15,7 +13,9 @@ use crate::{
             },
             origin_selector::OriginSelector,
         },
+        SequencerEngineClient,
     },
+    CancellableContext, NodeActor, SequencerAdminQuery, UnsafePayloadGossipClient,
 };
 use alloy_rpc_types_engine::PayloadId;
 use async_trait::async_trait;
@@ -90,12 +90,12 @@ pub struct SequencerActor<
 }
 
 impl<
-    AttributesBuilder_,
-    Conductor_,
-    OriginSelector_,
-    SequencerEngineClient_,
-    UnsafePayloadGossipClient_,
->
+        AttributesBuilder_,
+        Conductor_,
+        OriginSelector_,
+        SequencerEngineClient_,
+        UnsafePayloadGossipClient_,
+    >
     SequencerActor<
         AttributesBuilder_,
         Conductor_,
@@ -136,7 +136,7 @@ where
     /// Sends a seal request to seal the provided [`UnsealedPayloadHandle`], committing and
     /// gossiping the resulting block, if one is built.
     async fn seal_and_commit_payload_if_applicable(
-        &mut self,
+        &self,
         unsealed_payload_handle: &UnsealedPayloadHandle,
     ) -> Result<(), SequencerActorError> {
         let seal_request_start = Instant::now();
@@ -251,7 +251,7 @@ where
         Ok(Some(l1_origin))
     }
 
-    /// Builds the OpAttributesWithParent for the next block to build. If None is returned, it
+    /// Builds the `OpAttributesWithParent` for the next block to build. If None is returned, it
     /// indicates that no attributes could be built at this time but future attempts may be made.
     async fn build_attributes(
         &mut self,
@@ -357,7 +357,7 @@ where
     }
 
     /// Schedules the initial engine reset request and waits for the unsafe head to be updated.
-    async fn schedule_initial_reset(&mut self) -> Result<(), SequencerActorError> {
+    async fn schedule_initial_reset(&self) -> Result<(), SequencerActorError> {
         // Reset the engine, in order to initialize the engine state.
         // NB: this call waits for confirmation that the reset succeeded and we can proceed with
         // post-reset logic.
@@ -370,12 +370,12 @@ where
 
 #[async_trait]
 impl<
-    AttributesBuilder_,
-    Conductor_,
-    OriginSelector_,
-    SequencerEngineClient_,
-    UnsafePayloadGossipClient_,
-> NodeActor
+        AttributesBuilder_,
+        Conductor_,
+        OriginSelector_,
+        SequencerEngineClient_,
+        UnsafePayloadGossipClient_,
+    > NodeActor
     for SequencerActor<
         AttributesBuilder_,
         Conductor_,
@@ -439,9 +439,8 @@ where
                                 error!(target: "sequencer", err=?err, "Critical seal task error occurred");
                                 self.cancellation_token.cancel();
                                 return Err(SequencerActorError::EngineError(EngineClientError::SealError(err)));
-                            } else {
-                                next_payload_to_seal = None;
                             }
+                            next_payload_to_seal = None;
                         },
                         Err(other_err) => {
                             error!(target: "sequencer", err = ?other_err, "Unexpected error building or sealing payload");
@@ -468,12 +467,12 @@ where
 }
 
 impl<
-    AttributesBuilder_,
-    Conductor_,
-    OriginSelector_,
-    SequencerEngineClient_,
-    UnsafePayloadGossipClient_,
-> CancellableContext
+        AttributesBuilder_,
+        Conductor_,
+        OriginSelector_,
+        SequencerEngineClient_,
+        UnsafePayloadGossipClient_,
+    > CancellableContext
     for SequencerActor<
         AttributesBuilder_,
         Conductor_,
@@ -504,22 +503,22 @@ fn is_seal_task_err_fatal(err: &SealTaskError) -> bool {
         SealTaskError::PayloadInsertionFailed(insert_err) => match &**insert_err {
             InsertTaskError::ForkchoiceUpdateFailed(synchronize_error) => match synchronize_error {
                 SynchronizeTaskError::FinalizedAheadOfUnsafe(_, _) => true,
-                SynchronizeTaskError::ForkchoiceUpdateFailed(_) => false,
-                SynchronizeTaskError::InvalidForkchoiceState => false,
+                SynchronizeTaskError::ForkchoiceUpdateFailed(_) |
+                SynchronizeTaskError::InvalidForkchoiceState |
                 SynchronizeTaskError::UnexpectedPayloadStatus(_) => false,
             },
-            InsertTaskError::FromBlockError(_) => true,
-            InsertTaskError::InsertFailed(_) => false,
-            InsertTaskError::UnexpectedPayloadStatus(_) => false,
-            InsertTaskError::L2BlockInfoConstruction(_) => true,
+            InsertTaskError::FromBlockError(_) | InsertTaskError::L2BlockInfoConstruction(_) => {
+                true
+            }
+            InsertTaskError::InsertFailed(_) | InsertTaskError::UnexpectedPayloadStatus(_) => false,
         },
-        SealTaskError::GetPayloadFailed(_) => false,
-        SealTaskError::DepositOnlyPayloadFailed => true,
-        SealTaskError::DepositOnlyPayloadReattemptFailed => true,
-        SealTaskError::HoloceneInvalidFlush => false,
-        SealTaskError::FromBlock(_) => true,
-        SealTaskError::MpscSend(_) => true,
-        SealTaskError::ClockWentBackwards => true,
+        SealTaskError::GetPayloadFailed(_) |
+        SealTaskError::HoloceneInvalidFlush |
         SealTaskError::UnsafeHeadChangedSinceBuild => false,
+        SealTaskError::DepositOnlyPayloadFailed |
+        SealTaskError::DepositOnlyPayloadReattemptFailed |
+        SealTaskError::FromBlock(_) |
+        SealTaskError::MpscSend(_) |
+        SealTaskError::ClockWentBackwards => true,
     }
 }

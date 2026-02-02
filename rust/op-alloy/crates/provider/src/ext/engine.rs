@@ -1,5 +1,5 @@
 use alloy_network::Network;
-use alloy_primitives::{B256, BlockHash, Bytes};
+use alloy_primitives::{BlockHash, Bytes, B256};
 use alloy_provider::Provider;
 use alloy_rpc_types_engine::{
     ClientVersionV1, ExecutionPayloadBodiesV1, ExecutionPayloadEnvelopeV2, ExecutionPayloadInputV2,
@@ -144,7 +144,7 @@ pub trait OpEngineApi<N, T> {
     /// Returns the execution payload bodies by the range starting at `start`, containing `count`
     /// blocks.
     ///
-    /// WARNING: This method is associated with the BeaconBlocksByRange message in the consensus
+    /// WARNING: This method is associated with the `BeaconBlocksByRange` message in the consensus
     /// layer p2p specification, meaning the input should be treated as untrusted or potentially
     /// adversarial.
     ///

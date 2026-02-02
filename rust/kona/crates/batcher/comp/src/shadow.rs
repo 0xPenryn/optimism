@@ -32,7 +32,7 @@ const CLOSE_OVERHEAD_ZLIB: u64 = 9;
 pub struct ShadowCompressor {
     /// The compressor configuration.
     config: Config,
-    /// The inner [VariantCompressor] that will be used to compress the data.
+    /// The inner [`VariantCompressor`] that will be used to compress the data.
     compressor: VariantCompressor,
     /// The shadow compressor.
     shadow: VariantCompressor,
@@ -44,7 +44,7 @@ pub struct ShadowCompressor {
 }
 
 impl ShadowCompressor {
-    /// Creates a new [ShadowCompressor] with the given [VariantCompressor].
+    /// Creates a new [`ShadowCompressor`] with the given [`VariantCompressor`].
     pub const fn new(
         config: Config,
         compressor: VariantCompressor,

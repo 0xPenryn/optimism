@@ -1,13 +1,13 @@
-//! Contains a concrete implementation of the [KeyValueStore] trait that splits between two separate
-//! [KeyValueStore]s depending on [PreimageKeyType].
+//! Contains a concrete implementation of the [`KeyValueStore`] trait that splits between two
+//! separate [`KeyValueStore`]s depending on [`PreimageKeyType`].
 
 use super::KeyValueStore;
 use crate::Result;
 use alloy_primitives::B256;
 use kona_preimage::PreimageKeyType;
 
-/// A split implementation of the [KeyValueStore] trait that splits between two separate
-/// [KeyValueStore]s.
+/// A split implementation of the [`KeyValueStore`] trait that splits between two separate
+/// [`KeyValueStore`]s.
 #[derive(Clone, Debug)]
 pub struct SplitKeyValueStore<L, R>
 where
@@ -23,7 +23,7 @@ where
     L: KeyValueStore,
     R: KeyValueStore,
 {
-    /// Create a new [SplitKeyValueStore] with the given left and right [KeyValueStore]s.
+    /// Create a new [`SplitKeyValueStore`] with the given left and right [`KeyValueStore`]s.
     pub const fn new(local_store: L, remote_store: R) -> Self {
         Self { local_store, remote_store }
     }

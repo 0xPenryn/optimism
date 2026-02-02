@@ -1,21 +1,21 @@
-//! [HintHandler] for the [InteropHost].
+//! [`HintHandler`] for the [`InteropHost`].
 
 use super::InteropHost;
 use crate::{
-    HintHandler, OnlineHostBackend, OnlineHostBackendCfg, PreimageServer, SharedKeyValueStore,
-    backend::util::store_ordered_trie,
+    backend::util::store_ordered_trie, HintHandler, OnlineHostBackend, OnlineHostBackendCfg,
+    PreimageServer, SharedKeyValueStore,
 };
 use alloy_consensus::{Header, Sealed};
 use alloy_eips::{
     eip2718::Encodable2718,
-    eip4844::{BlobTransactionSidecarItem, FIELD_ELEMENTS_PER_BLOB, IndexedBlobHash},
+    eip4844::{BlobTransactionSidecarItem, IndexedBlobHash, FIELD_ELEMENTS_PER_BLOB},
 };
 use alloy_op_evm::OpEvmFactory;
-use alloy_primitives::{Address, B256, Bytes, keccak256};
+use alloy_primitives::{keccak256, Address, Bytes, B256};
 use alloy_provider::Provider;
 use alloy_rlp::{Decodable, Encodable};
 use alloy_rpc_types::Block;
-use anyhow::{Result, anyhow, ensure};
+use anyhow::{anyhow, ensure, Result};
 use ark_ff::{BigInteger, PrimeField};
 use async_trait::async_trait;
 use kona_derive::EthereumDataSource;
@@ -26,20 +26,20 @@ use kona_preimage::{
     PreimageKeyType,
 };
 use kona_proof::{
-    CachingOracle, Hint,
     executor::KonaExecutor,
     l1::{OracleBlobProvider, OracleL1ChainProvider, OraclePipeline, ROOTS_OF_UNITY},
     l2::OracleL2ChainProvider,
     sync::new_oracle_pipeline_cursor,
+    CachingOracle, Hint,
 };
 use kona_proof_interop::{HintType, PreState};
 use kona_protocol::{BlockInfo, OutputRoot, Predeploys};
 use kona_registry::{L1_CONFIGS, ROLLUP_CONFIGS};
 use std::sync::Arc;
 use tokio::task;
-use tracing::{Instrument, debug, info, info_span, warn};
+use tracing::{debug, info, info_span, warn, Instrument};
 
-/// The [HintHandler] for the [InteropHost].
+/// The [`HintHandler`] for the [`InteropHost`].
 #[derive(Debug, Clone, Copy)]
 pub struct InteropHintHandler;
 
@@ -73,7 +73,7 @@ impl HintHandler for InteropHintHandler {
                     .get_block_by_hash(hash)
                     .full()
                     .await?
-                    .ok_or(anyhow!("Block not found"))?;
+                    .ok_or_else(|| anyhow!("Block not found"))?;
                 let encoded_transactions = transactions
                     .into_transactions()
                     .map(|tx| tx.inner.encoded_2718())
@@ -230,7 +230,7 @@ impl HintHandler for InteropHintHandler {
                     // configs.
                     .or_else(|| ROLLUP_CONFIGS.get(&chain_id).cloned())
                     .map(Arc::new)
-                    .ok_or(anyhow!("No rollup config found for chain ID: {chain_id}"))?;
+                    .ok_or_else(|| anyhow!("No rollup config found for chain ID: {chain_id}"))?;
                 let block_number = rollup_config.block_number_from_timestamp(timestamp);
 
                 // Fetch the header for the L2 head block.
@@ -288,7 +288,7 @@ impl HintHandler for InteropHintHandler {
                     .get_block_by_hash(hash)
                     .full()
                     .await?
-                    .ok_or(anyhow!("Block not found"))?;
+                    .ok_or_else(|| anyhow!("Block not found"))?;
                 let encoded_transactions = transactions
                     .into_transactions()
                     .map(|tx| tx.inner.inner.encoded_2718())
@@ -439,7 +439,7 @@ impl HintHandler for InteropHintHandler {
                     // configs.
                     .or_else(|| ROLLUP_CONFIGS.get(&chain_id).cloned())
                     .map(Arc::new)
-                    .ok_or(anyhow!("No rollup config found for chain ID: {chain_id}"))?;
+                    .ok_or_else(|| anyhow!("No rollup config found for chain ID: {chain_id}"))?;
 
                 let l1_config = cfg
                     .read_l1_config()
@@ -457,11 +457,11 @@ impl HintHandler for InteropHintHandler {
                 let parent_block = l2_provider
                     .get_block_by_hash(agreed_block_hash)
                     .await?
-                    .ok_or(anyhow!("Block not found."))?;
+                    .ok_or_else(|| anyhow!("Block not found."))?;
                 let disputed_block = l2_provider
                     .get_block_by_number((parent_block.header.number + 1).into())
                     .await?
-                    .ok_or(anyhow!("Block not found."))?;
+                    .ok_or_else(|| anyhow!("Block not found."))?;
 
                 // Return early if the disputed block is canonical - preimages can be fetched
                 // through the normal flow.

@@ -1,5 +1,6 @@
 //! Contains the [`RollupNode`] implementation.
 use crate::{
+    actors::{BlockStream, NetworkInboundData, QueuedUnsafePayloadGossipClient},
     ConductorClient, DelayedL1OriginSelectorProvider, DelegateDerivationActor, DerivationActor,
     DerivationDelegateClient, DerivationError, EngineActor, EngineActorRequest, EngineConfig,
     EngineProcessor, EngineRpcProcessor, InteropMode, L1OriginSelector, L1WatcherActor,
@@ -8,7 +9,6 @@ use crate::{
     QueuedNetworkEngineClient, QueuedSequencerAdminAPIClient, QueuedSequencerEngineClient,
     RollupBoostAdminApiClient, RollupBoostHealthRpcClient, RpcActor, RpcContext, SequencerActor,
     SequencerConfig,
-    actors::{BlockStream, NetworkInboundData, QueuedUnsafePayloadGossipClient},
 };
 use alloy_eips::BlockNumberOrTag;
 use alloy_provider::RootProvider;
@@ -43,8 +43,8 @@ pub struct L1Config {
     pub engine_provider: RootProvider,
 }
 
-/// The standard implementation of the [RollupNode] service, using the governance approved OP Stack
-/// configuration of components.
+/// The standard implementation of the [`RollupNode`] service, using the governance approved OP
+/// Stack configuration of components.
 #[derive(Debug)]
 pub struct RollupNode {
     /// The rollup configuration.
@@ -72,10 +72,10 @@ pub struct RollupNode {
 /// A RollupNode-level derivation actor wrapper.
 ///
 /// This type selects the concrete derivation actor implementation
-/// based on RollupNode configuration.
+/// based on `RollupNode` configuration.
 ///
 /// It is not intended to be generic or reusable outside the
-/// RollupNode wiring logic.
+/// `RollupNode` wiring logic.
 enum ConfiguredDerivationActor {
     Delegate(Box<DelegateDerivationActor<QueuedDerivationEngineClient>>),
     Normal(Box<DerivationActor<QueuedDerivationEngineClient, OnlinePipeline>>),
@@ -213,7 +213,7 @@ impl RollupNode {
             self.config.clone(),
             derivation_client,
             engine,
-            if self.mode().is_sequencer() { Some(unsafe_head_tx) } else { None },
+            self.mode().is_sequencer().then_some(unsafe_head_tx),
         );
 
         let engine_rpc_processor = EngineRpcProcessor::new(

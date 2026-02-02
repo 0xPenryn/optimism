@@ -2,7 +2,7 @@
 
 use alloc::boxed::Box;
 use alloy_consensus::{Header, Sealed};
-use alloy_evm::{EvmFactory, FromRecoveredTx, FromTxWithEncoded, revm::context::BlockEnv};
+use alloy_evm::{revm::context::BlockEnv, EvmFactory, FromRecoveredTx, FromTxWithEncoded};
 use alloy_op_evm::block::OpTxEnv;
 use alloy_primitives::B256;
 use async_trait::async_trait;

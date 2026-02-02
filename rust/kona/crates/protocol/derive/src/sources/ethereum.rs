@@ -1,5 +1,5 @@
-//! Contains the [EthereumDataSource], which is a concrete implementation of the
-//! [DataAvailabilityProvider] trait for the Ethereum protocol.
+//! Contains the [`EthereumDataSource`], which is a concrete implementation of the
+//! [`DataAvailabilityProvider`] trait for the Ethereum protocol.
 
 use crate::{
     BlobProvider, BlobSource, CalldataSource, ChainProvider, DataAvailabilityProvider,
@@ -82,13 +82,13 @@ where
 mod tests {
     use super::*;
     use crate::{
-        BlobData,
         test_utils::{TestBlobProvider, TestChainProvider},
+        BlobData,
     };
     use alloc::vec;
     use alloy_consensus::TxEnvelope;
     use alloy_eips::eip2718::Decodable2718;
-    use alloy_primitives::{Address, address};
+    use alloy_primitives::{address, Address};
     use kona_genesis::{HardForkConfig, RollupConfig, SystemConfig};
     use kona_protocol::BlockInfo;
 

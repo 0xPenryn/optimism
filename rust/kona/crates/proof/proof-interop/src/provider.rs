@@ -1,4 +1,4 @@
-//! [InteropProvider] trait implementation using a [CommsClient] data source.
+//! [`InteropProvider`] trait implementation using a [`CommsClient`] data source.
 
 use crate::{BootInfo, HintType};
 use alloc::{boxed::Box, string::ToString, sync::Arc, vec::Vec};
@@ -9,18 +9,18 @@ use alloy_rlp::Decodable;
 use async_trait::async_trait;
 use kona_interop::InteropProvider;
 use kona_mpt::{OrderedListWalker, TrieHinter, TrieNode, TrieProvider};
-use kona_preimage::{CommsClient, PreimageKey, PreimageKeyType, errors::PreimageOracleError};
+use kona_preimage::{errors::PreimageOracleError, CommsClient, PreimageKey, PreimageKeyType};
 use kona_proof::{eip_2935_history_lookup, errors::OracleProviderError};
 use kona_registry::HashMap;
 use op_alloy_consensus::OpReceiptEnvelope;
 use spin::RwLock;
 
-/// A [CommsClient] backed [InteropProvider] implementation.
+/// A [`CommsClient`] backed [`InteropProvider`] implementation.
 #[derive(Debug, Clone)]
 pub struct OracleInteropProvider<C> {
     /// The oracle client.
     oracle: Arc<C>,
-    /// The [BootInfo] for the current program execution.
+    /// The [`BootInfo`] for the current program execution.
     boot: BootInfo,
     /// The local safe head block header cache.
     local_safe_heads: HashMap<u64, Sealed<Header>>,
@@ -32,7 +32,7 @@ impl<C> OracleInteropProvider<C>
 where
     C: CommsClient + Send + Sync,
 {
-    /// Creates a new [OracleInteropProvider] with the given oracle client and [BootInfo].
+    /// Creates a new [`OracleInteropProvider`] with the given oracle client and [`BootInfo`].
     pub fn new(
         oracle: Arc<C>,
         boot: BootInfo,
@@ -76,7 +76,7 @@ where
         Header::decode(&mut header_rlp.as_ref()).map_err(OracleProviderError::Rlp)
     }
 
-    /// Fetch the [OpReceiptEnvelope]s for the block with the given hash.
+    /// Fetch the [`OpReceiptEnvelope`]s for the block with the given hash.
     async fn derive_receipts(
         &self,
         chain_id: u64,

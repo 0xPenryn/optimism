@@ -6,9 +6,9 @@ use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::Address;
 
 use crate::{
-    AddressList, AltDAConfig, BaseFeeConfig, ChainGenesis, GRANITE_CHANNEL_TIMEOUT, HardForkConfig,
-    Roles, RollupConfig, SuperchainLevel, base_fee_params, base_fee_params_canyon,
-    params::base_fee_config, rollup::DEFAULT_INTEROP_MESSAGE_EXPIRY_WINDOW,
+    base_fee_params, base_fee_params_canyon, params::base_fee_config,
+    rollup::DEFAULT_INTEROP_MESSAGE_EXPIRY_WINDOW, AddressList, AltDAConfig, BaseFeeConfig,
+    ChainGenesis, HardForkConfig, Roles, RollupConfig, SuperchainLevel, GRANITE_CHANNEL_TIMEOUT,
 };
 
 /// L1 chain configuration from the `alloy-genesis` crate.
@@ -86,7 +86,7 @@ pub struct ChainConfig {
     /// The maximum sequencer drift in seconds.
     #[cfg_attr(feature = "serde", serde(rename = "max_sequencer_drift"))]
     pub max_sequencer_drift: u64,
-    /// Gas paying token metadata. Not consumed by downstream OPStack components.
+    /// Gas paying token metadata. Not consumed by downstream `OPStack` components.
     #[cfg_attr(feature = "serde", serde(rename = "GasPayingToken", alias = "gas_paying_token"))]
     pub gas_paying_token: Option<Address>,
     /// Hardfork Config. These values may override the superchain-wide defaults.

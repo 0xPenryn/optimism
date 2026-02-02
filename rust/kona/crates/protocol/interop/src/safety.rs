@@ -2,7 +2,7 @@
 use alloc::string::String;
 use thiserror::Error;
 
-/// Error when parsing SafetyLevel from string.
+/// Error when parsing `SafetyLevel` from string.
 #[derive(Error, Debug)]
 #[error("Invalid SafetyLevel, error: {0}")]
 pub struct SafetyLevelParseError(pub String);

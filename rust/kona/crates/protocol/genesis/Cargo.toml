@@ -64,6 +64,7 @@ std = [
 	"op-revm?/std",
 	"serde?/std",
 	"thiserror/std",
+	"tabled?/std"
 ]
 arbitrary = [
 	"alloy-chains/arbitrary",

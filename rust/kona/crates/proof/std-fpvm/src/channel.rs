@@ -1,7 +1,7 @@
-//! This module contains a rudimentary channel between two file descriptors, using [crate::io]
+//! This module contains a rudimentary channel between two file descriptors, using [`crate::io`]
 //! for reading and writing from the file descriptors.
 
-use crate::{FileDescriptor, io};
+use crate::{io, FileDescriptor};
 use alloc::boxed::Box;
 use async_trait::async_trait;
 use core::{
@@ -12,11 +12,11 @@ use core::{
     task::{Context, Poll},
 };
 use kona_preimage::{
-    Channel,
     errors::{ChannelError, ChannelResult},
+    Channel,
 };
 
-/// [FileChannel] is a handle for one end of a bidirectional channel.
+/// [`FileChannel`] is a handle for one end of a bidirectional channel.
 #[derive(Debug, Clone, Copy)]
 pub struct FileChannel {
     /// File descriptor to read from
@@ -26,17 +26,17 @@ pub struct FileChannel {
 }
 
 impl FileChannel {
-    /// Create a new [FileChannel] from two file descriptors.
+    /// Create a new [`FileChannel`] from two file descriptors.
     pub const fn new(read_handle: FileDescriptor, write_handle: FileDescriptor) -> Self {
         Self { read_handle, write_handle }
     }
 
-    /// Returns a copy of the [FileDescriptor] used for the read end of the channel.
+    /// Returns a copy of the [`FileDescriptor`] used for the read end of the channel.
     pub const fn read_handle(&self) -> FileDescriptor {
         self.read_handle
     }
 
-    /// Returns a copy of the [FileDescriptor] used for the write end of the channel.
+    /// Returns a copy of the [`FileDescriptor`] used for the write end of the channel.
     pub const fn write_handle(&self) -> FileDescriptor {
         self.write_handle
     }
@@ -57,7 +57,7 @@ impl Channel for FileChannel {
     }
 }
 
-/// A future that reads from a channel, returning [Poll::Ready] when the buffer is full.
+/// A future that reads from a channel, returning [`Poll::Ready`] when the buffer is full.
 struct ReadFuture<'a> {
     /// The channel to read from
     channel: FileChannel,
@@ -68,7 +68,7 @@ struct ReadFuture<'a> {
 }
 
 impl<'a> ReadFuture<'a> {
-    /// Create a new [ReadFuture] from a channel and a buffer.
+    /// Create a new [`ReadFuture`] from a channel and a buffer.
     #[allow(clippy::missing_const_for_fn)]
     fn new(channel: FileChannel, buf: &'a mut [u8]) -> Self {
         Self { channel, buf: RefCell::new(buf), read: 0 }
@@ -100,7 +100,7 @@ impl Future for ReadFuture<'_> {
     }
 }
 
-/// A future that writes to a channel, returning [Poll::Ready] when the full buffer has been
+/// A future that writes to a channel, returning [`Poll::Ready`] when the full buffer has been
 /// written.
 struct WriteFuture<'a> {
     /// The channel to write to
@@ -112,7 +112,7 @@ struct WriteFuture<'a> {
 }
 
 impl<'a> WriteFuture<'a> {
-    /// Create a new [WriteFuture] from a channel and a buffer.
+    /// Create a new [`WriteFuture`] from a channel and a buffer.
     const fn new(channel: FileChannel, buf: &'a [u8]) -> Self {
         Self { channel, buf, written: 0 }
     }

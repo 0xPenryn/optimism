@@ -1,4 +1,4 @@
-use alloy_primitives::{Address, B256, Bytes, Log, keccak256};
+use alloy_primitives::{keccak256, Address, Bytes, Log, B256};
 
 /// Computes the log hash from a payload hash and log address.
 ///
@@ -45,7 +45,7 @@ pub fn log_to_log_hash(log: &Log) -> B256 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_primitives::{Bytes, Log, address, b256};
+    use alloy_primitives::{address, b256, Bytes, Log};
 
     /// Creates a dummy log with fixed topics and data for testing.
     fn sample_log() -> Log {

@@ -1,4 +1,4 @@
-//! Contains the [BatchValidator] stage.
+//! Contains the [`BatchValidator`] stage.
 
 use super::NextBatchProvider;
 use crate::{
@@ -77,15 +77,15 @@ where
         // Batches prior to the l1 origin of the l2 safe head are not accepted.
         if self.origin != self.prev.origin() {
             self.origin = self.prev.origin();
-            if !origin_behind {
-                let origin = self.origin.as_ref().ok_or(PipelineError::MissingOrigin.crit())?;
-                self.l1_blocks.push(*origin);
-            } else {
+            if origin_behind {
                 // This is to handle the special case of startup.
                 // At startup, the batch validator is reset and includes the
                 // l1 origin. That is the only time when immediately after
                 // reset is called, the origin behind is false.
                 self.l1_blocks.clear();
+            } else {
+                let origin = self.origin.as_ref().ok_or(PipelineError::MissingOrigin.crit())?;
+                self.l1_blocks.push(*origin);
             }
             debug!(
                 target: "batch_validator",
@@ -315,7 +315,7 @@ where
                 self.l1_blocks.clear();
                 self.l1_blocks.push(l1_origin);
             }
-            s @ Signal::Activation(_) | s @ Signal::FlushChannel | s @ Signal::ProvideBlock(_) => {
+            s @ (Signal::Activation(_) | Signal::FlushChannel | Signal::ProvideBlock(_)) => {
                 self.prev.signal(s).await?;
             }
         }
@@ -326,9 +326,9 @@ where
 #[cfg(test)]
 mod test {
     use crate::{
+        test_utils::{CollectingLayer, TestNextBatchProvider, TraceStorage},
         AttributesProvider, BatchValidator, NextBatchProvider, OriginAdvancer, PipelineError,
         PipelineErrorKind, PipelineResult, ResetError, ResetSignal, Signal, SignalReceiver,
-        test_utils::{CollectingLayer, TestNextBatchProvider, TraceStorage},
     };
     use alloc::{sync::Arc, vec, vec::Vec};
     use alloy_eips::{BlockNumHash, NumHash};

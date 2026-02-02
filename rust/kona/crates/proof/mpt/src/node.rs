@@ -1,15 +1,15 @@
-//! This module contains the [TrieNode] type, which represents a node within a standard Merkle
+//! This module contains the [`TrieNode`] type, which represents a node within a standard Merkle
 //! Patricia Trie.
 
 use crate::{
-    TrieHinter, TrieNodeError, TrieProvider,
     errors::TrieNodeResult,
     util::{rlp_list_element_length, unpack_path_to_nibbles},
+    TrieHinter, TrieNodeError, TrieProvider,
 };
 use alloc::{boxed::Box, string::ToString, vec, vec::Vec};
-use alloy_primitives::{B256, Bytes, keccak256};
-use alloy_rlp::{Buf, Decodable, EMPTY_STRING_CODE, Encodable, Header, length_of_length};
-use alloy_trie::{EMPTY_ROOT_HASH, Nibbles};
+use alloy_primitives::{keccak256, Bytes, B256};
+use alloy_rlp::{length_of_length, Buf, Decodable, Encodable, Header, EMPTY_STRING_CODE};
+use alloy_trie::{Nibbles, EMPTY_ROOT_HASH};
 
 /// The length of the branch list when RLP encoded
 const BRANCH_LIST_LENGTH: usize = 17;
@@ -35,35 +35,36 @@ const PREFIX_LEAF_ODD: u8 = 3;
 /// Nibble bit width.
 const NIBBLE_WIDTH: usize = 4;
 
-/// A [TrieNode] is a node within a standard Ethereum Merkle Patricia Trie. In this implementation,
-/// keys are expected to be fixed-size nibble sequences, and values are arbitrary byte sequences.
+/// A [`TrieNode`] is a node within a standard Ethereum Merkle Patricia Trie. In this
+/// implementation, keys are expected to be fixed-size nibble sequences, and values are arbitrary
+/// byte sequences.
 ///
-/// The [TrieNode] has several variants:
-/// - [TrieNode::Empty] represents an empty node.
-/// - [TrieNode::Blinded] represents a node that has been blinded by a commitment.
-/// - [TrieNode::Leaf] represents a 2-item node with the encoding `rlp([encoded_path, value])`.
-/// - [TrieNode::Extension] represents a 2-item pointer node with the encoding `rlp([encoded_path,
+/// The [`TrieNode`] has several variants:
+/// - [`TrieNode::Empty`] represents an empty node.
+/// - [`TrieNode::Blinded`] represents a node that has been blinded by a commitment.
+/// - [`TrieNode::Leaf`] represents a 2-item node with the encoding `rlp([encoded_path, value])`.
+/// - [`TrieNode::Extension`] represents a 2-item pointer node with the encoding `rlp([encoded_path,
 ///   key])`.
-/// - [TrieNode::Branch] represents a node that refers to up to 16 child nodes with the encoding
+/// - [`TrieNode::Branch`] represents a node that refers to up to 16 child nodes with the encoding
 ///   `rlp([ v0, ..., v15, value ])`.
 ///
 /// In the Ethereum Merkle Patricia Trie, nodes longer than an encoded 32 byte string (33 total
 /// bytes) are blinded with [keccak256] hashes. When a node is "opened", it is replaced with the
-/// [TrieNode] that is decoded from to the preimage of the hash.
+/// [`TrieNode`] that is decoded from to the preimage of the hash.
 ///
-/// The [alloy_rlp::Encodable] and [alloy_rlp::Decodable] traits are implemented for [TrieNode],
-/// allowing for RLP encoding and decoding of the types for storage and retrieval. The
+/// The [`alloy_rlp::Encodable`] and [`alloy_rlp::Decodable`] traits are implemented for
+/// [`TrieNode`], allowing for RLP encoding and decoding of the types for storage and retrieval. The
 /// implementation of these traits will implicitly blind nodes that are longer than 32 bytes in
 /// length when encoding. When decoding, the implementation will leave blinded nodes in place.
 ///
 /// ## SAFETY
-/// As this implementation only supports uniform key sizes, the [TrieNode] data structure will fail
-/// to behave correctly if confronted with keys of varying lengths. Namely, this is because it does
-/// not support the `value` field in branch nodes, just like the Ethereum Merkle Patricia Trie.
+/// As this implementation only supports uniform key sizes, the [`TrieNode`] data structure will
+/// fail to behave correctly if confronted with keys of varying lengths. Namely, this is because it
+/// does not support the `value` field in branch nodes, just like the Ethereum Merkle Patricia Trie.
 #[derive(Debug, Clone, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum TrieNode {
-    /// An empty [TrieNode] is represented as an [EMPTY_STRING_CODE] (0x80).
+    /// An empty [`TrieNode`] is represented as an [`EMPTY_STRING_CODE`] (0x80).
     Empty,
     /// A blinded node is a node that has been blinded by a [keccak256] commitment.
     Blinded {
@@ -82,29 +83,29 @@ pub enum TrieNode {
         /// The path prefix of the extension
         prefix: Nibbles,
         /// The pointer to the child node
-        node: Box<TrieNode>,
+        node: Box<Self>,
     },
     /// A branch node refers to up to 16 child nodes with the encoding
     /// `rlp([ v0, ..., v15, value ])`
     Branch {
         /// The 16 child nodes and value of the branch.
-        stack: Vec<TrieNode>,
+        stack: Vec<Self>,
     },
 }
 
 impl TrieNode {
-    /// Creates a new [TrieNode::Blinded] node.
+    /// Creates a new [`TrieNode::Blinded`] node.
     ///
     /// ## Takes
     /// - `commitment` - The commitment that blinds the node
     ///
     /// ## Returns
-    /// - `Self` - The new blinded [TrieNode].
+    /// - `Self` - The new blinded [`TrieNode`].
     pub const fn new_blinded(commitment: B256) -> Self {
         Self::Blinded { commitment }
     }
 
-    /// Blinds the [TrieNode].. Alternatively, if the [TrieNode] is a [TrieNode::Blinded] node
+    /// Blinds the [`TrieNode`].. Alternatively, if the [`TrieNode`] is a [`TrieNode::Blinded`] node
     /// already, its commitment is returned directly.
     pub fn blind(&self) -> B256 {
         match self {
@@ -118,7 +119,7 @@ impl TrieNode {
         }
     }
 
-    /// Unblinds the [TrieNode] if it is a [TrieNode::Blinded] node.
+    /// Unblinds the [`TrieNode`] if it is a [`TrieNode::Blinded`] node.
     pub fn unblind<F: TrieProvider>(&mut self, fetcher: &F) -> TrieNodeResult<()> {
         if let Self::Blinded { commitment } = self {
             if *commitment == EMPTY_ROOT_HASH {
@@ -136,7 +137,7 @@ impl TrieNode {
 
     /// Walks down the trie to a leaf value with the given key, if it exists. Preimages for blinded
     /// nodes along the path are fetched using the `fetcher` function, and persisted in the inner
-    /// [TrieNode] elements.
+    /// [`TrieNode`] elements.
     ///
     /// ## Takes
     /// - `self` - The root trie node
@@ -178,7 +179,7 @@ impl TrieNode {
         }
     }
 
-    /// Inserts a [TrieNode] at the given path into the trie rooted at Self.
+    /// Inserts a [`TrieNode`] at the given path into the trie rooted at Self.
     ///
     /// ## Takes
     /// - `self` - The root trie node
@@ -444,11 +445,11 @@ impl TrieNode {
         Ok(())
     }
 
-    /// Attempts to convert a `path` and `value` into a [TrieNode], if they correspond to a
-    /// [TrieNode::Leaf] or [TrieNode::Extension].
+    /// Attempts to convert a `path` and `value` into a [`TrieNode`], if they correspond to a
+    /// [`TrieNode::Leaf`] or [`TrieNode::Extension`].
     ///
     /// **Note:** This function assumes that the passed reader has already consumed the RLP header
-    /// of the [TrieNode::Leaf] or [TrieNode::Extension] node.
+    /// of the [`TrieNode::Leaf`] or [`TrieNode::Extension`] node.
     fn try_decode_leaf_or_extension_payload(buf: &mut &[u8]) -> TrieNodeResult<Self> {
         // Decode the path and value of the leaf or extension node.
         let path = Bytes::decode(buf).map_err(TrieNodeError::RLPError)?;
@@ -478,7 +479,7 @@ impl TrieNode {
         }
     }
 
-    /// Returns the RLP payload length of the [TrieNode].
+    /// Returns the RLP payload length of the [`TrieNode`].
     pub(crate) fn payload_length(&self) -> usize {
         match self {
             Self::Empty => 0,
@@ -518,7 +519,11 @@ impl TrieNode {
     ///   than a [B256].
     fn blinded_length(&self) -> usize {
         let encoded_len = self.length();
-        if encoded_len >= B256::ZERO.len() { B256::ZERO.length() } else { encoded_len }
+        if encoded_len >= B256::ZERO.len() {
+            B256::ZERO.length()
+        } else {
+            encoded_len
+        }
     }
 }
 
@@ -550,14 +555,14 @@ impl Encodable for TrieNode {
                 // Assuming we have an open trie node, we must re-hash the elements
                 // that are longer than 32 bytes in length.
                 Header { list: true, payload_length }.encode(out);
-                stack.iter().for_each(|node| {
+                for node in stack {
                     if node.length() >= B256::ZERO.len() {
                         let hash = node.blind();
                         hash.encode(out);
                     } else {
                         node.encode(out);
                     }
-                });
+                }
             }
         }
     }
@@ -566,15 +571,7 @@ impl Encodable for TrieNode {
         match self {
             Self::Empty => 1,
             Self::Blinded { commitment } => commitment.length(),
-            Self::Leaf { .. } => {
-                let payload_length = self.payload_length();
-                Header { list: true, payload_length }.length() + payload_length
-            }
-            Self::Extension { .. } => {
-                let payload_length = self.payload_length();
-                Header { list: true, payload_length }.length() + payload_length
-            }
-            Self::Branch { .. } => {
+            Self::Leaf { .. } | Self::Extension { .. } | Self::Branch { .. } => {
                 let payload_length = self.payload_length();
                 Header { list: true, payload_length }.length() + payload_length
             }
@@ -583,7 +580,7 @@ impl Encodable for TrieNode {
 }
 
 impl Decodable for TrieNode {
-    /// Attempts to decode the [TrieNode].
+    /// Attempts to decode the [`TrieNode`].
     fn decode(buf: &mut &[u8]) -> alloy_rlp::Result<Self> {
         // Peek at the header to determine the type of Trie node we're currently decoding.
         let header = Header::decode(&mut (**buf).as_ref())?;
@@ -626,12 +623,12 @@ impl Decodable for TrieNode {
 mod test {
     use super::*;
     use crate::{
-        NoopTrieHinter, NoopTrieProvider, TrieNode, ordered_trie_with_encoder,
-        test_util::TrieNodeProvider,
+        ordered_trie_with_encoder, test_util::TrieNodeProvider, NoopTrieHinter, NoopTrieProvider,
+        TrieNode,
     };
     use alloc::{collections::BTreeMap, vec, vec::Vec};
     use alloy_primitives::{b256, bytes, hex, keccak256};
-    use alloy_rlp::{Decodable, EMPTY_STRING_CODE, Encodable};
+    use alloy_rlp::{Decodable, Encodable, EMPTY_STRING_CODE};
     use alloy_trie::{HashBuilder, Nibbles};
     use rand::prelude::IteratorRandom;
 

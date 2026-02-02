@@ -1,5 +1,5 @@
 use super::EventHandler;
-use crate::{ChainProcessorError, ProcessorState, syncnode::ManagedNodeCommand};
+use crate::{syncnode::ManagedNodeCommand, ChainProcessorError, ProcessorState};
 use alloy_primitives::ChainId;
 use async_trait::async_trait;
 use derive_more::Constructor;
@@ -219,7 +219,7 @@ mod tests {
         assert!(result.is_ok());
 
         // The handler should send the reset command
-        if let Some(ManagedNodeCommand::Reset {}) = rx.recv().await {
+        if rx.recv().await == Some(ManagedNodeCommand::Reset {}) {
             // Command received successfully
         } else {
             panic!("Expected Reset command");

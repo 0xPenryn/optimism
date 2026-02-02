@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use op_alloy_consensus::OpBlock;
 use spin::Mutex;
 use tracing::{Event, Level, Subscriber};
-use tracing_subscriber::{Layer, layer::Context};
+use tracing_subscriber::{layer::Context, Layer};
 
 use crate::{
     BatchValidationProvider, L1BlockInfoBedrock, L1BlockInfoEcotone, L1BlockInfoIsthmus,
@@ -72,7 +72,7 @@ impl BatchValidationProvider for TestBatchValidator {
         self.blocks
             .iter()
             .find(|b| b.block_info.number == number)
-            .cloned()
+            .copied()
             .ok_or_else(|| TestBatchValidatorError::BlockNotFound)
     }
 
@@ -95,7 +95,8 @@ impl TraceStorage {
         self.0
             .lock()
             .iter()
-            .filter_map(|(l, message)| if *l == level { Some(message.clone()) } else { None })
+            .filter(|&(l, _message)| *l == level)
+            .map(|(_l, message)| message.clone())
             .collect()
     }
 

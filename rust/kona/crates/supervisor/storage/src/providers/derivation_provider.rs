@@ -322,16 +322,15 @@ where
 
             if incoming_pair == stored_pair.into() {
                 return Ok(());
-            } else {
-                warn!(
-                    target: "supervisor::storage",
-                    chain_id = %self.chain_id,
-                    %latest_derivation_state,
-                    incoming_derived_block_pair = %incoming_pair,
-                    "Incoming derived block is not consistent with the latest stored derived block"
-                );
-                return Err(StorageError::ConflictError);
             }
+            warn!(
+                target: "supervisor::storage",
+                chain_id = %self.chain_id,
+                %latest_derivation_state,
+                incoming_derived_block_pair = %incoming_pair,
+                "Incoming derived block is not consistent with the latest stored derived block"
+            );
+            return Err(StorageError::ConflictError);
         }
 
         // Latest source block must be same as the incoming source block
@@ -457,16 +456,15 @@ where
 
             if source_block == incoming_source {
                 return Ok(());
-            } else {
-                error!(
-                    target: "supervisor::storage",
-                    chain_id = %self.chain_id,
-                    latest_source_block = %latest_source_block,
-                    incoming_source = %incoming_source,
-                    "Incoming source block is not consistent with the latest source block"
-                );
-                return Err(StorageError::ConflictError);
             }
+            error!(
+                target: "supervisor::storage",
+                chain_id = %self.chain_id,
+                latest_source_block = %latest_source_block,
+                incoming_source = %incoming_source,
+                "Incoming source block is not consistent with the latest source block"
+            );
+            return Err(StorageError::ConflictError);
         }
 
         if !latest_source_block.is_parent_of(&incoming_source) {
@@ -693,8 +691,8 @@ mod tests {
     use kona_interop::DerivedRefPair;
     use kona_protocol::BlockInfo;
     use reth_db::{
+        mdbx::{init_db_for, DatabaseArguments},
         Database, DatabaseEnv,
-        mdbx::{DatabaseArguments, init_db_for},
     };
     use tempfile::TempDir;
 

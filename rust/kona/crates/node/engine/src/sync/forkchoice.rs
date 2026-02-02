@@ -9,8 +9,8 @@ use kona_protocol::L2BlockInfo;
 use op_alloy_network::Optimism;
 use std::fmt::Display;
 
-/// An unsafe, safe, and finalized [L2BlockInfo] returned by the [crate::find_starting_forkchoice]
-/// function.
+/// An unsafe, safe, and finalized [`L2BlockInfo`] returned by the
+/// [`crate::find_starting_forkchoice`] function.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct L2ForkchoiceState {
     /// The unsafe L2 block.

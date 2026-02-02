@@ -1,9 +1,9 @@
 //! Contains the [`SystemConfigUpdate`].
 
 use crate::{
+    updates::{DaFootprintGasScalarUpdate, MinBaseFeeUpdate},
     BatcherUpdate, Eip1559Update, GasConfigUpdate, GasLimitUpdate, OperatorFeeUpdate, SystemConfig,
     SystemConfigUpdateKind, UnsafeBlockSignerUpdate,
-    updates::{DaFootprintGasScalarUpdate, MinBaseFeeUpdate},
 };
 
 /// The system config update is an update

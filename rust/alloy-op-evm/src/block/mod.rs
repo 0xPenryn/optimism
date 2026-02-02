@@ -161,11 +161,13 @@ where
         tx: impl RecoveredTx<R::Transaction>,
     ) -> Result<u64, BlockExecutionError> {
         // Try to use the enveloped tx if it exists, otherwise use the encoded 2718 bytes
-        let encoded = match tx_env.encoded_bytes() {
-            Some(encoded) => estimate_tx_compressed_size(encoded),
-            None => estimate_tx_compressed_size(tx.tx().encoded_2718().as_ref()),
-        }
-        .saturating_div(1_000_000);
+        let encoded = tx_env
+            .encoded_bytes()
+            .map_or_else(
+                || estimate_tx_compressed_size(tx.tx().encoded_2718().as_ref()),
+                |encoded| estimate_tx_compressed_size(encoded),
+            )
+            .saturating_div(1_000_000);
 
         // Load the L1 block contract into the cache. If the L1 block contract is not pre-loaded the
         // database will panic when trying to fetch the DA footprint gas scalar.
@@ -237,20 +239,20 @@ where
 
         let da_footprint_used = if self
             .spec
-            .is_jovian_active_at_timestamp(self.evm.block().timestamp().saturating_to())
-            && !is_deposit
+            .is_jovian_active_at_timestamp(self.evm.block().timestamp().saturating_to()) &&
+            !is_deposit
         {
             let da_footprint_available = self.evm.block().gas_limit() - self.da_footprint_used;
 
             let tx_da_footprint = self.jovian_da_footprint_estimation(&tx_env, &tx)?;
 
             if tx_da_footprint > da_footprint_available {
-                return Err(BlockExecutionError::Validation(BlockValidationError::Other(
-                    Box::new(OpBlockExecutionError::TransactionDaFootprintAboveGasLimit {
+                return Err(BlockExecutionError::Validation(BlockValidationError::Other(Box::new(
+                    OpBlockExecutionError::TransactionDaFootprintAboveGasLimit {
                         transaction_da_footprint: tx_da_footprint,
                         available_block_da_footprint: da_footprint_available,
-                    }),
-                )));
+                    },
+                ))));
             }
 
             tx_da_footprint
@@ -299,8 +301,8 @@ where
         self.gas_used += gas_used;
 
         // Update DA footprint if Jovian is active
-        if self.spec.is_jovian_active_at_timestamp(self.evm.block().timestamp().saturating_to())
-            && !is_deposit
+        if self.spec.is_jovian_active_at_timestamp(self.evm.block().timestamp().saturating_to()) &&
+            !is_deposit
         {
             // Add to DA footprint used
             self.da_footprint_used = self.da_footprint_used.saturating_add(blob_gas_used);
@@ -332,8 +334,8 @@ where
                         // when set. The state transition process ensures
                         // this is only set for post-Canyon deposit
                         // transactions.
-                        deposit_receipt_version: (is_deposit
-                            && self.spec.is_canyon_active_at_timestamp(
+                        deposit_receipt_version: (is_deposit &&
+                            self.spec.is_canyon_active_at_timestamp(
                                 self.evm.block().timestamp().saturating_to(),
                             ))
                         .then_some(1),
@@ -547,7 +549,7 @@ mod tests {
 
         db.insert_account_with_storage(
             L1_BLOCK_CONTRACT,
-            AccountInfo { ..Default::default() },
+            Default::default(),
             HashMap::from_iter([
                 (L1_BASE_FEE_SLOT, L1_BASE_FEE),
                 (ECOTONE_L1_FEE_SCALARS_SLOT, L1_FEE_SCALARS),

@@ -1,6 +1,6 @@
 use crate::{
-    CrossSafetyError,
     safety_checker::{ValidationError, ValidationError::InitiatingMessageNotFound},
+    CrossSafetyError,
 };
 use alloy_primitives::{BlockHash, ChainId};
 use derive_more::Constructor;
@@ -673,7 +673,6 @@ mod tests {
                         hash: b256(333),
                     }),
                 }]),
-                ("3", 20) => Ok(vec![]), // No further dependency — traversal ends here
                 _ => Ok(vec![]),
             }
         });

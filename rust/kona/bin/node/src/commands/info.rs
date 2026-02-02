@@ -16,7 +16,7 @@ use tracing::info;
 /// kona-node info
 /// ```
 
-#[derive(Parser, Default, PartialEq, Debug, Clone)]
+#[derive(Parser, Default, PartialEq, Eq, Debug, Clone)]
 #[command(about = "Runs the information stack for the kona-node.")]
 pub struct InfoCommand;
 

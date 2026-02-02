@@ -1,4 +1,4 @@
-//! [NodeActor] services for the node.
+//! [`NodeActor`] services for the node.
 //!
 //! [NodeActor]: super::NodeActor
 

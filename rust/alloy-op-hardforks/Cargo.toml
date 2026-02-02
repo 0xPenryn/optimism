@@ -31,5 +31,7 @@ serde = { workspace = true, optional = true }
 [features]
 serde = [
 	"dep:serde",
-	"alloy-hardforks/serde"
+	"alloy-hardforks/serde",
+	"alloy-chains/serde",
+	"alloy-primitives/serde"
 ]

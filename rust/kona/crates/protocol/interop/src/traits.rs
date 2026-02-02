@@ -3,7 +3,7 @@
 use crate::InteropValidationError;
 use alloc::{boxed::Box, vec::Vec};
 use alloy_consensus::Header;
-use alloy_primitives::{B256, ChainId};
+use alloy_primitives::{ChainId, B256};
 use async_trait::async_trait;
 use core::error::Error;
 use kona_protocol::BlockInfo;

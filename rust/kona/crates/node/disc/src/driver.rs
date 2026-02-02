@@ -2,11 +2,11 @@
 
 use backon::{ExponentialBuilder, RetryableWithContext};
 use derive_more::Debug;
-use discv5::{Config, Discv5, Enr, enr::NodeId};
-use kona_peers::{BootNode, BootNodes, BootStore, BootStoreFile, EnrValidation, enr_to_multiaddr};
+use discv5::{enr::NodeId, Config, Discv5, Enr};
+use kona_peers::{enr_to_multiaddr, BootNode, BootNodes, BootStore, BootStoreFile, EnrValidation};
 use tokio::{
     sync::mpsc::channel,
-    time::{Duration, sleep},
+    time::{sleep, Duration},
 };
 
 use crate::{Discv5Builder, Discv5Handler, HandlerRequest, LocalNode};
@@ -377,9 +377,9 @@ mod tests {
     use super::*;
     use crate::LocalNode;
     use discv5::{
-        ConfigBuilder,
         enr::{CombinedKey, CombinedPublicKey},
         handler::NodeContact,
+        ConfigBuilder,
     };
     use kona_genesis::{OP_MAINNET_CHAIN_ID, OP_SEPOLIA_CHAIN_ID};
     use tempfile::tempdir;
@@ -487,10 +487,10 @@ mod tests {
         let mainnet: Vec<CombinedPublicKey> = mainnet
             .iter()
             .filter_map(|node| {
-                if let BootNode::Enr(enr) = node {
-                    if EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid() {
-                        return None;
-                    }
+                if let BootNode::Enr(enr) = node &&
+                    EnrValidation::validate(enr, OP_MAINNET_CHAIN_ID).is_invalid()
+                {
+                    return None;
                 }
                 let node_contact =
                     NodeContact::try_from_multiaddr(node.to_multiaddr().unwrap()).unwrap();

@@ -4,11 +4,11 @@ use ambassador::Delegate;
 
 use crate::info::bedrock_base::ambassador_impl_L1BlockInfoBedrockBaseFields;
 use alloc::vec::Vec;
-use alloy_primitives::{Address, B256, Bytes, U256};
+use alloy_primitives::{Address, Bytes, B256, U256};
 
 use crate::{
+    info::{bedrock_base::L1BlockInfoBedrockBase, L1BlockInfoBedrockBaseFields},
     DecodeError,
-    info::{L1BlockInfoBedrockBaseFields, bedrock_base::L1BlockInfoBedrockBase},
 };
 /// Represents the fields within a Bedrock L1 block info transaction.
 ///

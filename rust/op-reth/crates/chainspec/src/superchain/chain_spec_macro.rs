@@ -16,7 +16,7 @@ macro_rules! create_chain_spec {
 /// Generates the key string for a given name and environment pair.
 #[macro_export]
 macro_rules! key_for {
-    ($name:expr, "mainnet") => {
+    ($name:expr,"mainnet") => {
         $name
     };
     ($name:expr, $env:expr) => {

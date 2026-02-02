@@ -2,7 +2,7 @@
 
 use alloc::{string::String, vec::Vec};
 use alloy_eips::eip2718::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex};
+use alloy_primitives::{address, hex, Address, Bytes, TxKind, B256, U256};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::{TxDeposit, UpgradeDepositSource};
 
@@ -89,21 +89,21 @@ impl Ecotone {
 
     /// Returns the EIP-4788 creation data.
     pub fn eip4788_creation_data() -> Bytes {
-        hex::decode(include_str!("./bytecode/eip4788_ecotone.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/eip4788_ecotone.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the raw bytecode for the L1 Block deployment.
     pub fn l1_block_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/l1_block_ecotone.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/l1_block_ecotone.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the gas price oracle deployment bytecode.
     pub fn ecotone_gas_price_oracle_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/gpo_ecotone.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/gpo_ecotone.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
@@ -281,22 +281,22 @@ mod tests {
         assert_eq!(ecotone_upgrade_tx.len(), 6);
 
         let expected_txs: Vec<Bytes> = vec![
-            hex::decode(include_str!("./bytecode/ecotone_tx_0.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_0.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/ecotone_tx_1.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_1.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/ecotone_tx_2.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_2.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/ecotone_tx_3.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_3.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/ecotone_tx_4.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_4.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/ecotone_tx_5.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/ecotone_tx_5.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
         ];

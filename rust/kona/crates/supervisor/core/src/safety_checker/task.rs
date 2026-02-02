@@ -1,7 +1,7 @@
 use crate::{
-    CrossSafetyError,
     event::ChainEvent,
-    safety_checker::{CrossSafetyChecker, traits::SafetyPromoter},
+    safety_checker::{traits::SafetyPromoter, CrossSafetyChecker},
+    CrossSafetyError,
 };
 use alloy_primitives::ChainId;
 use derive_more::Constructor;
@@ -197,7 +197,7 @@ where
 mod tests {
     use super::*;
     use crate::safety_checker::promoter::{CrossSafePromoter, CrossUnsafePromoter};
-    use alloy_primitives::{B256, ChainId};
+    use alloy_primitives::{ChainId, B256};
     use kona_interop::{DerivedRefPair, InteropValidationError};
     use kona_supervisor_storage::{CrossChainSafetyProvider, StorageError};
     use kona_supervisor_types::{ExecutingMessage, Log};

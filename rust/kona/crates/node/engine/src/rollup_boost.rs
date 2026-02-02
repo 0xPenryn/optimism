@@ -28,20 +28,20 @@ pub struct RollupBoostServerArgs {
 /// Configuration for the Flashblocks client.
 #[derive(Clone, Debug)]
 pub struct FlashblocksClientArgs {
-    /// Flashblocks Builder WebSocket URL
+    /// Flashblocks Builder `WebSocket` URL
     pub flashblocks_builder_url: Url,
 
-    /// Flashblocks WebSocket host for outbound connections
+    /// Flashblocks `WebSocket` host for outbound connections
     pub flashblocks_host: String,
 
-    /// Flashblocks WebSocket port for outbound connections
+    /// Flashblocks `WebSocket` port for outbound connections
     pub flashblocks_port: u16,
 
     /// Websocket connection configuration
     pub flashblocks_ws_config: FlashblocksWebsocketConfig,
 }
 
-/// Configuration for the Flashblocks WebSocket connection.
+/// Configuration for the Flashblocks `WebSocket` connection.
 #[derive(Debug, Clone, Copy)]
 pub struct FlashblocksWebsocketConfig {
     /// Minimum time for exponential backoff for timeout if builder disconnected

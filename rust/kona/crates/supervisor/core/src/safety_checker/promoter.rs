@@ -1,10 +1,10 @@
-use crate::{CrossSafetyError, event::ChainEvent, safety_checker::traits::SafetyPromoter};
+use crate::{event::ChainEvent, safety_checker::traits::SafetyPromoter, CrossSafetyError};
 use alloy_primitives::ChainId;
 use kona_protocol::BlockInfo;
 use kona_supervisor_storage::CrossChainSafetyProvider;
 use op_alloy_consensus::interop::SafetyLevel;
 
-/// CrossUnsafePromoter implements [`SafetyPromoter`] for [`SafetyLevel::CrossUnsafe`]
+/// `CrossUnsafePromoter` implements [`SafetyPromoter`] for [`SafetyLevel::CrossUnsafe`]
 #[derive(Debug)]
 pub struct CrossUnsafePromoter;
 
@@ -28,7 +28,7 @@ impl SafetyPromoter for CrossUnsafePromoter {
     }
 }
 
-/// CrossSafePromoter implements [`SafetyPromoter`] for [`SafetyLevel::CrossSafe`]
+/// `CrossSafePromoter` implements [`SafetyPromoter`] for [`SafetyLevel::CrossSafe`]
 #[derive(Debug)]
 pub struct CrossSafePromoter;
 

@@ -160,7 +160,7 @@ pub trait LogStorageReader: Debug {
     /// * `Err(StorageError)` if there is an issue retrieving the block.
     fn get_block(&self, block_number: u64) -> Result<BlockInfo, StorageError>;
 
-    /// Finds a [`Log`] by block_number and log_index
+    /// Finds a [`Log`] by `block_number` and `log_index`
     ///
     /// # Arguments
     /// * `block_number` - The block number to search for the log.
@@ -337,7 +337,7 @@ pub trait CrossChainSafetyProvider {
     /// * `Err(StorageError)` if there is an issue fetching the block.
     fn get_block(&self, chain_id: ChainId, block_number: u64) -> Result<BlockInfo, StorageError>;
 
-    /// Retrieves a [`Log`] by block_number and log_index
+    /// Retrieves a [`Log`] by `block_number` and `log_index`
     ///
     /// # Arguments
     /// * `chain_id` - The [`ChainId`] of the target chain.

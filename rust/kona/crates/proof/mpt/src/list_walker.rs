@@ -1,26 +1,26 @@
-//! This module contains the [OrderedListWalker] struct, which allows for traversing an MPT root of
-//! a derivable ordered list.
+//! This module contains the [`OrderedListWalker`] struct, which allows for traversing an MPT root
+//! of a derivable ordered list.
 
 use crate::{
-    TrieNode, TrieNodeError, TrieProvider,
     errors::{OrderedListWalkerError, OrderedListWalkerResult},
+    TrieNode, TrieNodeError, TrieProvider,
 };
 use alloc::{collections::VecDeque, string::ToString, vec};
-use alloy_primitives::{B256, Bytes};
+use alloy_primitives::{Bytes, B256};
 use alloy_rlp::EMPTY_STRING_CODE;
 use core::marker::PhantomData;
 
-/// A [OrderedListWalker] allows for traversing over a Merkle Patricia Trie containing a derivable
+/// A [`OrderedListWalker`] allows for traversing over a Merkle Patricia Trie containing a derivable
 /// ordered list.
 ///
-/// Once it has been hydrated with [Self::hydrate], the elements in the derivable list can be
+/// Once it has been hydrated with [`Self::hydrate`], the elements in the derivable list can be
 /// iterated over using the [Iterator] implementation.
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct OrderedListWalker<F: TrieProvider> {
     /// The Merkle Patricia Trie root.
     root: B256,
     /// The leaf nodes of the derived list, in order. [None] if the tree has yet to be fully
-    /// traversed with [Self::hydrate].
+    /// traversed with [`Self::hydrate`].
     inner: Option<VecDeque<(Bytes, Bytes)>>,
     /// Phantom data
     _phantom: PhantomData<F>,
@@ -30,20 +30,20 @@ impl<F> OrderedListWalker<F>
 where
     F: TrieProvider,
 {
-    /// Creates a new [OrderedListWalker], yet to be hydrated.
+    /// Creates a new [`OrderedListWalker`], yet to be hydrated.
     pub const fn new(root: B256) -> Self {
         Self { root, inner: None, _phantom: PhantomData }
     }
 
-    /// Creates a new [OrderedListWalker] and hydrates it with [Self::hydrate] and the given fetcher
-    /// immediately.
+    /// Creates a new [`OrderedListWalker`] and hydrates it with [`Self::hydrate`] and the given
+    /// fetcher immediately.
     pub fn try_new_hydrated(root: B256, fetcher: &F) -> OrderedListWalkerResult<Self> {
         let mut walker = Self { root, inner: None, _phantom: PhantomData };
         walker.hydrate(fetcher)?;
         Ok(walker)
     }
 
-    /// Hydrates the [OrderedListWalker]'s iterator with the leaves of the derivable list. If
+    /// Hydrates the [`OrderedListWalker`]'s iterator with the leaves of the derivable list. If
     /// `Self::inner` is [Some], this function will fail fast.
     pub fn hydrate(&mut self, fetcher: &F) -> OrderedListWalkerResult<()> {
         // Do not allow for re-hydration if `inner` is `Some` and still contains elements.
@@ -75,13 +75,13 @@ where
         Ok(())
     }
 
-    /// Takes the inner list of the [OrderedListWalker], returning it and setting the inner list to
-    /// [None].
+    /// Takes the inner list of the [`OrderedListWalker`], returning it and setting the inner list
+    /// to [None].
     pub const fn take_inner(&mut self) -> Option<VecDeque<(Bytes, Bytes)>> {
         self.inner.take()
     }
 
-    /// Traverses a [TrieNode], returning all values of child [TrieNode::Leaf] variants.
+    /// Traverses a [`TrieNode`], returning all values of child [`TrieNode::Leaf`] variants.
     fn fetch_leaves(
         trie_node: &TrieNode,
         fetcher: &F,
@@ -89,7 +89,7 @@ where
         match trie_node {
             TrieNode::Branch { stack } => {
                 let mut leaf_values = VecDeque::with_capacity(stack.len());
-                for item in stack.iter() {
+                for item in stack {
                     match item {
                         TrieNode::Blinded { commitment } => {
                             // If the string is a hash, we need to grab the preimage for it and
@@ -127,7 +127,7 @@ where
     }
 
     /// Grabs the preimage of `hash` using `fetcher`, and attempts to decode the preimage data into
-    /// a [TrieNode]. Will error if the conversion of `T` into [B256] fails.
+    /// a [`TrieNode`]. Will error if the conversion of `T` into [B256] fails.
     fn get_trie_node<T>(hash: T, fetcher: &F) -> OrderedListWalkerResult<TrieNode>
     where
         T: Into<B256>,
@@ -163,11 +163,12 @@ where
 mod test {
     use super::*;
     use crate::{
-        NoopTrieProvider, ordered_trie_with_encoder,
+        ordered_trie_with_encoder,
         test_util::{
-            TrieNodeProvider, get_live_derivable_receipts_list,
-            get_live_derivable_transactions_list,
+            get_live_derivable_receipts_list, get_live_derivable_transactions_list,
+            TrieNodeProvider,
         },
+        NoopTrieProvider,
     };
     use alloc::{collections::BTreeMap, string::String, vec::Vec};
     use alloy_consensus::{ReceiptEnvelope, TxEnvelope};
@@ -233,10 +234,8 @@ mod test {
 
     #[test]
     fn test_empty_list_walker() {
-        assert!(
-            OrderedListWalker::fetch_leaves(&TrieNode::Empty, &NoopTrieProvider)
-                .expect("Failed to traverse empty trie")
-                .is_empty()
-        );
+        assert!(OrderedListWalker::fetch_leaves(&TrieNode::Empty, &NoopTrieProvider)
+            .expect("Failed to traverse empty trie")
+            .is_empty());
     }
 }

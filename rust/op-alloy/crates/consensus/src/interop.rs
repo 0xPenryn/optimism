@@ -1,7 +1,7 @@
 //! Commonly used types for interop.
 
 use alloc::string::{String, ToString};
-use alloy_primitives::{Address, address};
+use alloy_primitives::{address, Address};
 use core::str::FromStr;
 use derive_more::Display;
 
@@ -45,7 +45,7 @@ impl FromStr for SafetyLevel {
     }
 }
 
-/// Error when parsing SafetyLevel from string.
+/// Error when parsing `SafetyLevel` from string.
 #[derive(thiserror::Error, Debug)]
 #[error("Invalid SafetyLevel, error: {0}")]
 pub struct SafetyLevelParseError(pub String);

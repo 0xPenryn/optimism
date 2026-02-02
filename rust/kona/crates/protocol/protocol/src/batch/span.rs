@@ -341,9 +341,10 @@ impl SpanBatch {
         seq_num: u64,
     ) -> Result<(), SpanBatchError> {
         // If the new element is not ordered with respect to the last element, panic.
-        if !self.batches.is_empty() && self.peek(0).timestamp > singular_batch.timestamp {
-            panic!("Batch is not ordered");
-        }
+        assert!(
+            self.batches.is_empty() || self.peek(0).timestamp <= singular_batch.timestamp,
+            "Batch is not ordered"
+        );
 
         let SingleBatch { epoch_hash, parent_hash, .. } = singular_batch;
 
@@ -468,12 +469,11 @@ impl SpanBatch {
                             return BatchValidity::Drop(
                                 BatchDropReason::SequencerDriftNotAdoptedNextOrigin,
                             );
-                        } else {
-                            info!(
-                                target: "batch_span",
-                                "continuing with empty batch before late L1 block to preserve L2 time invariant"
-                            );
                         }
+                        info!(
+                            target: "batch_span",
+                            "continuing with empty batch before late L1 block to preserve L2 time invariant"
+                        );
                     }
                 } else {
                     // If the sequencer is ignoring the time drift rule, then drop the batch and
@@ -660,6 +660,7 @@ impl SpanBatch {
         // If the span batch does not overlap the current safe chain, parent block should be the L2
         // safe head.
         let mut parent_num = l2_safe_head.block_info.number;
+        #[allow(clippy::useless_let_if_seq)]
         let mut parent_block = l2_safe_head;
         if self.starting_timestamp() < next_timestamp {
             if self.starting_timestamp() > l2_safe_head.block_info.timestamp {
@@ -752,9 +753,9 @@ mod tests {
     use super::*;
     use crate::test_utils::{CollectingLayer, TestBatchValidator, TraceStorage};
     use alloc::vec;
-    use alloy_consensus::{Header, constants::EIP1559_TX_TYPE_ID};
+    use alloy_consensus::{constants::EIP1559_TX_TYPE_ID, Header};
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{B256, Bytes, b256};
+    use alloy_primitives::{b256, Bytes, B256};
     use kona_genesis::{ChainGenesis, HardForkConfig};
     use op_alloy_consensus::OpBlock;
     use tracing::Level;

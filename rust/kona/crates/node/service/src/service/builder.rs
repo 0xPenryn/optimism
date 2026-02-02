@@ -1,15 +1,15 @@
 //! Contains the builder for the [`RollupNode`].
 
 use crate::{
-    EngineConfig, InteropMode, NetworkConfig, RollupNode, SequencerConfig,
-    actors::DerivationDelegateClient, service::node::L1Config,
+    actors::DerivationDelegateClient, service::node::L1Config, EngineConfig, InteropMode,
+    NetworkConfig, RollupNode, SequencerConfig,
 };
 use alloy_primitives::Bytes;
 use alloy_provider::RootProvider;
 use alloy_rpc_client::RpcClient;
 use alloy_transport_http::{
-    AuthLayer, Http, HyperClient,
     hyper_util::{client::legacy::Client, rt::TokioExecutor},
+    AuthLayer, Http, HyperClient,
 };
 use http_body_util::Full;
 use op_alloy_network::Optimism;

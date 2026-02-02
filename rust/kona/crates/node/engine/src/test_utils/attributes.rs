@@ -1,9 +1,9 @@
 use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, b256};
+use alloy_primitives::{b256, B256};
 use kona_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
 
-/// Builder for creating test OpAttributesWithParent instances with sensible defaults
+/// Builder for creating test `OpAttributesWithParent` instances with sensible defaults
 #[derive(Debug)]
 pub struct TestAttributesBuilder {
     timestamp: u64,
@@ -78,7 +78,7 @@ impl TestAttributesBuilder {
         self
     }
 
-    /// Builds the OpAttributesWithParent
+    /// Builds the `OpAttributesWithParent`
     pub fn build(self) -> OpAttributesWithParent {
         let attributes = OpPayloadAttributes {
             payload_attributes: alloy_rpc_types_engine::PayloadAttributes {

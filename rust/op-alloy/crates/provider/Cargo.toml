@@ -30,8 +30,12 @@ async-trait.workspace = true
 
 [features]
 std = [
-	"op-alloy-rpc-types-engine/std"
+	"op-alloy-rpc-types-engine/std",
+	"alloy-primitives/std",
+	"alloy-rpc-types-engine/std"
 ]
 serde = [
-	"op-alloy-rpc-types-engine/serde"
+	"op-alloy-rpc-types-engine/serde",
+	"alloy-primitives/serde",
+	"alloy-rpc-types-engine/serde"
 ]

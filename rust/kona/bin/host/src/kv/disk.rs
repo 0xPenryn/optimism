@@ -1,10 +1,10 @@
-//! Contains a concrete implementation of the [KeyValueStore] trait that stores data on disk
+//! Contains a concrete implementation of the [`KeyValueStore`] trait that stores data on disk
 //! using [rocksdb].
 
 use super::{KeyValueStore, MemoryKeyValueStore};
 use crate::{HostError, Result};
 use alloy_primitives::B256;
-use rocksdb::{DB, Options};
+use rocksdb::{Options, DB};
 use std::path::PathBuf;
 
 /// A simple, synchronous key-value store that stores data on disk.
@@ -15,7 +15,7 @@ pub struct DiskKeyValueStore {
 }
 
 impl DiskKeyValueStore {
-    /// Create a new [DiskKeyValueStore] with the given data directory.
+    /// Create a new [`DiskKeyValueStore`] with the given data directory.
     pub fn new(data_directory: PathBuf) -> Self {
         let db = DB::open(&Self::get_db_options(), data_directory.as_path())
             .unwrap_or_else(|e| panic!("Failed to open database at {data_directory:?}: {e}"));
@@ -23,7 +23,7 @@ impl DiskKeyValueStore {
         Self { data_directory, db }
     }
 
-    /// Gets the [Options] for the underlying RocksDB instance.
+    /// Gets the [Options] for the underlying `RocksDB` instance.
     fn get_db_options() -> Options {
         let mut options = Options::default();
         options.set_compression_type(rocksdb::DBCompressionType::Snappy);
@@ -87,13 +87,13 @@ mod test {
         fn convert_disk_kv_to_mem_kv(k_v in hash_map(any::<[u8; 32]>(), vec(any::<u8>(), 0..128), 1..128)) {
             let tempdir = temp_dir();
             let mut disk_kv = DiskKeyValueStore::new(tempdir);
-            k_v.iter().for_each(|(k, v)| {
-                disk_kv.set(k.into(), v.to_vec()).unwrap();
-            });
+            for (k, v) in &k_v {
+                disk_kv.set(k.into(), v.clone()).unwrap();
+            }
 
             let mem_kv = MemoryKeyValueStore::try_from(disk_kv).unwrap();
             for (k, v) in k_v {
-                assert_eq!(mem_kv.get(k.into()).unwrap(), v.to_vec());
+                assert_eq!(mem_kv.get(k.into()).unwrap(), v.clone());
             }
         }
     }

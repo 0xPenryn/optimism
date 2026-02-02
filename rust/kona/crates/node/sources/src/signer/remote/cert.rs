@@ -4,8 +4,8 @@ use alloy_rpc_client::{ClientBuilder, RpcClient};
 use alloy_transport_http::Http;
 use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use rustls::{
+    pki_types::{pem::PemObject, CertificateDer, PrivateKeyDer},
     ClientConfig, RootCertStore,
-    pki_types::{CertificateDer, PrivateKeyDer, pem::PemObject},
 };
 use thiserror::Error;
 use tokio::sync::RwLock;

@@ -85,7 +85,7 @@ mod tests {
     use crate::{SpanBatchElement, SpanBatchError, SpanBatchTransactions};
     use alloc::{vec, vec::Vec};
     use alloy_consensus::{Signed, TxEip2930, TxEnvelope};
-    use alloy_primitives::{Bytes, Signature, TxKind, address, hex};
+    use alloy_primitives::{address, hex, Bytes, Signature, TxKind};
 
     #[test]
     fn test_single_batch_encode_decode() {

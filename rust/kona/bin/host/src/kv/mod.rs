@@ -1,4 +1,4 @@
-//! This module contains the [KeyValueStore] trait and concrete implementations of it.
+//! This module contains the [`KeyValueStore`] trait and concrete implementations of it.
 
 use crate::Result;
 use alloy_primitives::B256;

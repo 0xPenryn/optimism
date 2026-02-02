@@ -1,11 +1,11 @@
 //! RPC Server Actor
 
-use crate::{NodeActor, RpcActorError, actors::CancellableContext};
+use crate::{actors::CancellableContext, NodeActor, RpcActorError};
 use async_trait::async_trait;
 use derive_more::Constructor;
 use jsonrpsee::{
+    server::{middleware::http::ProxyGetRequestLayer, Server, ServerHandle},
     RpcModule,
-    server::{Server, ServerHandle, middleware::http::ProxyGetRequestLayer},
 };
 use kona_gossip::P2pRpcRequest;
 use kona_rpc::{

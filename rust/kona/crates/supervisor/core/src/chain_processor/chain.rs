@@ -3,9 +3,9 @@ use super::handlers::{
     OriginHandler, ReplacementHandler, SafeBlockHandler, UnsafeBlockHandler,
 };
 use crate::{
-    LogIndexer, ProcessorState,
     event::ChainEvent,
     syncnode::{BlockProvider, ManagedNodeCommand},
+    LogIndexer, ProcessorState,
 };
 use alloy_primitives::ChainId;
 use kona_interop::InteropValidator;

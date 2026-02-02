@@ -2,8 +2,8 @@
 //! RPC.
 
 use crate::{
+    actors::{l1_watcher::error::L1WatcherActorError, CancellableContext},
     NodeActor,
-    actors::{CancellableContext, l1_watcher::error::L1WatcherActorError},
 };
 use alloy_eips::BlockId;
 use alloy_primitives::Address;

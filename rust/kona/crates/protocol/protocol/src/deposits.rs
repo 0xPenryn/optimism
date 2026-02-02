@@ -2,7 +2,7 @@
 
 use alloc::vec::Vec;
 use alloy_eips::eip2718::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, Log, TxKind, U256, b256};
+use alloy_primitives::{b256, Address, Bytes, Log, TxKind, B256, U256};
 use op_alloy_consensus::{TxDeposit, UserDepositSource};
 
 /// Deposit log event abi signature.
@@ -172,7 +172,7 @@ pub fn decode_deposit(block_hash: B256, index: usize, log: &Log) -> Result<Bytes
         });
     };
 
-    if !(opaque_content_len % 32 == 0 ||
+    if !(opaque_content_len.is_multiple_of(32) ||
         log.data
             .data
             .get((64 + opaque_content_len) as usize..padding_end as usize)
@@ -258,7 +258,7 @@ pub(crate) fn unmarshal_deposit_version0(
 mod test {
     use super::*;
     use alloc::vec;
-    use alloy_primitives::{LogData, U64, U128, address, b256, hex};
+    use alloy_primitives::{address, b256, hex, LogData, U128, U64};
 
     #[test]
     fn test_decode_deposit_invalid_first_topic() {

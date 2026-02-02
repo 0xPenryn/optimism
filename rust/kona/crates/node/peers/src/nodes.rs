@@ -110,7 +110,7 @@ pub static OP_RAW_TESTNET_BOOTNODES: &[&str] = &[
 
 #[cfg(test)]
 mod tests {
-    use discv5::{Enr, enr::EnrPublicKey};
+    use discv5::{enr::EnrPublicKey, Enr};
     use std::str::FromStr;
 
     use kona_genesis::{BASE_MAINNET_CHAIN_ID, OP_MAINNET_CHAIN_ID, OP_SEPOLIA_CHAIN_ID};
@@ -125,11 +125,11 @@ mod tests {
 
     #[test]
     fn test_parse_raw_bootnodes() {
-        for raw in OP_RAW_BOOTNODES.iter() {
+        for raw in OP_RAW_BOOTNODES {
             BootNode::parse_bootnode(raw);
         }
 
-        for raw in OP_RAW_TESTNET_BOOTNODES.iter() {
+        for raw in OP_RAW_TESTNET_BOOTNODES {
             BootNode::parse_bootnode(raw);
         }
     }

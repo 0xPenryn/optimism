@@ -56,7 +56,9 @@ pub enum StorageError {
 
 impl PartialEq for StorageError {
     fn eq(&self, other: &Self) -> bool {
-        use StorageError::*;
+        use StorageError::{
+            ConflictError, Database, DatabaseInit, DatabaseNotInitialised, EntryNotFound,
+        };
         match (self, other) {
             (Database(a), Database(b)) => format!("{a}") == format!("{b}"),
             (DatabaseInit(a), DatabaseInit(b)) => format!("{a}") == format!("{b}"),

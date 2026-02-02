@@ -1,9 +1,9 @@
 //! The min base fee update type.
 
 use alloy_primitives::LogData;
-use alloy_sol_types::{SolType, sol};
+use alloy_sol_types::{sol, SolType};
 
-use crate::{SystemConfig, SystemConfigLog, system::MinBaseFeeUpdateError};
+use crate::{system::MinBaseFeeUpdateError, SystemConfig, SystemConfigLog};
 
 /// The min base fee update type.
 #[derive(Debug, Default, Clone, Hash, PartialEq, Eq)]
@@ -56,7 +56,7 @@ mod tests {
     use super::*;
     use crate::{CONFIG_UPDATE_EVENT_VERSION_0, CONFIG_UPDATE_TOPIC};
     use alloc::vec;
-    use alloy_primitives::{Address, B256, Bytes, Log, LogData, hex};
+    use alloy_primitives::{hex, Address, Bytes, Log, LogData, B256};
 
     #[test]
     fn test_min_base_fee_update_try_from() {

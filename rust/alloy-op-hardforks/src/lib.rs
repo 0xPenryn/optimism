@@ -10,7 +10,7 @@
 extern crate alloc;
 use alloc::vec::Vec;
 use alloy_chains::{Chain, NamedChain};
-use alloy_hardforks::{EthereumHardfork, hardfork};
+use alloy_hardforks::{hardfork, EthereumHardfork};
 pub use alloy_hardforks::{EthereumHardforks, ForkCondition};
 use alloy_primitives::U256;
 use core::ops::Index;
@@ -340,7 +340,9 @@ impl Index<OpHardfork> for OpChainHardforks {
     type Output = ForkCondition;
 
     fn index(&self, hf: OpHardfork) -> &Self::Output {
-        use OpHardfork::*;
+        use OpHardfork::{
+            Bedrock, Canyon, Ecotone, Fjord, Granite, Holocene, Interop, Isthmus, Jovian, Regolith,
+        };
 
         match hf {
             Bedrock => &self.forks[Bedrock.idx()].1,
@@ -361,16 +363,19 @@ impl Index<EthereumHardfork> for OpChainHardforks {
     type Output = ForkCondition;
 
     fn index(&self, hf: EthereumHardfork) -> &Self::Output {
-        use EthereumHardfork::*;
-        use OpHardfork::*;
+        use EthereumHardfork::{
+            Amsterdam, ArrowGlacier, Berlin, Bpo1, Bpo2, Bpo3, Bpo4, Bpo5, Byzantium, Cancun,
+            Constantinople, Dao, Frontier, GrayGlacier, Homestead, Istanbul, London, MuirGlacier,
+            Osaka, Paris, Petersburg, Prague, Shanghai, SpuriousDragon, Tangerine,
+        };
+        use OpHardfork::{Bedrock, Canyon, Ecotone, Isthmus};
 
         match hf {
-            Frontier | Homestead | Tangerine | SpuriousDragon | Byzantium | Constantinople
-            | Petersburg | Istanbul | MuirGlacier => &ForkCondition::ZERO_BLOCK,
             // Dao Hardfork is not needed for OpChainHardforks
-            Dao => &ForkCondition::Never,
+            Dao | Osaka | Bpo1 | Bpo2 | Bpo3 | Bpo4 | Bpo5 | Amsterdam => &ForkCondition::Never,
             Berlin if self.is_op_mainnet() => &ForkCondition::Block(OP_MAINNET_BERLIN_BLOCK),
-            Berlin => &ForkCondition::ZERO_BLOCK,
+            Frontier | Homestead | Tangerine | SpuriousDragon | Byzantium | Constantinople |
+            Petersburg | Istanbul | MuirGlacier | Berlin => &ForkCondition::ZERO_BLOCK,
             London | ArrowGlacier | GrayGlacier => &self[Bedrock],
             Paris if self.is_op_mainnet() => &ForkCondition::TTD {
                 activation_block_number: OP_MAINNET_BEDROCK_BLOCK,
@@ -385,8 +390,6 @@ impl Index<EthereumHardfork> for OpChainHardforks {
             Shanghai => &self[Canyon],
             Cancun => &self[Ecotone],
             Prague => &self[Isthmus],
-            // Not activated for now
-            Osaka | Bpo1 | Bpo2 | Bpo3 | Bpo4 | Bpo5 | Amsterdam => &ForkCondition::Never,
             _ => unreachable!(),
         }
     }

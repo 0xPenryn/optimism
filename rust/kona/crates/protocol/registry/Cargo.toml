@@ -57,4 +57,5 @@ std = [
 	"serde/std",
 	"serde_json/std",
 	"tabled?/std",
+	"toml/std"
 ]

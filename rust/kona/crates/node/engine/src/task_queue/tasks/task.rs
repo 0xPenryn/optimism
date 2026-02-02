@@ -4,9 +4,9 @@
 
 use super::{BuildTask, ConsolidateTask, FinalizeTask, InsertTask};
 use crate::{
+    task_queue::{SealTask, SealTaskError},
     BuildTaskError, ConsolidateTaskError, EngineClient, EngineState, FinalizeTaskError,
     InsertTaskError,
-    task_queue::{SealTask, SealTaskError},
 };
 use async_trait::async_trait;
 use derive_more::Display;
@@ -169,10 +169,10 @@ impl<EngineClient_: EngineClient> Ord for EngineTask<EngineClient_> {
         // - Finalize tasks have the lowest priority, as they only update finalized status.
         match (self, other) {
             // Same variant cases
-            (Self::Insert(_), Self::Insert(_)) => Ordering::Equal,
-            (Self::Consolidate(_), Self::Consolidate(_)) => Ordering::Equal,
-            (Self::Build(_), Self::Build(_)) => Ordering::Equal,
-            (Self::Seal(_), Self::Seal(_)) => Ordering::Equal,
+            (Self::Insert(_), Self::Insert(_)) |
+            (Self::Consolidate(_), Self::Consolidate(_)) |
+            (Self::Build(_), Self::Build(_)) |
+            (Self::Seal(_), Self::Seal(_)) |
             (Self::Finalize(_), Self::Finalize(_)) => Ordering::Equal,
 
             // SealBlock tasks are prioritized over all others
@@ -217,8 +217,6 @@ impl<EngineClient_: EngineClient> EngineTaskExt for EngineTask<EngineClient_> {
 
                     // Yield the task to allow other tasks to execute to avoid starvation.
                     yield_now().await;
-
-                    continue;
                 }
                 EngineTaskErrorSeverity::Critical => {
                     error!(target: "engine", "{e}");

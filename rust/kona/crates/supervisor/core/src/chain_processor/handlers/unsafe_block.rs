@@ -1,7 +1,7 @@
 use super::EventHandler;
 use crate::{
-    ChainProcessorError, LogIndexer, ProcessorState, chain_processor::Metrics,
-    syncnode::BlockProvider,
+    chain_processor::Metrics, syncnode::BlockProvider, ChainProcessorError, LogIndexer,
+    ProcessorState,
 };
 use alloy_primitives::ChainId;
 use async_trait::async_trait;
@@ -98,8 +98,8 @@ where
 mod tests {
     use super::*;
     use crate::{
-        ProcessorState,
         syncnode::{BlockProvider, ManagedNodeError},
+        ProcessorState,
     };
     use alloy_primitives::B256;
     use kona_interop::{DerivedRefPair, InteropValidationError};

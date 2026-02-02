@@ -5,7 +5,7 @@ use crate::{
     PipelineErrorKind, PipelineResult, Signal, SignalReceiver,
 };
 use alloc::{boxed::Box, collections::VecDeque, sync::Arc};
-use alloy_primitives::{Bytes, hex, map::HashMap};
+use alloy_primitives::{hex, map::HashMap, Bytes};
 use async_trait::async_trait;
 use core::fmt::Debug;
 use kona_genesis::RollupConfig;

@@ -1,10 +1,10 @@
 //! Interop [`MessageGraph`].
 
 use crate::{
-    MESSAGE_EXPIRY_WINDOW, RawMessagePayload,
     errors::{MessageGraphError, MessageGraphResult},
-    message::{EnrichedExecutingMessage, extract_executing_messages},
+    message::{extract_executing_messages, EnrichedExecutingMessage},
     traits::InteropProvider,
+    RawMessagePayload, MESSAGE_EXPIRY_WINDOW,
 };
 use alloc::{string::ToString, vec::Vec};
 use alloy_consensus::{Header, Sealed};
@@ -58,7 +58,7 @@ where
         );
 
         let mut messages = Vec::with_capacity(blocks.len());
-        for (chain_id, header) in blocks.iter() {
+        for (chain_id, header) in blocks {
             let receipts = provider.receipts_by_hash(*chain_id, header.hash()).await?;
             let executing_messages = extract_executing_messages(receipts.as_slice());
 
@@ -99,7 +99,7 @@ where
         // Prune all valid messages, collecting errors for any chain whose block contains an invalid
         // message. Errors are de-duplicated by chain ID in a map, since a single invalid
         // message is cause for invalidating a block.
-        for message in self.messages.iter() {
+        for message in &self.messages {
             if let Err(e) = self.check_single_dependency(message).await {
                 warn!(
                     target: "message_graph",
@@ -245,12 +245,12 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::{MESSAGE_EXPIRY_WINDOW, MessageGraph};
+    use super::{MessageGraph, MESSAGE_EXPIRY_WINDOW};
     use crate::{
-        MessageGraphError,
         test_util::{ExecutingMessageBuilder, SuperchainBuilder},
+        MessageGraphError,
     };
-    use alloy_primitives::{Address, hex, keccak256};
+    use alloy_primitives::{hex, keccak256, Address};
 
     const MOCK_MESSAGE: [u8; 4] = hex!("deadbeef");
     const CHAIN_A_ID: u64 = 1;

@@ -1,7 +1,7 @@
 //! Build script that generates a `configs.json` file from the configs.
 
 use std::{
-    collections::{BTreeMap, BTreeSet, btree_map::Entry},
+    collections::{btree_map::Entry, BTreeMap, BTreeSet},
     fs,
     path::{Path, PathBuf},
 };
@@ -24,9 +24,10 @@ fn main() {
 
     // Check if the `superchain-registry` directory exists
     let superchain_registry = format!("{src_dir}/superchain-registry");
-    if !std::path::Path::new(&superchain_registry).exists() {
-        panic!("Git Submodule missing. Please run `just source` to initialize the submodule.");
-    }
+    assert!(
+        std::path::Path::new(&superchain_registry).exists(),
+        "Git Submodule missing. Please run `just source` to initialize the submodule."
+    );
 
     // Copy the `superchain-registry/chainList.json` file to `etc/chainList.json`
     let chain_list = format!("{src_dir}/superchain-registry/chainList.json");
@@ -76,7 +77,7 @@ fn main() {
     superchains.superchains.sort_by(|a, b| a.name.cmp(&b.name));
 
     // For each superchain, sort the list of chains by chain id.
-    for superchain in superchains.superchains.iter_mut() {
+    for superchain in &mut superchains.superchains {
         superchain.chains.sort_by(|a, b| a.chain_id.cmp(&b.chain_id));
     }
 
@@ -106,9 +107,11 @@ fn merge_custom_configs() {
         .expect("KONA_CUSTOM_CONFIGS_DIR must be set when KONA_CUSTOM_CONFIGS is enabled");
     println!("cargo:rerun-if-env-changed=KONA_CUSTOM_CONFIGS_DIR");
     let custom_configs_dir = PathBuf::from(custom_configs_dir);
-    if !custom_configs_dir.exists() {
-        panic!("Custom configs directory {} does not exist", custom_configs_dir.display());
-    }
+    assert!(
+        custom_configs_dir.exists(),
+        "Custom configs directory {} does not exist",
+        custom_configs_dir.display()
+    );
 
     let custom_chain_list_path = custom_configs_dir.join("chainList.json");
     let custom_configs_path = custom_configs_dir.join("configs.json");
@@ -127,12 +130,8 @@ fn merge_custom_configs() {
 }
 
 fn merge_chain_list(custom_path: &Path, target_path: &Path) {
-    if !custom_path.exists() {
-        panic!("Custom chain list {} does not exist", custom_path.display());
-    }
-    if !target_path.exists() {
-        panic!("Target chain list {} does not exist", target_path.display());
-    }
+    assert!(custom_path.exists(), "Custom chain list {} does not exist", custom_path.display());
+    assert!(target_path.exists(), "Target chain list {} does not exist", target_path.display());
 
     let mut merged_chain_list: ChainList = read_json(target_path);
     let custom_chain_list: ChainList = read_json(custom_path);
@@ -140,36 +139,34 @@ fn merge_chain_list(custom_path: &Path, target_path: &Path) {
     let mut chains_by_id: BTreeMap<u64, Chain> = BTreeMap::new();
     let mut identifiers: BTreeMap<String, Chain> = BTreeMap::new();
 
-    for chain in merged_chain_list.chains.iter() {
+    for chain in &merged_chain_list.chains {
         let ident_key = chain.identifier.to_ascii_lowercase();
         identifiers.insert(ident_key, chain.clone());
         chains_by_id.insert(chain.chain_id, chain.clone());
     }
     // preserve ordering of chains in etc/chainList.json
-    for chain in custom_chain_list.chains.iter() {
+    for chain in &custom_chain_list.chains {
         let ident_key = chain.identifier.to_ascii_lowercase();
         if let Some(existing_chain) = identifiers.get(&ident_key) {
             if existing_chain == chain {
                 continue;
-            } else {
-                panic!(
-                    "Chain identifier `{}` in {} already exists in the registry with a different config",
-                    chain.identifier,
-                    custom_path.display()
-                );
             }
+            panic!(
+                "Chain identifier `{}` in {} already exists in the registry with a different config",
+                chain.identifier,
+                custom_path.display()
+            );
         }
         if let Some(existing_chain) = chains_by_id.get(&chain.chain_id) {
             if existing_chain == chain {
                 continue;
-            } else {
-                panic!(
-                    "Chain id {} in {} already exists in the registry with a different config for identifier `{}`",
-                    chain.chain_id,
-                    custom_path.display(),
-                    existing_chain.identifier
-                );
             }
+            panic!(
+                "Chain id {} in {} already exists in the registry with a different config for identifier `{}`",
+                chain.chain_id,
+                custom_path.display(),
+                existing_chain.identifier
+            );
         }
         identifiers.insert(ident_key, chain.clone());
         chains_by_id.insert(chain.chain_id, chain.clone());
@@ -180,12 +177,8 @@ fn merge_chain_list(custom_path: &Path, target_path: &Path) {
 }
 
 fn merge_superchain_configs(custom_path: &Path, target_path: &Path) {
-    if !custom_path.exists() {
-        panic!("Custom configs {} does not exist", custom_path.display());
-    }
-    if !target_path.exists() {
-        panic!("Target configs {} does not exist", target_path.display());
-    }
+    assert!(custom_path.exists(), "Custom configs {} does not exist", custom_path.display());
+    assert!(target_path.exists(), "Target configs {} does not exist", target_path.display());
 
     let mut superchains: BTreeMap<String, Superchain> = read_json::<Superchains>(target_path)
         .superchains
@@ -219,7 +212,7 @@ fn merge_superchain_configs(custom_path: &Path, target_path: &Path) {
 
     let mut merged: Vec<Superchain> = superchains.into_values().collect();
     merged.sort_by(|a, b| a.name.cmp(&b.name));
-    for superchain in merged.iter_mut() {
+    for superchain in &mut merged {
         superchain.chains.sort_by(|a, b| a.chain_id.cmp(&b.chain_id));
     }
 
@@ -238,12 +231,11 @@ fn merge_superchain_entry(base: Superchain, custom: Superchain) -> Superchain {
         if let Some(existing_config) = chain_map.get(&chain.chain_id) {
             if existing_config == &chain {
                 continue;
-            } else {
-                panic!(
-                    "conflict merging superchain `{}`: chain id {} has differing configs",
-                    merged.name, chain.chain_id
-                );
             }
+            panic!(
+                "conflict merging superchain `{}`: chain id {} has differing configs",
+                merged.name, chain.chain_id
+            );
         }
         chain_map.insert(chain.chain_id, chain.clone());
         merged.chains.push(chain.clone());
@@ -261,50 +253,46 @@ fn validate_chain_configs(chain_list_path: &Path, superchains_path: &Path) {
 
     let mut list_chain_ids = BTreeSet::new();
     for chain in &chain_list.chains {
-        if !list_chain_ids.insert(chain.chain_id) {
-            panic!(
-                "Duplicate chain id {} (identifier `{}`) detected in {}",
-                chain.chain_id,
-                chain.identifier,
-                chain_list_path.display()
-            );
-        }
+        assert!(
+            list_chain_ids.insert(chain.chain_id),
+            "Duplicate chain id {} (identifier `{}`) detected in {}",
+            chain.chain_id,
+            chain.identifier,
+            chain_list_path.display()
+        );
     }
 
     let mut config_chain_ids = BTreeSet::new();
     for superchain in &superchains.superchains {
         for chain in &superchain.chains {
-            if !config_chain_ids.insert(chain.chain_id) {
-                panic!(
-                    "Duplicate chain id {} detected across superchain configs in {}",
-                    chain.chain_id,
-                    superchains_path.display()
-                );
-            }
+            assert!(
+                config_chain_ids.insert(chain.chain_id),
+                "Duplicate chain id {} detected across superchain configs in {}",
+                chain.chain_id,
+                superchains_path.display()
+            );
         }
     }
 
     for chain_id in &config_chain_ids {
-        if !list_chain_ids.contains(chain_id) {
-            panic!(
-                "Chain id {} present in {} but missing from {}",
-                chain_id,
-                superchains_path.display(),
-                chain_list_path.display()
-            );
-        }
+        assert!(
+            list_chain_ids.contains(chain_id),
+            "Chain id {} present in {} but missing from {}",
+            chain_id,
+            superchains_path.display(),
+            chain_list_path.display()
+        );
     }
 
     for chain in chain_list.chains {
-        if !config_chain_ids.contains(&chain.chain_id) {
-            panic!(
-                "Chain `{}` (chain id {}) present in {} but missing from {}",
-                chain.identifier,
-                chain.chain_id,
-                chain_list_path.display(),
-                superchains_path.display()
-            );
-        }
+        assert!(
+            config_chain_ids.contains(&chain.chain_id),
+            "Chain `{}` (chain id {}) present in {} but missing from {}",
+            chain.identifier,
+            chain.chain_id,
+            chain_list_path.display(),
+            superchains_path.display()
+        );
     }
 }
 

@@ -1,15 +1,15 @@
-//! Contains the implementations of the [HintRouter] and [PreimageFetcher] traits.
+//! Contains the implementations of the [`HintRouter`] and [`PreimageFetcher`] traits.
 
 use crate::kv::KeyValueStore;
 use async_trait::async_trait;
 use kona_preimage::{
-    HintRouter, PreimageFetcher, PreimageKey,
     errors::{PreimageOracleError, PreimageOracleResult},
+    HintRouter, PreimageFetcher, PreimageKey,
 };
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-/// A [KeyValueStore]-backed implementation of the [PreimageFetcher] trait.
+/// A [`KeyValueStore`]-backed implementation of the [`PreimageFetcher`] trait.
 #[derive(Debug)]
 pub struct OfflineHostBackend<KV>
 where
@@ -22,7 +22,7 @@ impl<KV> OfflineHostBackend<KV>
 where
     KV: KeyValueStore + ?Sized,
 {
-    /// Create a new [OfflineHostBackend] from the given [KeyValueStore].
+    /// Create a new [`OfflineHostBackend`] from the given [`KeyValueStore`].
     pub const fn new(kv_store: Arc<RwLock<KV>>) -> Self {
         Self { inner: kv_store }
     }

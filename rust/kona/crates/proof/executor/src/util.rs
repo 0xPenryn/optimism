@@ -6,8 +6,8 @@ use alloy_eips::eip1559::BaseFeeParams;
 use alloy_primitives::Bytes;
 use kona_genesis::RollupConfig;
 use op_alloy_consensus::{
-    EIP1559ParamError, decode_holocene_extra_data, decode_jovian_extra_data,
-    encode_holocene_extra_data, encode_jovian_extra_data,
+    decode_holocene_extra_data, decode_jovian_extra_data, encode_holocene_extra_data,
+    encode_jovian_extra_data, EIP1559ParamError,
 };
 use op_alloy_rpc_types_engine::OpPayloadAttributes;
 
@@ -61,8 +61,8 @@ pub(crate) fn decode_jovian_eip_1559_params_block_header(
 /// Encode Holocene [Header] extra data.
 ///
 /// ## Takes
-/// - `config`: The [RollupConfig] for the chain.
-/// - `attributes`: The [OpPayloadAttributes] for the block.
+/// - `config`: The [`RollupConfig`] for the chain.
+/// - `attributes`: The [`OpPayloadAttributes`] for the block.
 ///
 /// ## Returns
 /// - `Ok(data)`: The encoded extra data.
@@ -80,8 +80,8 @@ pub(crate) fn encode_holocene_eip_1559_params(
 /// Encode Jovian [Header] extra data.
 ///
 /// ## Takes
-/// - `config`: The [RollupConfig] for the chain.
-/// - `attributes`: The [OpPayloadAttributes] for the block.
+/// - `config`: The [`RollupConfig`] for the chain.
+/// - `attributes`: The [`OpPayloadAttributes`] for the block.
 ///
 /// ## Returns
 /// - `Ok(data)`: The encoded extra data.
@@ -106,7 +106,7 @@ mod test {
         decode_jovian_eip_1559_params_block_header, encode_holocene_eip_1559_params,
     };
     use alloy_consensus::Header;
-    use alloy_primitives::{B64, b64, bytes};
+    use alloy_primitives::{b64, bytes, B64};
     use alloy_rpc_types_engine::PayloadAttributes;
     use kona_genesis::{BaseFeeConfig, RollupConfig};
     use op_alloy_rpc_types_engine::OpPayloadAttributes;

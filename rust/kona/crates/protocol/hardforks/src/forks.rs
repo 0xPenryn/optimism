@@ -1,4 +1,4 @@
-//! Contains all hardforks represented in the [crate::Hardfork] type.
+//! Contains all hardforks represented in the [`crate::Hardfork`] type.
 
 use crate::{Ecotone, Fjord, Interop, Isthmus, Jovian};
 

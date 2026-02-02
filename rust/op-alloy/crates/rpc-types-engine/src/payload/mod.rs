@@ -7,8 +7,8 @@ pub mod v4;
 use crate::{OpExecutionPayloadSidecar, OpExecutionPayloadV4};
 use alloc::vec::Vec;
 use alloy_consensus::{Block, BlockHeader, HeaderInfo, Transaction};
-use alloy_eips::{Decodable2718, Encodable2718, Typed2718, eip7685::EMPTY_REQUESTS_HASH};
-use alloy_primitives::{Address, B256, Bytes, Sealable, U256};
+use alloy_eips::{eip7685::EMPTY_REQUESTS_HASH, Decodable2718, Encodable2718, Typed2718};
+use alloy_primitives::{Address, Bytes, Sealable, B256, U256};
 use alloy_rpc_types_engine::{
     ExecutionPayload, ExecutionPayloadInputV2, ExecutionPayloadV1, ExecutionPayloadV2,
     ExecutionPayloadV3, PayloadError,
@@ -53,7 +53,7 @@ impl<'de> serde::Deserialize<'de> for OpExecutionPayload {
                 A: serde::de::MapAccess<'de>,
             {
                 use alloc::string::String;
-                use alloy_primitives::{U64, map::HashMap};
+                use alloy_primitives::{map::HashMap, U64};
                 use alloy_rpc_types_engine::ExecutionPayloadV1;
 
                 enum Fields {
@@ -146,6 +146,7 @@ impl<'de> serde::Deserialize<'de> for OpExecutionPayload {
                 let mut excess_blob_gas = None;
                 let mut withdrawals_root = None;
 
+                #[allow(clippy::collection_is_never_read)]
                 let mut extra_fields = HashMap::new();
 
                 while let Some(key) = map.next_key()? {
@@ -520,7 +521,7 @@ impl OpExecutionPayload {
     ///
     /// Caution: This does not set fields that are not part of the payload and only part of the
     /// [`OpExecutionPayloadSidecar`]:
-    /// - parent_beacon_block_root
+    /// - `parent_beacon_block_root`
     ///
     /// See also: [`OpExecutionPayload::into_block_with_sidecar_raw`]
     pub fn into_block_raw(self) -> Result<Block<alloy_primitives::Bytes>, PayloadError> {
@@ -543,16 +544,16 @@ impl OpExecutionPayload {
         self,
         sidecar: &OpExecutionPayloadSidecar,
     ) -> Result<Block<alloy_primitives::Bytes>, OpPayloadError> {
-        if let Some(payload) = self.as_v2()
-            && !payload.withdrawals.is_empty()
+        if let Some(payload) = self.as_v2() &&
+            !payload.withdrawals.is_empty()
         {
             return Err(OpPayloadError::NonEmptyL1Withdrawals);
         }
 
         let mut block = self.into_block_raw()?;
 
-        if let Some(blobs_hashes) = sidecar.versioned_hashes()
-            && !blobs_hashes.is_empty()
+        if let Some(blobs_hashes) = sidecar.versioned_hashes() &&
+            !blobs_hashes.is_empty()
         {
             return Err(OpPayloadError::NonEmptyBlobVersionedHashes);
         }
@@ -576,7 +577,7 @@ impl OpExecutionPayload {
     ///
     /// Caution: This does not set fields that are not part of the payload and only part of the
     /// [`OpExecutionPayloadSidecar`]:
-    /// - parent_beacon_block_root
+    /// - `parent_beacon_block_root`
     ///
     /// See also: [`OpExecutionPayload::try_into_block_with_sidecar`]
     pub fn try_into_block<T: Decodable2718 + Typed2718>(self) -> Result<Block<T>, OpPayloadError> {
@@ -596,7 +597,7 @@ impl OpExecutionPayload {
     ///
     /// Caution: This does not set fields that are not part of the payload and only part of the
     /// [`OpExecutionPayloadSidecar`]:
-    /// - parent_beacon_block_root
+    /// - `parent_beacon_block_root`
     ///
     /// See also: [`OpExecutionPayload::try_into_block_with_sidecar_with`]
     pub fn try_into_block_with<T, F, E>(self, f: F) -> Result<Block<T>, OpPayloadError>
@@ -605,8 +606,8 @@ impl OpExecutionPayload {
         F: FnMut(alloy_primitives::Bytes) -> Result<T, E>,
         E: Into<PayloadError>,
     {
-        if let Some(payload) = self.as_v2()
-            && !payload.withdrawals.is_empty()
+        if let Some(payload) = self.as_v2() &&
+            !payload.withdrawals.is_empty()
         {
             return Err(OpPayloadError::NonEmptyL1Withdrawals);
         }
@@ -664,8 +665,8 @@ impl OpExecutionPayload {
         E: Into<PayloadError>,
     {
         let mut base_payload = self.try_into_block_with(f)?;
-        if let Some(blobs_hashes) = sidecar.versioned_hashes()
-            && !blobs_hashes.is_empty()
+        if let Some(blobs_hashes) = sidecar.versioned_hashes() &&
+            !blobs_hashes.is_empty()
         {
             return Err(OpPayloadError::NonEmptyBlobVersionedHashes);
         }

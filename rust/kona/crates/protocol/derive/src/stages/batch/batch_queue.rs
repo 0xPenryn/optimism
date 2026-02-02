@@ -80,9 +80,7 @@ where
     /// The parent is used to set the parent hash of the batch.
     /// The parent is verified when the batch is later validated.
     pub fn pop_next_batch(&mut self, parent: L2BlockInfo) -> Option<SingleBatch> {
-        if self.next_spans.is_empty() {
-            panic!("Invalid state: must have next spans to pop");
-        }
+        assert!(!self.next_spans.is_empty(), "Invalid state: must have next spans to pop");
         let mut next = self.next_spans.remove(0);
         next.parent_hash = parent.block_info.hash;
         Some(next)
@@ -91,7 +89,7 @@ where
     /// Derives the next batch to apply on top of the current L2 safe head.
     /// Follows the validity rules imposed on consecutive batches.
     /// Based on currently available buffered batch and L1 origin information.
-    /// A [PipelineError::Eof] is returned if no batch can be derived yet.
+    /// A [`PipelineError::Eof`] is returned if no batch can be derived yet.
     pub async fn derive_next_batch(
         &mut self,
         empty: bool,
@@ -137,11 +135,11 @@ where
                     // Drop Future batches post-holocene.
                     //
                     // See: <https://specs.optimism.io/protocol/holocene/derivation.html#batch_queue>
-                    if !self.cfg.is_holocene_active(origin.timestamp) {
-                        remaining.push(batch.clone());
-                    } else {
+                    if self.cfg.is_holocene_active(origin.timestamp) {
                         self.prev.flush();
                         warn!(target: "batch_queue", "[HOLOCENE] Dropping future batch with parent: {}", parent.block_info.number);
+                    } else {
+                        remaining.push(batch.clone());
                     }
                 }
                 BatchValidity::Drop(reason) => {
@@ -149,7 +147,6 @@ where
                     // stage.
                     self.prev.flush();
                     warn!(target: "batch_queue", "Dropping batch with parent: {}, reason: {}", parent.block_info, reason);
-                    continue;
                 }
                 BatchValidity::Accept => {
                     next_batch = Some(batch.clone());
@@ -170,7 +167,6 @@ where
                     }
 
                     warn!(target: "batch_queue", "[HOLOCENE] Dropping outdated batch with parent: {}", parent.block_info.number);
-                    continue;
                 }
             }
         }
@@ -324,7 +320,13 @@ where
         // Batches prior to the l1 origin of the l2 safe head are not accepted.
         if self.origin != self.prev.origin() {
             self.origin = self.prev.origin();
-            if !origin_behind {
+            if origin_behind {
+                // This is to handle the special case of startup.
+                // At startup, the batch queue is reset and includes the
+                // l1 origin. That is the only time where immediately after
+                // reset is called, the origin behind is false.
+                self.l1_blocks.clear();
+            } else {
                 let origin = match self.origin.as_ref().ok_or(PipelineError::MissingOrigin.crit()) {
                     Ok(o) => o,
                     Err(e) => {
@@ -332,12 +334,6 @@ where
                     }
                 };
                 self.l1_blocks.push(*origin);
-            } else {
-                // This is to handle the special case of startup.
-                // At startup, the batch queue is reset and includes the
-                // l1 origin. That is the only time where immediately after
-                // reset is called, the origin behind is false.
-                self.l1_blocks.clear();
             }
             info!(target: "batch_queue", "Advancing batch queue origin: {:?}", self.origin);
         }
@@ -346,14 +342,14 @@ where
         let mut out_of_data = false;
         match self.prev.next_batch(parent, &self.l1_blocks).await {
             Ok(b) => {
-                if !origin_behind {
-                    self.add_batch(b, parent).await.ok();
-                } else {
+                if origin_behind {
                     warn!(target: "batch_queue", "Dropping batch: Origin is behind");
+                } else {
+                    self.add_batch(b, parent).await.ok();
                 }
             }
             Err(e) => {
-                if let PipelineErrorKind::Temporary(PipelineError::Eof) = e {
+                if e == PipelineErrorKind::Temporary(PipelineError::Eof) {
                     out_of_data = true;
                 } else {
                     return Err(e);
@@ -447,7 +443,7 @@ where
                 self.l1_blocks.push(l1_origin);
                 self.next_spans.clear();
             }
-            s @ Signal::Activation(_) | s @ Signal::FlushChannel => {
+            s @ (Signal::Activation(_) | Signal::FlushChannel) => {
                 self.prev.signal(s).await?;
                 self.batches.clear();
                 self.next_spans.clear();
@@ -468,8 +464,8 @@ mod tests {
     };
     use alloc::vec;
     use alloy_consensus::Header;
-    use alloy_eips::{BlockNumHash, eip2718::Decodable2718};
-    use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, b256};
+    use alloy_eips::{eip2718::Decodable2718, BlockNumHash};
+    use alloy_primitives::{address, b256, Address, Bytes, TxKind, B256, U256};
     use alloy_rlp::{BytesMut, Encodable};
     use kona_genesis::{ChainGenesis, HardForkConfig, MAX_RLP_BYTES_PER_CHANNEL_FJORD};
     use kona_protocol::{BatchReader, L1BlockInfoBedrock, L1BlockInfoTx};

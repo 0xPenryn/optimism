@@ -26,7 +26,7 @@ use kona_node_service::{
     EngineClientResult, NetworkActor, NetworkConfig, NetworkEngineClient, NodeActor,
 };
 use kona_registry::ROLLUP_CONFIGS;
-use libp2p::{Multiaddr, identity::Keypair};
+use libp2p::{identity::Keypair, Multiaddr};
 use op_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},

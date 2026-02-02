@@ -136,7 +136,7 @@ impl Default for L2ClientArgs {
 /// L2 derivation delegate connection arguments.
 #[derive(Clone, Debug, Default, clap::Args)]
 pub struct DerivationDelegateArgs {
-    /// The source must be an OP Stack L2 CL RPC exposing optimism_syncStatus.
+    /// The source must be an OP Stack L2 CL RPC exposing `optimism_syncStatus`.
     #[arg(long, visible_alias = "l2.follow.source", env = "KONA_NODE_L2_FOLLOW_SOURCE")]
     pub l2_follow_source: Option<Url>,
 }

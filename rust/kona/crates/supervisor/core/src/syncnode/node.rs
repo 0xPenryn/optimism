@@ -1,13 +1,13 @@
 //! [`ManagedNode`] implementation for handling events from the managed node.
 
 use super::{
-    BlockProvider, ManagedNodeClient, ManagedNodeController, ManagedNodeDataProvider,
-    ManagedNodeError, SubscriptionHandler, resetter::Resetter,
+    resetter::Resetter, BlockProvider, ManagedNodeClient, ManagedNodeController,
+    ManagedNodeDataProvider, ManagedNodeError, SubscriptionHandler,
 };
 use crate::event::ChainEvent;
 use alloy_eips::BlockNumberOrTag;
 use alloy_network::Ethereum;
-use alloy_primitives::{B256, ChainId};
+use alloy_primitives::{ChainId, B256};
 use alloy_provider::{Provider, RootProvider};
 use alloy_rpc_types_eth::BlockNumHash;
 use async_trait::async_trait;
@@ -16,14 +16,14 @@ use kona_protocol::BlockInfo;
 use kona_supervisor_storage::{DerivationStorageReader, HeadRefStorageReader, LogStorageReader};
 use kona_supervisor_types::{BlockSeal, OutputV0, Receipts};
 use std::sync::Arc;
-use tokio::sync::{Mutex, mpsc};
+use tokio::sync::{mpsc, Mutex};
 use tracing::{debug, error, trace, warn};
 
 /// [`ManagedNode`] processes events dispatched from the managed node.
 ///
 /// It implements `SubscriptionHandler`, forwards resulting `ChainEvent`s to the chain
 /// processor, and delegates control operations to the underlying client/resetter.
-/// The WebSocket subscription lifecycle (subscription creation, reconnection/restart)
+/// The `WebSocket` subscription lifecycle (subscription creation, reconnection/restart)
 /// is managed by the supervisor actor and the client, not by this type.
 #[derive(Debug)]
 pub struct ManagedNode<DB, C> {
@@ -205,7 +205,7 @@ where
     }
 }
 
-/// Implements [`BlockProvider`] for [`ManagedNode`] by delegating to the underlying WebSocket
+/// Implements [`BlockProvider`] for [`ManagedNode`] by delegating to the underlying `WebSocket`
 /// client.
 #[async_trait]
 impl<DB, C> BlockProvider for ManagedNode<DB, C>
@@ -347,7 +347,7 @@ where
 mod tests {
     use super::*;
     use crate::syncnode::ClientError;
-    use alloy_primitives::{B256, ChainId, hex::FromHex};
+    use alloy_primitives::{hex::FromHex, ChainId, B256};
     use alloy_provider::RootProvider;
     use alloy_rpc_client::RpcClient;
     use alloy_transport::mock::*;

@@ -1,11 +1,11 @@
-//! This module contains the [HintType] enum.
+//! This module contains the [`HintType`] enum.
 
 use crate::errors::{HintParsingError, OracleProviderError};
 use alloc::{
     string::{String, ToString},
     vec::Vec,
 };
-use alloy_primitives::{Bytes, hex};
+use alloy_primitives::{hex, Bytes};
 use core::{fmt::Display, str::FromStr};
 use kona_preimage::HintWriterClient;
 
@@ -34,7 +34,7 @@ where
         (self.ty, self.data)
     }
 
-    /// Appends more data to [Hint::data].
+    /// Appends more data to [`Hint::data`].
     pub fn with_data<T: AsRef<[u8]>>(self, data: T) -> Self {
         // No-op if the data is empty.
         if data.as_ref().is_empty() {
@@ -48,7 +48,7 @@ where
         Self { data: hint_data.into(), ..self }
     }
 
-    /// Sends the hint to the passed [HintWriterClient].
+    /// Sends the hint to the passed [`HintWriterClient`].
     pub async fn send<T: HintWriterClient>(&self, comms: &T) -> Result<(), OracleProviderError> {
         comms.write(&self.encode()).await.map_err(OracleProviderError::Preimage)
     }
@@ -80,7 +80,7 @@ where
     }
 }
 
-/// The [HintType] enum is used to specify the type of hint that was received.
+/// The [`HintType`] enum is used to specify the type of hint that was received.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum HintType {
     /// A hint that specifies the block header of a layer 1 block.

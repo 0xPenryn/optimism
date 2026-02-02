@@ -1,10 +1,10 @@
 //! Optimism specific types related to transactions.
 
-use alloy_consensus::{Transaction as TransactionTrait, Typed2718, transaction::Recovered};
-use alloy_eips::{Encodable2718, eip2930::AccessList, eip7702::SignedAuthorization};
-use alloy_primitives::{Address, B256, BlockHash, Bytes, ChainId, TxKind, U256};
+use alloy_consensus::{transaction::Recovered, Transaction as TransactionTrait, Typed2718};
+use alloy_eips::{eip2930::AccessList, eip7702::SignedAuthorization, Encodable2718};
+use alloy_primitives::{Address, BlockHash, Bytes, ChainId, TxKind, B256, U256};
 use alloy_serde::OtherFields;
-use op_alloy_consensus::{OpTransaction, OpTxEnvelope, transaction::OpTransactionInfo};
+use op_alloy_consensus::{transaction::OpTransactionInfo, OpTransaction, OpTxEnvelope};
 use serde::{Deserialize, Serialize};
 
 mod request;
@@ -316,7 +316,7 @@ mod tx_serde {
             // Only serialize deposit_nonce if inner transaction is deposit to avoid duplicated keys
             let deposit_nonce = other.deposit_nonce.filter(|_| inner.is_deposit());
 
-            let effective_gas_price = other.effective_gas_price.or(inner.gas_price());
+            let effective_gas_price = other.effective_gas_price.or_else(|| inner.gas_price());
 
             Ok(Self {
                 inner: alloy_rpc_types_eth::Transaction {

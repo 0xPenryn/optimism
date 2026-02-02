@@ -1,8 +1,8 @@
 //! Utilities for creating hardforks.
 
-use alloy_primitives::{Address, Bytes, hex};
+use alloy_primitives::{hex, Address, Bytes};
 
-/// UpgradeTo Function 4Byte Signature
+/// `UpgradeTo` Function 4Byte Signature
 pub(crate) const UPGRADE_TO_FUNC_BYTES_4: [u8; 4] = hex!("3659cfe6");
 
 /// Turns the given address into calldata for the `upgradeTo` function.

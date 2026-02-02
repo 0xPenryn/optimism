@@ -1,6 +1,6 @@
 use alloy_primitives::ChainId;
 
-/// Container for ChainDb metrics.
+/// Container for `ChainDb` metrics.
 #[derive(Debug, Clone)]
 pub(crate) struct Metrics;
 

@@ -10,8 +10,9 @@ use crate::fpvm_evm::precompiles::utils::precompile_run;
 use alloc::string::ToString;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use revm::precompile::{
-    PrecompileError, PrecompileOutput, PrecompileResult, bls12_381,
+    bls12_381,
     bls12_381_const::{PAIRING_INPUT_LENGTH, PAIRING_MULTIPLIER_BASE, PAIRING_OFFSET_BASE},
+    PrecompileError, PrecompileOutput, PrecompileResult,
 };
 
 /// The max pairing size for BLS12-381 input given a 20M gas limit.

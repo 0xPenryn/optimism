@@ -252,7 +252,7 @@ mod test {
     use alloc::vec;
     use alloy_consensus::{BlockBody, Header};
     use alloy_eips::{BlockNumHash, NumHash};
-    use alloy_primitives::{FixedBytes, b256};
+    use alloy_primitives::{b256, FixedBytes};
     use kona_genesis::{ChainGenesis, HardForkConfig};
     use kona_protocol::{SingleBatch, SpanBatchElement};
     use op_alloy_consensus::OpBlock;

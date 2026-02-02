@@ -9,7 +9,7 @@ use alloy_primitives::B256;
 use async_trait::async_trait;
 use kona_derive::{L2ChainProvider, PipelineError, PipelineErrorKind};
 use kona_genesis::{ChainGenesis, RollupConfig, SystemConfig};
-use kona_protocol::{BatchValidationProvider, L2BlockInfo, to_system_config};
+use kona_protocol::{to_system_config, BatchValidationProvider, L2BlockInfo};
 use op_alloy_consensus::OpBlock;
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -147,7 +147,7 @@ impl BufferedL2Provider {
     }
 }
 
-/// Clone implementation for BufferedL2Provider
+/// Clone implementation for `BufferedL2Provider`
 impl Clone for BufferedL2Provider {
     fn clone(&self) -> Self {
         Self {
@@ -255,10 +255,10 @@ pub enum BufferedProviderError {
     /// Block not found in cache
     #[error("Block {0} not found in cache")]
     BlockNotFound(u64),
-    /// Failed to construct L2BlockInfo
+    /// Failed to construct `L2BlockInfo`
     #[error("Failed to construct L2BlockInfo for block {0}")]
     L2BlockInfoConstruction(u64),
-    /// Failed to convert block to SystemConfig
+    /// Failed to convert block to `SystemConfig`
     #[error("Failed to convert block {0} to SystemConfig")]
     SystemConfigConversion(u64),
     /// System config missing from genesis

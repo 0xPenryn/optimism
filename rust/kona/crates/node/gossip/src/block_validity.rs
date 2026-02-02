@@ -171,12 +171,12 @@ impl BlockHandler {
                         BlockInvalidError::Signer { .. } => "invalid_signer",
                         BlockInvalidError::TooManyBlocks { .. } => "too_many_blocks",
                         BlockInvalidError::BlockSeen { .. } => "block_seen",
-                        BlockInvalidError::InvalidBlock(_) => "invalid_block",
+                        BlockInvalidError::InvalidBlock(_) |
+                        BlockInvalidError::BaseFeePerGasOverflow(_) => "invalid_block",
                         BlockInvalidError::ParentBeaconRoot => "parent_beacon_root",
                         BlockInvalidError::BlobGasUsed => "blob_gas_used",
                         BlockInvalidError::ExcessBlobGas => "excess_blob_gas",
                         BlockInvalidError::WithdrawalsRoot => "withdrawals_root",
-                        BlockInvalidError::BaseFeePerGasOverflow(_) => "invalid_block",
                     };
                     kona_macros::inc!(counter, Metrics::BLOCK_VALIDATION_FAILED, "reason" => reason);
                 }
@@ -324,8 +324,7 @@ impl BlockHandler {
         }
 
         match &envelope.payload {
-            OpExecutionPayload::V1(_) => Ok(()),
-            OpExecutionPayload::V2(_) => Ok(()),
+            OpExecutionPayload::V1(_) | OpExecutionPayload::V2(_) => Ok(()),
             OpExecutionPayload::V3(payload) => {
                 validate_v3(&self.rollup_config, payload, envelope.parent_beacon_block_root)
             }
@@ -343,7 +342,7 @@ pub(crate) mod tests {
     use alloy_chains::Chain;
     use alloy_consensus::{Block, EMPTY_OMMER_ROOT_HASH};
     use alloy_eips::{eip2718::Encodable2718, eip4895::Withdrawal};
-    use alloy_primitives::{Address, B256, Bytes, Signature};
+    use alloy_primitives::{Address, Bytes, Signature, B256};
     use alloy_rlp::BufMut;
     use alloy_rpc_types_engine::{ExecutionPayloadV1, ExecutionPayloadV2, ExecutionPayloadV3};
     use arbitrary::{Arbitrary, Unstructured};
@@ -622,7 +621,7 @@ pub(crate) mod tests {
             })
             .collect::<Vec<_>>();
 
-        for envelope in next_payloads[..next_payloads.len() - 1].iter() {
+        for envelope in &next_payloads[..next_payloads.len() - 1] {
             assert!(handler.block_valid(envelope).is_ok());
         }
 

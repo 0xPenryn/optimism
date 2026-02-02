@@ -1,12 +1,12 @@
-//! Contains the [TrieDBProvider] trait for fetching EVM bytecode hash preimages as well as [Header]
-//! preimages.
+//! Contains the [`TrieDBProvider`] trait for fetching EVM bytecode hash preimages as well as
+//! [Header] preimages.
 
 use alloc::string::String;
 use alloy_consensus::Header;
-use alloy_primitives::{B256, Bytes};
+use alloy_primitives::{Bytes, B256};
 use kona_mpt::{TrieNode, TrieProvider};
 
-/// The [TrieDBProvider] trait defines the synchronous interface for fetching EVM bytecode hash
+/// The [`TrieDBProvider`] trait defines the synchronous interface for fetching EVM bytecode hash
 /// preimages as well as [Header] preimages.
 pub trait TrieDBProvider: TrieProvider {
     /// Fetches the preimage of the bytecode hash provided.
@@ -16,7 +16,7 @@ pub trait TrieDBProvider: TrieProvider {
     ///
     /// ## Returns
     /// - Ok(Bytes): The bytecode of the contract.
-    /// - Err(Self::Error): If the bytecode hash could not be fetched.
+    /// - `Err(Self::Error)`: If the bytecode hash could not be fetched.
     ///
     /// [TrieDB]: crate::TrieDB
     fn bytecode_by_hash(&self, code_hash: B256) -> Result<Bytes, Self::Error>;
@@ -28,13 +28,13 @@ pub trait TrieDBProvider: TrieProvider {
     ///
     /// ## Returns
     /// - Ok(Bytes): The [Header].
-    /// - Err(Self::Error): If the [Header] could not be fetched.
+    /// - `Err(Self::Error)`: If the [Header] could not be fetched.
     ///
     /// [TrieDB]: crate::TrieDB
     fn header_by_hash(&self, hash: B256) -> Result<Header, Self::Error>;
 }
 
-/// The default, no-op implementation of the [TrieDBProvider] trait, used for testing.
+/// The default, no-op implementation of the [`TrieDBProvider`] trait, used for testing.
 #[derive(Debug, Clone, Copy)]
 pub struct NoopTrieDBProvider;
 

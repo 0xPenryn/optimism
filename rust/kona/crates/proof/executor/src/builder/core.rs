@@ -1,19 +1,19 @@
 //! Stateless OP Stack L2 block builder implementation.
 //!
-//! The [StatelessL2Builder] provides a complete block building and execution engine
+//! The [`StatelessL2Builder`] provides a complete block building and execution engine
 //! for OP Stack L2 chains that operates in a stateless manner, pulling required state
-//! data from a [TrieDB] during execution rather than maintaining full state.
+//! data from a [`TrieDB`] during execution rather than maintaining full state.
 
 use crate::{ExecutorError, ExecutorResult, TrieDB, TrieDBError, TrieDBProvider};
 use alloc::{string::ToString, vec::Vec};
-use alloy_consensus::{Header, Sealed, crypto::RecoveryError};
+use alloy_consensus::{crypto::RecoveryError, Header, Sealed};
 use alloy_evm::{
-    EvmFactory, FromRecoveredTx, FromTxWithEncoded,
     block::{BlockExecutionResult, BlockExecutor, BlockExecutorFactory},
+    EvmFactory, FromRecoveredTx, FromTxWithEncoded,
 };
 use alloy_op_evm::{
-    OpBlockExecutionCtx, OpBlockExecutorFactory,
     block::{OpAlloyReceiptBuilder, OpTxEnv},
+    OpBlockExecutionCtx, OpBlockExecutorFactory,
 };
 use core::fmt::Debug;
 use kona_genesis::RollupConfig;
@@ -23,7 +23,7 @@ use op_alloy_rpc_types_engine::OpPayloadAttributes;
 use op_revm::OpSpecId;
 use revm::{
     context::BlockEnv,
-    database::{State, states::bundle_state::BundleRetention},
+    database::{states::bundle_state::BundleRetention, State},
 };
 
 /// Stateless OP Stack L2 block builder that derives state from trie proofs during execution.

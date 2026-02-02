@@ -1,8 +1,8 @@
 use super::EventHandler;
 use crate::{
-    ChainProcessorError, LogIndexer, ProcessorState,
     chain_processor::metrics::Metrics,
     syncnode::{BlockProvider, ManagedNodeCommand},
+    ChainProcessorError, LogIndexer, ProcessorState,
 };
 use alloy_primitives::ChainId;
 use async_trait::async_trait;

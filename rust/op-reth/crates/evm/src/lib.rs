@@ -57,7 +57,7 @@ mod build;
 pub use build::OpBlockAssembler;
 
 mod error;
-pub use error::OpBlockExecutionError;
+pub use error::{L1BlockInfoError, OpBlockExecutionError};
 
 pub use alloy_op_evm::{OpBlockExecutionCtx, OpBlockExecutorFactory, OpEvm, OpEvmFactory};
 

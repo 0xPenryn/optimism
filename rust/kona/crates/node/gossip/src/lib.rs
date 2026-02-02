@@ -7,7 +7,7 @@
 //! ## Key Components
 //!
 //! - [`GossipDriver`]: Main driver managing the libp2p swarm and event handling
-//! - [`Behaviour`]: Custom libp2p behavior combining GossipSub, Ping, and Identify
+//! - [`Behaviour`]: Custom libp2p behavior combining `GossipSub`, Ping, and Identify
 //! - [`BlockHandler`]: Validates and processes incoming block payloads
 //! - [`ConnectionGater`]: Sophisticated connection management and rate limiting
 //! - [`P2pRpcRequest`]: RPC interface for network administration
@@ -38,10 +38,10 @@ pub use behaviour::{Behaviour, BehaviourError};
 
 mod config;
 pub use config::{
-    DEFAULT_MESH_D, DEFAULT_MESH_DHI, DEFAULT_MESH_DLAZY, DEFAULT_MESH_DLO,
-    GLOBAL_VALIDATE_THROTTLE, GOSSIP_HEARTBEAT, MAX_GOSSIP_SIZE, MAX_OUTBOUND_QUEUE,
-    MAX_VALIDATE_QUEUE, MIN_GOSSIP_SIZE, PEER_SCORE_INSPECT_FREQUENCY, SEEN_MESSAGES_TTL,
-    default_config, default_config_builder,
+    default_config, default_config_builder, DEFAULT_MESH_D, DEFAULT_MESH_DHI, DEFAULT_MESH_DLAZY,
+    DEFAULT_MESH_DLO, GLOBAL_VALIDATE_THROTTLE, GOSSIP_HEARTBEAT, MAX_GOSSIP_SIZE,
+    MAX_OUTBOUND_QUEUE, MAX_VALIDATE_QUEUE, MIN_GOSSIP_SIZE, PEER_SCORE_INSPECT_FREQUENCY,
+    SEEN_MESSAGES_TTL,
 };
 
 mod gate;

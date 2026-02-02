@@ -1,6 +1,6 @@
 //! Contains a builder for the discovery service.
 
-use discv5::{Config, Discv5, Enr, enr::k256};
+use discv5::{enr::k256, Config, Discv5, Enr};
 use kona_peers::{BootNodes, BootStoreFile, OpStackEnr};
 use std::net::IpAddr;
 use tokio::time::Duration;
@@ -188,7 +188,7 @@ impl Discv5Builder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use discv5::{ConfigBuilder, ListenConfig, enr::CombinedKey};
+    use discv5::{enr::CombinedKey, ConfigBuilder, ListenConfig};
     use kona_peers::EnrValidation;
     use std::net::{IpAddr, Ipv4Addr};
 

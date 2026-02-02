@@ -2,7 +2,7 @@
 
 use crate::{NodeRecord, PeerId};
 use derive_more::From;
-use discv5::{Enr, enr::EnrPublicKey};
+use discv5::{enr::EnrPublicKey, Enr};
 use libp2p::swarm::dial_opts::DialOpts;
 
 use super::utils::peer_id_to_secp256k1_pubkey;

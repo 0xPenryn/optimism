@@ -4,7 +4,7 @@ use crate::SingleBatch;
 use alloc::vec::Vec;
 use alloy_primitives::Bytes;
 
-/// MAX_SPAN_BATCH_ELEMENTS is the maximum number of blocks, transactions in total,
+/// `MAX_SPAN_BATCH_ELEMENTS` is the maximum number of blocks, transactions in total,
 /// or transaction per block allowed in a span batch.
 pub const MAX_SPAN_BATCH_ELEMENTS: u64 = 10_000_000;
 

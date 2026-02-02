@@ -33,7 +33,7 @@ use reth_primitives_traits::{
 #[cfg_attr(any(test, feature = "reth-codec"), reth_codecs::add_arbitrary_tests(rlp))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, Eq)]
-pub struct OpTransactionSigned {
+pub(super) struct OpTransactionSigned {
     /// Transaction hash
     #[cfg_attr(feature = "serde", serde(skip))]
     hash: OnceLock<TxHash>,
@@ -52,7 +52,7 @@ impl Deref for OpTransactionSigned {
 
 impl OpTransactionSigned {
     /// Creates a new signed transaction from the given transaction, signature and hash.
-    pub fn new(transaction: OpTypedTransaction, signature: Signature, hash: B256) -> Self {
+    pub(super) fn new(transaction: OpTypedTransaction, signature: Signature, hash: B256) -> Self {
         Self { hash: hash.into(), signature, transaction }
     }
 
@@ -69,35 +69,35 @@ impl OpTransactionSigned {
 
     /// Consumes the type and returns the transaction.
     #[inline]
-    pub fn into_transaction(self) -> OpTypedTransaction {
+    pub(super) fn into_transaction(self) -> OpTypedTransaction {
         self.transaction
     }
 
     /// Returns the transaction.
     #[inline]
-    pub const fn transaction(&self) -> &OpTypedTransaction {
+    pub(super) const fn transaction(&self) -> &OpTypedTransaction {
         &self.transaction
     }
 
     /// Splits the `OpTransactionSigned` into its transaction and signature.
-    pub fn split(self) -> (OpTypedTransaction, Signature) {
+    pub(super) fn split(self) -> (OpTypedTransaction, Signature) {
         (self.transaction, self.signature)
     }
 
     /// Creates a new signed transaction from the given transaction and signature without the hash.
     ///
     /// Note: this only calculates the hash on the first [`OpTransactionSigned::hash`] call.
-    pub fn new_unhashed(transaction: OpTypedTransaction, signature: Signature) -> Self {
+    pub(super) fn new_unhashed(transaction: OpTypedTransaction, signature: Signature) -> Self {
         Self { hash: Default::default(), signature, transaction }
     }
 
     /// Returns whether this transaction is a deposit.
-    pub const fn is_deposit(&self) -> bool {
+    pub(super) const fn is_deposit(&self) -> bool {
         matches!(self.transaction, OpTypedTransaction::Deposit(_))
     }
 
     /// Splits the transaction into parts.
-    pub fn into_parts(self) -> (OpTypedTransaction, Signature, B256) {
+    pub(super) fn into_parts(self) -> (OpTypedTransaction, Signature, B256) {
         let hash = *self.hash.get_or_init(|| self.recalculate_hash());
         (self.transaction, self.signature, hash)
     }

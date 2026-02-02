@@ -9,8 +9,8 @@ use crate::{
 };
 use alloc::vec::Vec;
 use alloy_consensus::{Block, BlockHeader, Sealable, Transaction};
-use alloy_eips::{Encodable2718, eip4895::Withdrawal, eip7685::Requests};
-use alloy_primitives::{B256, Signature, keccak256};
+use alloy_eips::{eip4895::Withdrawal, eip7685::Requests, Encodable2718};
+use alloy_primitives::{keccak256, Signature, B256};
 use alloy_rpc_types_engine::{
     CancunPayloadFields, ExecutionPayloadInputV2, ExecutionPayloadV1, ExecutionPayloadV2,
     ExecutionPayloadV3, PraguePayloadFields,
@@ -228,7 +228,7 @@ impl OpExecutionData {
         let (transactions, withdrawals) =
             flashblocks.iter().fold((Vec::new(), Vec::new()), |(mut txs, mut withdrawals), p| {
                 txs.extend(p.diff.transactions.iter().cloned());
-                withdrawals.extend(p.diff.withdrawals.iter().cloned());
+                withdrawals.extend(p.diff.withdrawals.iter().copied());
                 (txs, withdrawals)
             });
 
@@ -734,21 +734,17 @@ mod tests {
         use alloy_primitives::{Address, Bloom, Bytes, U256};
         use alloy_rpc_types_engine::PayloadId;
 
-        let base = if with_base {
-            Some(OpFlashblockPayloadBase {
-                parent_beacon_block_root: B256::ZERO,
-                parent_hash: B256::ZERO,
-                fee_recipient: Address::ZERO,
-                prev_randao: B256::ZERO,
-                block_number: 100,
-                gas_limit: 30_000_000,
-                timestamp: 1234567890,
-                extra_data: Bytes::default(),
-                base_fee_per_gas: U256::from(1000000000u64),
-            })
-        } else {
-            None
-        };
+        let base = with_base.then(|| OpFlashblockPayloadBase {
+            parent_beacon_block_root: B256::ZERO,
+            parent_hash: B256::ZERO,
+            fee_recipient: Address::ZERO,
+            prev_randao: B256::ZERO,
+            block_number: 100,
+            gas_limit: 30_000_000,
+            timestamp: 1234567890,
+            extra_data: Bytes::default(),
+            base_fee_per_gas: U256::from(1000000000u64),
+        });
 
         let diff = OpFlashblockPayloadDelta {
             state_root: B256::ZERO,

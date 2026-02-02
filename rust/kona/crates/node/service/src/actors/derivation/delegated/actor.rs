@@ -1,6 +1,6 @@
 use crate::{
-    CancellableContext, DerivationActorRequest, DerivationEngineClient, NodeActor,
     actors::derivation::{DerivationDelegateClient, DerivationError},
+    CancellableContext, DerivationActorRequest, DerivationEngineClient, NodeActor,
 };
 use alloy_primitives::BlockHash;
 use async_trait::async_trait;
@@ -10,15 +10,15 @@ use thiserror::Error;
 use tokio::{select, sync::mpsc, time};
 use tokio_util::sync::{CancellationToken, WaitForCancellationFuture};
 
-/// The [NodeActor] for the delegate derivation sub-routine.
+/// The [`NodeActor`] for the delegate derivation sub-routine.
 ///
-/// This actor is responsible for receiving messages from [NodeActor]s and polls
+/// This actor is responsible for receiving messages from [`NodeActor`]s and polls
 /// an external derivation delegation provider for derivation state. It validates
 /// the canonicality of the L1 information associated with delegated derivation
 /// results against the canonical L1 chain before forwarding updates.
 ///
 /// Once validated, the actor sends the derived safe and finalized L2 info
-/// to the [NodeActor] responsible for the execution sub-routine.
+/// to the [`NodeActor`] responsible for the execution sub-routine.
 #[derive(Debug)]
 pub struct DelegateDerivationActor<DerivationEngineClient_>
 where
@@ -56,7 +56,7 @@ impl<DerivationEngineClient_> DelegateDerivationActor<DerivationEngineClient_>
 where
     DerivationEngineClient_: DerivationEngineClient,
 {
-    /// Creates a new instance of the [DelegateDerivationActor].
+    /// Creates a new instance of the [`DelegateDerivationActor`].
     pub fn new(
         engine_client: DerivationEngineClient_,
         cancellation_token: CancellationToken,

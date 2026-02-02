@@ -8,9 +8,9 @@ use kona_derive::PipelineErrorKind;
 use kona_driver::DriverError;
 use kona_executor::ExecutorError;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
-use kona_proof::{CachingOracle, errors::OracleProviderError};
+use kona_proof::{errors::OracleProviderError, CachingOracle};
 use kona_proof_interop::{
-    BootInfo, ConsolidationError, PreState, TRANSITION_STATE_MAX_STEPS, boot::BootstrapError,
+    boot::BootstrapError, BootInfo, ConsolidationError, PreState, TRANSITION_STATE_MAX_STEPS,
 };
 use thiserror::Error;
 use tracing::{error, info};

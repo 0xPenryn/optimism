@@ -5,7 +5,7 @@ use alloy_consensus::{Transaction, TxType, Typed2718};
 use alloy_primitives::{B256, U256};
 use alloy_rlp::{Buf, Header};
 use kona_genesis::{RollupConfig, SystemConfig};
-use op_alloy_consensus::{OpBlock, decode_holocene_extra_data, decode_jovian_extra_data};
+use op_alloy_consensus::{decode_holocene_extra_data, decode_jovian_extra_data, OpBlock};
 
 use crate::{
     L1BlockInfoBedrockOnlyFields as _, L1BlockInfoEcotoneBaseFields as _, L1BlockInfoTx,
@@ -138,7 +138,7 @@ mod tests {
     use crate::test_utils::{RAW_BEDROCK_INFO_TX, RAW_ECOTONE_INFO_TX, RAW_ISTHMUS_INFO_TX};
     use alloc::vec;
     use alloy_eips::eip1898::BlockNumHash;
-    use alloy_primitives::{U256, address, bytes, uint};
+    use alloy_primitives::{address, bytes, uint, U256};
     use kona_genesis::{ChainGenesis, HardForkConfig};
 
     #[test]

@@ -1,9 +1,9 @@
 //! Utilities to translate types.
 
 use discv5::{
-    Enr,
     enr::{CombinedPublicKey, EnrPublicKey},
     multiaddr::Protocol,
+    Enr,
 };
 use libp2p::Multiaddr;
 
@@ -104,7 +104,7 @@ mod tests {
         let mut received_tcp_port = None;
         let mut received_p2p_id = None;
 
-        for protocol in multiaddr.iter() {
+        for protocol in &multiaddr {
             match protocol {
                 Protocol::Ip4(ip) => {
                     received_ip = Some(ip);
@@ -145,7 +145,7 @@ mod tests {
         let mut received_tcp_port = None;
         let mut received_p2p_id = None;
 
-        for protocol in multiaddr.iter() {
+        for protocol in &multiaddr {
             match protocol {
                 Protocol::Ip6(ip) => {
                     received_ip = Some(ip);

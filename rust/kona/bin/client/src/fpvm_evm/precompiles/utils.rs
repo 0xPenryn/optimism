@@ -11,8 +11,8 @@ macro_rules! precompile_run {
     ($hint_writer:expr, $oracle_reader:expr, $hint_data:expr) => {
         async move {
             use alloc::{string::ToString, vec::Vec};
-            use kona_preimage::{PreimageKey, PreimageKeyType, errors::PreimageOracleError};
-            use kona_proof::{HintType, errors::OracleProviderError};
+            use kona_preimage::{errors::PreimageOracleError, PreimageKey, PreimageKeyType};
+            use kona_proof::{errors::OracleProviderError, HintType};
 
             // Write the hint for the precompile run.
             let hint_data = $hint_data;

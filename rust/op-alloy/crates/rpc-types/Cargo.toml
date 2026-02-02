@@ -51,19 +51,35 @@ similar-asserts.workspace = true
 [features]
 default = ["std"]
 std = [
-  "alloy-network-primitives/std",
-  "alloy-eips/std",
-  "alloy-primitives/std",
-  "alloy-rpc-types-eth/std",
-  "op-alloy-consensus/std",
+	"alloy-network-primitives/std",
+	"alloy-eips/std",
+	"alloy-primitives/std",
+	"alloy-rpc-types-eth/std",
+	"op-alloy-consensus/std",
+	"alloy-consensus/std",
+	"alloy-serde/std",
+	"derive_more/std",
+	"serde/std",
+	"serde_json/std",
+	"thiserror/std"
 ]
 arbitrary = [
-  "std",
-  "dep:arbitrary",
-  "alloy-primitives/arbitrary",
-  "alloy-rpc-types-eth/arbitrary",
-  "op-alloy-consensus/arbitrary",
+	"std",
+	"dep:arbitrary",
+	"alloy-primitives/arbitrary",
+	"alloy-rpc-types-eth/arbitrary",
+	"op-alloy-consensus/arbitrary",
+	"alloy-consensus/arbitrary",
+	"alloy-eips/arbitrary",
+	"alloy-serde/arbitrary"
 ]
 k256 = ["alloy-rpc-types-eth/k256", "op-alloy-consensus/k256"]
-serde = ["op-alloy-consensus/serde"]
+serde = [
+	"op-alloy-consensus/serde",
+	"alloy-consensus/serde",
+	"alloy-eips/serde",
+	"alloy-network-primitives/serde",
+	"alloy-primitives/serde",
+	"alloy-rpc-types-eth/serde"
+]
 jsonrpsee = ["dep:jsonrpsee"]

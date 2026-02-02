@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 pub struct EngineSyncState {
     /// Most recent block found on the P2P network (lowest safety level).
     unsafe_head: L2BlockInfo,
-    /// Cross-verified unsafe head (equal to unsafe_head pre-interop).
+    /// Cross-verified unsafe head (equal to `unsafe_head` pre-interop).
     cross_unsafe_head: L2BlockInfo,
     /// Derived from L1 data as a completed span-batch, but not yet cross-verified.
     local_safe_head: L2BlockInfo,

@@ -69,7 +69,7 @@ impl L2ChainProvider for TestSystemConfigL2Fetcher {
     ) -> Result<SystemConfig, <Self as L2ChainProvider>::Error> {
         self.system_configs
             .get(&number)
-            .cloned()
+            .copied()
             .ok_or_else(|| TestSystemConfigL2FetcherError::NotFound(number))
     }
 }

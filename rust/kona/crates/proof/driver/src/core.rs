@@ -3,7 +3,7 @@
 use crate::{DriverError, DriverPipeline, DriverResult, Executor, PipelineCursor, TipCursor};
 use alloc::{sync::Arc, vec::Vec};
 use alloy_consensus::BlockBody;
-use alloy_primitives::{B256, Bytes};
+use alloy_primitives::{Bytes, B256};
 use alloy_rlp::Decodable;
 use core::fmt::Debug;
 use kona_derive::{Pipeline, PipelineError, PipelineErrorKind, Signal, SignalReceiver};
@@ -151,7 +151,7 @@ where
     /// This method can fail with several error types:
     ///
     /// ## Pipeline Errors
-    /// - **EndOfSource (Critical)**: L1 data source exhausted
+    /// - **`EndOfSource` (Critical)**: L1 data source exhausted
     ///   - In interop mode: Returns error immediately for caller handling
     ///   - In normal mode: Adjusts target to current safe head and halts gracefully
     /// - **Temporary**: Insufficient data, automatically retried
@@ -165,8 +165,8 @@ where
     ///   - If deposit-only block also fails, returns critical error
     ///
     /// ## Other Errors
-    /// - **MissingOrigin**: Pipeline origin not available when expected
-    /// - **BlockConversion**: Failed to convert block format
+    /// - **`MissingOrigin`**: Pipeline origin not available when expected
+    /// - **`BlockConversion`**: Failed to convert block format
     /// - **RLP**: Failed to decode transaction data
     ///
     /// # Behavior Details
@@ -207,7 +207,7 @@ where
     ///
     /// # Panics
     /// This method does not explicitly panic, but may propagate panics from:
-    /// - RwLock poisoning (if another thread panicked while holding the cursor lock)
+    /// - `RwLock` poisoning (if another thread panicked while holding the cursor lock)
     /// - Executor or pipeline implementation panics
     /// - Arithmetic overflow in block number operations (highly unlikely)
     pub async fn advance_to_target(
@@ -219,11 +219,11 @@ where
             // Check if we have reached the target block number.
             let pipeline_cursor = self.cursor.read();
             let tip_cursor = pipeline_cursor.tip();
-            if let Some(tb) = target {
-                if tip_cursor.l2_safe_head.block_info.number >= tb {
-                    info!(target: "client", "Derivation complete, reached L2 safe head.");
-                    return Ok((tip_cursor.l2_safe_head, tip_cursor.l2_safe_head_output_root));
-                }
+            if let Some(tb) = target &&
+                tip_cursor.l2_safe_head.block_info.number >= tb
+            {
+                info!(target: "client", "Derivation complete, reached L2 safe head.");
+                return Ok((tip_cursor.l2_safe_head, tip_cursor.l2_safe_head_output_root));
             }
 
             let mut attributes = match self.pipeline.produce_payload(tip_cursor.l2_safe_head).await
@@ -242,9 +242,8 @@ where
                     // Otherwise, we continue the loop to halt derivation on the next iteration.
                     if cfg.is_interop_active(self.cursor.read().l2_safe_head().block_info.number) {
                         return Err(PipelineError::EndOfSource.crit().into());
-                    } else {
-                        continue;
                     }
+                    continue;
                 }
                 Err(e) => {
                     error!(target: "client", "Failed to produce payload: {:?}", e);

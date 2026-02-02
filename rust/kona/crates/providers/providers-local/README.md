@@ -10,8 +10,8 @@ This crate provides a pure in-memory L2 provider implementation for the Kona OP 
 
 ## Features
 
-- **BufferedL2Provider**: A pure in-memory L2 provider that serves data from cached blocks
-- **ChainStateBuffer**: LRU cache for managing chain state with reorganization support
+- **`BufferedL2Provider`**: A pure in-memory L2 provider that serves data from cached blocks
+- **`ChainStateBuffer`**: LRU cache for managing chain state with reorganization support
 - **Chain Event Handling**: Support for processing execution extension notifications for chain events (commits, reorgs, reverts)
 - **No External Dependencies**: Operates entirely from in-memory state without RPC calls
 

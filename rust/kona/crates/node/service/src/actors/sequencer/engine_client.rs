@@ -1,6 +1,6 @@
 use crate::{
-    EngineClientError, EngineClientResult,
     actors::engine::{BuildRequest, EngineActorRequest, ResetRequest, SealRequest},
+    EngineClientError, EngineClientResult,
 };
 use alloy_rpc_types_engine::PayloadId;
 use async_trait::async_trait;
@@ -45,7 +45,7 @@ pub trait SequencerEngineClient: Debug + Send + Sync {
 /// channel-based communication.
 #[derive(Constructor, Debug)]
 pub struct QueuedSequencerEngineClient {
-    /// A channel to use to send the EngineActor requests.
+    /// A channel to use to send the `EngineActor` requests.
     pub engine_actor_request_tx: mpsc::Sender<EngineActorRequest>,
     /// A channel to receive the latest unsafe head [`L2BlockInfo`].
     pub unsafe_head_rx: watch::Receiver<L2BlockInfo>,

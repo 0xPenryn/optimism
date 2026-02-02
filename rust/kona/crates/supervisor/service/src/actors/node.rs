@@ -11,7 +11,7 @@ use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 use tracing::{error, info, warn};
 
-use crate::{SupervisorActor, actors::utils::spawn_task_with_retry};
+use crate::{actors::utils::spawn_task_with_retry, SupervisorActor};
 
 /// Actor for managing a node in the supervisor environment.
 #[derive(Debug, Constructor)]
@@ -181,72 +181,71 @@ async fn run_subscription_task<C: ManagedNodeClient, N: SubscriptionHandler>(
 }
 
 async fn handle_subscription_event<N: SubscriptionHandler>(handler: &Arc<N>, event: ManagedEvent) {
-    if let Some(reset_id) = &event.reset {
-        if let Err(err) = handler.handle_reset(reset_id).await {
-            warn!(
-                target: "supervisor::syncnode",
-                %err,
-                %reset_id,
-                "Failed to handle reset event"
-            );
-        }
+    if let Some(reset_id) = &event.reset &&
+        let Err(err) = handler.handle_reset(reset_id).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %reset_id,
+            "Failed to handle reset event"
+        );
     }
 
-    if let Some(unsafe_block) = &event.unsafe_block {
-        if let Err(err) = handler.handle_unsafe_block(unsafe_block).await {
-            warn!(
-                target: "supervisor::syncnode",
-                %err,
-                %unsafe_block,
-                "Failed to handle unsafe block event"
-            );
-        }
+    if let Some(unsafe_block) = &event.unsafe_block &&
+        let Err(err) = handler.handle_unsafe_block(unsafe_block).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %unsafe_block,
+            "Failed to handle unsafe block event"
+        );
     }
 
-    if let Some(derived_ref_pair) = &event.derivation_update {
-        if event.derivation_origin_update.is_none() {
-            if let Err(err) = handler.handle_derivation_update(derived_ref_pair).await {
-                warn!(
-                    target: "supervisor::syncnode",
-                    %err,
-                    %derived_ref_pair,
-                    "Failed to handle derivation update event"
-                );
-            }
-        }
+    if let Some(derived_ref_pair) = &event.derivation_update &&
+        event.derivation_origin_update.is_none() &&
+        let Err(err) = handler.handle_derivation_update(derived_ref_pair).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %derived_ref_pair,
+            "Failed to handle derivation update event"
+        );
     }
 
-    if let Some(origin) = &event.derivation_origin_update {
-        if let Err(err) = handler.handle_derivation_origin_update(origin).await {
-            warn!(
-                target: "supervisor::syncnode",
-                %err,
-                %origin,
-                "Failed to handle derivation origin update event"
-            );
-        }
+    if let Some(origin) = &event.derivation_origin_update &&
+        let Err(err) = handler.handle_derivation_origin_update(origin).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %origin,
+            "Failed to handle derivation origin update event"
+        );
     }
 
-    if let Some(derived_ref_pair) = &event.exhaust_l1 {
-        if let Err(err) = handler.handle_exhaust_l1(derived_ref_pair).await {
-            warn!(
-                target: "supervisor::syncnode",
-                %err,
-                %derived_ref_pair,
-                "Failed to handle L1 exhaust event"
-            );
-        }
+    if let Some(derived_ref_pair) = &event.exhaust_l1 &&
+        let Err(err) = handler.handle_exhaust_l1(derived_ref_pair).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %derived_ref_pair,
+            "Failed to handle L1 exhaust event"
+        );
     }
 
-    if let Some(replacement) = &event.replace_block {
-        if let Err(err) = handler.handle_replace_block(replacement).await {
-            warn!(
-                target: "supervisor::syncnode",
-                %err,
-                %replacement,
-                "Failed to handle block replacement event"
-            );
-        }
+    if let Some(replacement) = &event.replace_block &&
+        let Err(err) = handler.handle_replace_block(replacement).await
+    {
+        warn!(
+            target: "supervisor::syncnode",
+            %err,
+            %replacement,
+            "Failed to handle block replacement event"
+        );
     }
 }
 
@@ -261,7 +260,7 @@ pub enum SupervisorRpcActorError {
 mod tests {
     use super::*;
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{B256, ChainId};
+    use alloy_primitives::{ChainId, B256};
     use jsonrpsee::core::client::Subscription;
     use kona_interop::{BlockReplacement, DerivedRefPair};
     use kona_protocol::BlockInfo;

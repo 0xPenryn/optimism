@@ -15,7 +15,7 @@ use std::path::PathBuf;
 /// ```sh
 /// kona-node bootstore [FLAGS] [OPTIONS]
 /// ```
-#[derive(Parser, Default, PartialEq, Debug, Clone)]
+#[derive(Parser, Default, PartialEq, Eq, Debug, Clone)]
 #[command(about = "Utility tool to interact with local bootstores")]
 pub struct BootstoreCommand {
     /// Optionally prints all bootstores.
@@ -57,7 +57,7 @@ impl BootstoreCommand {
     pub fn info(&self, chain_id: u64) -> anyhow::Result<()> {
         let chain = kona_registry::OPCHAINS
             .get(&chain_id)
-            .ok_or(anyhow::anyhow!("Chain ID {chain_id} not found in the registry"))?;
+            .ok_or_else(|| anyhow::anyhow!("Chain ID {chain_id} not found in the registry"))?;
         println!("{} Bootstore (Chain ID: {chain_id})", chain.name);
         let bootstore: BootStoreFile = self
             .bootstore

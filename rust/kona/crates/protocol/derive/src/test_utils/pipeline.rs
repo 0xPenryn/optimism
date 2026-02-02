@@ -2,8 +2,8 @@
 //! as well as its stages and providers.
 
 use crate::{
-    BatchProvider, PipelineResult,
     test_utils::{TestChainProvider, TestL2ChainProvider},
+    BatchProvider, PipelineResult,
 };
 use alloc::{boxed::Box, sync::Arc};
 use kona_genesis::RollupConfig;
@@ -11,10 +11,10 @@ use kona_protocol::{BlockInfo, L2BlockInfo, OpAttributesWithParent};
 
 // Re-export these types used internally to the test pipeline.
 use crate::{
+    test_utils::{TestAttributesBuilder, TestDAP},
     AttributesQueue, BatchStream, ChannelProvider, ChannelReader, DerivationPipeline, FrameQueue,
     L1Retrieval, NextAttributes, OriginAdvancer, OriginProvider, PipelineBuilder, PipelineError,
     PollingTraversal, Signal, SignalReceiver,
-    test_utils::{TestAttributesBuilder, TestDAP},
 };
 
 /// A fully custom [`NextAttributes`].

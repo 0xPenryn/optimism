@@ -1,6 +1,6 @@
 //! Macros used across test utilities.
 
-/// A shorthand syntax for constructing [kona_protocol::Frame]s.
+/// A shorthand syntax for constructing [`kona_protocol::Frame`]s.
 #[macro_export]
 macro_rules! frame {
     ($id:expr, $number:expr, $data:expr, $is_last:expr) => {
@@ -8,7 +8,7 @@ macro_rules! frame {
     };
 }
 
-/// A shorthand syntax for constructing a list of [kona_protocol::Frame]s.
+/// A shorthand syntax for constructing a list of [`kona_protocol::Frame`]s.
 #[macro_export]
 macro_rules! frames {
     ($id:expr, $number:expr, $data:expr, $count:expr) => {{

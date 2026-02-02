@@ -1,8 +1,8 @@
-//! Utility module to house implementation and declaration of MetricsArgs since it's being used in
+//! Utility module to house implementation and declaration of `MetricsArgs` since it's being used in
 //! multiple places, it's just being referenced from this module.
 
-use crate::{CliResult, init_prometheus_server};
-use clap::{Parser, arg};
+use crate::{init_prometheus_server, CliResult};
+use clap::Parser;
 use std::net::IpAddr;
 
 /// Configuration for Prometheus metrics.
@@ -57,7 +57,7 @@ mod tests {
     use clap::Parser;
     use std::net::{IpAddr, Ipv4Addr};
 
-    /// Helper struct to parse MetricsArgs within a test CLI structure.
+    /// Helper struct to parse `MetricsArgs` within a test CLI structure.
     #[derive(Parser, Debug)]
     struct TestCli {
         #[command(flatten)]

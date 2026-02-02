@@ -23,7 +23,7 @@ pub struct FlashblocksFlags {
     )]
     pub flashblocks: bool,
 
-    /// Flashblocks Builder WebSocket URL
+    /// Flashblocks Builder `WebSocket` URL
     #[arg(
         long,
         visible_alias = "rollup-boost.flashblocks-builder-url",
@@ -32,7 +32,7 @@ pub struct FlashblocksFlags {
     )]
     pub flashblocks_builder_url: Url,
 
-    /// Flashblocks WebSocket host for outbound connections
+    /// Flashblocks `WebSocket` host for outbound connections
     #[arg(
         long,
         visible_alias = "rollup-boost.flashblocks-host",
@@ -41,7 +41,7 @@ pub struct FlashblocksFlags {
     )]
     pub flashblocks_host: String,
 
-    /// Flashblocks WebSocket port for outbound connections
+    /// Flashblocks `WebSocket` port for outbound connections
     #[arg(
         long,
         visible_alias = "rollup-boost.flashblocks-port",
@@ -67,7 +67,7 @@ impl Default for FlashblocksFlags {
     }
 }
 
-/// Configuration for the Flashblocks WebSocket connection.
+/// Configuration for the Flashblocks `WebSocket` connection.
 #[derive(Parser, Debug, Clone, Copy)]
 pub struct FlashblocksWebsocketFlags {
     /// Minimum time for exponential backoff for timeout if builder disconnected

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use alloy_primitives::{Address, B256, ChainId, SignatureError};
+use alloy_primitives::{Address, ChainId, SignatureError, B256};
 use alloy_rpc_client::RpcClient;
 use alloy_signer::Signature;
 use notify::RecommendedWatcher;

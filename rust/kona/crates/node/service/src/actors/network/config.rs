@@ -6,7 +6,7 @@ use kona_genesis::RollupConfig;
 use kona_gossip::GaterConfig;
 use kona_peers::{BootNodes, BootStoreFile, PeerMonitoring, PeerScoreLevel};
 use kona_sources::BlockSigner;
-use libp2p::{Multiaddr, identity::Keypair};
+use libp2p::{identity::Keypair, Multiaddr};
 use tokio::time::Duration;
 
 /// Configuration for kona's P2P stack.

@@ -4,11 +4,11 @@ use crate::fpvm_evm::precompiles::utils::precompile_run;
 use alloc::string::ToString;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use revm::precompile::{
-    PrecompileError, PrecompileOutput, PrecompileResult,
     bn254::{
-        PAIR_ELEMENT_LEN,
         pair::{self, ISTANBUL_PAIR_BASE, ISTANBUL_PAIR_PER_POINT},
+        PAIR_ELEMENT_LEN,
     },
+    PrecompileError, PrecompileOutput, PrecompileResult,
 };
 
 const BN256_MAX_PAIRING_SIZE_GRANITE: usize = 112_687;

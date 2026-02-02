@@ -16,7 +16,7 @@
 //! - `-o` or `--output-dir`: (Optional) The output directory for the fixture. If not provided,
 //!   defaults to `kona-executor`'s `testdata` directory.
 
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use clap::Parser;
 use kona_cli::{LogArgs, LogConfig};
 use kona_executor::test_utils::ExecutorTestFixtureCreator;

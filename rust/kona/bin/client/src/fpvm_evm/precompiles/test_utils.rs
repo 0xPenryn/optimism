@@ -1,12 +1,12 @@
 //! Test utilities for accelerated precompiles.
 
-use alloy_primitives::{Address, Bytes, keccak256};
+use alloy_primitives::{keccak256, Address, Bytes};
 use async_trait::async_trait;
 use kona_preimage::{
+    errors::{PreimageOracleError, PreimageOracleResult},
     BidirectionalChannel, HintReader, HintReaderServer, HintRouter, HintWriter, NativeChannel,
     OracleReader, OracleServer, PreimageFetcher, PreimageKey, PreimageKeyType,
     PreimageOracleServer,
-    errors::{PreimageOracleError, PreimageOracleResult},
 };
 use kona_proof::{Hint, HintType};
 use revm::precompile::PrecompileResult;

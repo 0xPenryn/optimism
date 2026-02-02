@@ -1,8 +1,8 @@
 //! The Optimism RPC API using `jsonrpsee`
 
 use crate::{
-    OutputResponse, SafeHeadResponse,
     health::{HealthzResponse, RollupBoostHealthzResponse},
+    OutputResponse, SafeHeadResponse,
 };
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::B256;
@@ -34,7 +34,7 @@ pub trait RollupNodeApi {
     /// Get the output root at a specific block.
     #[method(name = "outputAtBlock")]
     async fn op_output_at_block(&self, block_number: BlockNumberOrTag)
-    -> RpcResult<OutputResponse>;
+        -> RpcResult<OutputResponse>;
 
     /// Gets the safe head at an L1 block height.
     #[method(name = "safeHeadAtL1Block")]
@@ -173,7 +173,7 @@ pub trait AdminApi {
     /// Posts the unsafe payload.
     #[method(name = "postUnsafePayload")]
     async fn admin_post_unsafe_payload(&self, payload: OpExecutionPayloadEnvelope)
-    -> RpcResult<()>;
+        -> RpcResult<()>;
 
     /// Checks if the sequencer is active.
     #[method(name = "sequencerActive")]

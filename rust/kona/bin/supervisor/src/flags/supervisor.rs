@@ -1,7 +1,7 @@
 use alloy_network::Ethereum;
 use alloy_provider::{Provider, RootProvider};
 use alloy_rpc_types_engine::JwtSecret;
-use anyhow::{Context as _, Ok, Result, anyhow};
+use anyhow::{anyhow, Context as _, Ok, Result};
 use clap::Args;
 use glob::glob;
 use kona_genesis::RollupConfig;
@@ -216,7 +216,7 @@ mod tests {
     use kona_interop::{ChainDependency, DependencySet};
     use kona_registry::HashMap;
     use std::{fs::File, io::Write, net::Ipv4Addr};
-    use tempfile::{NamedTempFile, tempdir};
+    use tempfile::{tempdir, NamedTempFile};
 
     // Helper struct to parse SupervisorArgs within a test CLI structure
     #[derive(Parser, Debug)]
@@ -299,6 +299,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[allow(clippy::zero_sized_map_values)]
     async fn test_init_dependency_set_success() -> anyhow::Result<()> {
         let mut temp_file = NamedTempFile::new()?;
         let json_content = r#"
@@ -662,7 +663,7 @@ mod tests {
         let args = SupervisorArgs {
             l1_rpc: "dummy".to_string(),
             // clap/env may produce [""] — ensure it's filtered to empty
-            l2_consensus_nodes: vec!["".to_string()],
+            l2_consensus_nodes: vec![String::new()],
             l2_consensus_jwt_secret: vec![],
             datadir: PathBuf::from("dummy"),
             datadir_sync_endpoint: None,

@@ -1,15 +1,15 @@
 //! Consensus-layer gossipsub driver for Optimism.
 
-use alloy_primitives::{Address, hex};
+use alloy_primitives::{hex, Address};
 use derive_more::Debug;
 use discv5::Enr;
-use futures::{AsyncReadExt, AsyncWriteExt, stream::StreamExt};
+use futures::{stream::StreamExt, AsyncReadExt, AsyncWriteExt};
 use kona_genesis::RollupConfig;
-use kona_peers::{EnrValidation, PeerMonitoring, enr_to_multiaddr};
+use kona_peers::{enr_to_multiaddr, EnrValidation, PeerMonitoring};
 use libp2p::{
-    Multiaddr, PeerId, Swarm, TransportError,
     gossipsub::{IdentTopic, MessageId},
     swarm::SwarmEvent,
+    Multiaddr, PeerId, Swarm, TransportError,
 };
 use libp2p_identity::Keypair;
 use libp2p_stream::IncomingStreams;
@@ -192,15 +192,14 @@ where
         match self.swarm.listen_on(self.addr.clone()) {
             Ok(id) => loop {
                 if let SwarmEvent::NewListenAddr { address, listener_id } =
-                    self.swarm.select_next_some().await
+                    self.swarm.select_next_some().await &&
+                    id == listener_id
                 {
-                    if id == listener_id {
-                        info!(target: "gossip", "Swarm now listening on: {address}");
+                    info!(target: "gossip", "Swarm now listening on: {address}");
 
-                        self.addr = address.clone();
+                    self.addr = address.clone();
 
-                        return Ok(address);
-                    }
+                    return Ok(address);
                 }
             },
             Err(err) => {

@@ -1,9 +1,9 @@
 //! A task for importing a block that has already been started.
 use super::SealTaskError;
 use crate::{
+    task_queue::build_and_seal,
     EngineClient, EngineGetPayloadVersion, EngineState, EngineTaskExt, InsertTask,
     InsertTaskError::{self},
-    task_queue::build_and_seal,
 };
 use alloy_rpc_types_engine::{ExecutionPayload, PayloadId};
 use async_trait::async_trait;
@@ -118,9 +118,9 @@ impl<EngineClient_: EngineClient> SealTask<EngineClient_> {
     /// Inserts a payload into the engine with Holocene fallback support.
     ///
     /// This function handles:
-    /// 1. Executing the InsertTask to import the payload
+    /// 1. Executing the `InsertTask` to import the payload
     /// 2. Handling deposits-only payload failures
-    /// 3. Holocene fallback via build_and_seal if needed
+    /// 3. Holocene fallback via `build_and_seal` if needed
     ///
     /// Returns Ok(()) if the payload is successfully inserted, or an error if insertion fails.
     async fn insert_payload(

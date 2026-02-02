@@ -1,5 +1,5 @@
 use crate::{
-    L1OriginSelectorError, UnsafePayloadGossipClientError, actors::engine::EngineClientError,
+    actors::engine::EngineClientError, L1OriginSelectorError, UnsafePayloadGossipClientError,
 };
 use kona_derive::PipelineErrorKind;
 use kona_engine::BuildTaskError;

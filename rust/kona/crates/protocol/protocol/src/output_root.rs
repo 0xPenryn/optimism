@@ -1,10 +1,10 @@
 //! The [`OutputRoot`] type.
 
-use alloy_primitives::{B256, keccak256};
+use alloy_primitives::{keccak256, B256};
 use derive_more::Display;
 
 /// The [`OutputRoot`] is a high-level commitment to an L2 block. It lifts the state root from the
-/// block header as well as the storage root of the [Predeploys::L2_TO_L1_MESSAGE_PASSER] account
+/// block header as well as the storage root of the [`Predeploys::L2_TO_L1_MESSAGE_PASSER`] account
 /// into the top-level commitment construction.
 ///
 /// <https://specs.optimism.io/protocol/proposals.html#l2-output-commitment-construction>
@@ -60,7 +60,7 @@ impl OutputRoot {
 #[cfg(test)]
 mod test {
     use super::OutputRoot;
-    use alloy_primitives::{B256, Bytes, b256, bytes};
+    use alloy_primitives::{b256, bytes, Bytes, B256};
 
     fn test_or() -> OutputRoot {
         OutputRoot::from_parts(

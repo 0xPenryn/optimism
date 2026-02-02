@@ -3,7 +3,7 @@
 //! This module is adapted from <https://github.com/paradigmxyz/reth/blob/aef442740c51fc00884d34931ebc3b547e41b9f4/crates/cli/util/src/load_secret_key.rs#L20>
 
 use alloy_primitives::B256;
-use libp2p::identity::{Keypair, secp256k1::SecretKey};
+use libp2p::identity::{secp256k1::SecretKey, Keypair};
 use std::{
     path::{Path, PathBuf},
     str::FromStr,

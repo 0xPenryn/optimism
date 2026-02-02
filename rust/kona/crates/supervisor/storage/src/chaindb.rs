@@ -1,25 +1,25 @@
 //! Main database access structure and transaction contexts.
 
 use crate::{
-    Metrics, StorageRewinder,
     error::StorageError,
     providers::{DerivationProvider, LogProvider, SafetyHeadRefProvider},
     traits::{
         DerivationStorageReader, DerivationStorageWriter, HeadRefStorageReader,
         HeadRefStorageWriter, LogStorageReader, LogStorageWriter,
     },
+    Metrics, StorageRewinder,
 };
 use alloy_eips::eip1898::BlockNumHash;
 use alloy_primitives::ChainId;
 use kona_interop::DerivedRefPair;
 use kona_protocol::BlockInfo;
-use kona_supervisor_metrics::{MetricsReporter, observe_metrics_for_result};
+use kona_supervisor_metrics::{observe_metrics_for_result, MetricsReporter};
 use kona_supervisor_types::{Log, SuperHead};
-use metrics::{Label, gauge};
+use metrics::{gauge, Label};
 use op_alloy_consensus::interop::SafetyLevel;
 use reth_db::{
+    mdbx::{init_db_for, DatabaseArguments},
     DatabaseEnv,
-    mdbx::{DatabaseArguments, init_db_for},
 };
 use reth_db_api::database::Database;
 use std::path::Path;
@@ -1014,17 +1014,17 @@ mod tests {
         db.store_block_logs(&derived2, vec![]).expect("storing logs failed");
         db.store_block_logs(&derived3, vec![]).expect("storing logs failed");
 
-        assert!(
-            db.save_derived_block(DerivedRefPair { source: source1, derived: derived1 }).is_ok()
-        );
+        assert!(db
+            .save_derived_block(DerivedRefPair { source: source1, derived: derived1 })
+            .is_ok());
 
         assert!(db.save_source_block(source2).is_ok());
-        assert!(
-            db.save_derived_block(DerivedRefPair { source: source2, derived: derived2 }).is_ok()
-        );
-        assert!(
-            db.save_derived_block(DerivedRefPair { source: source2, derived: derived3 }).is_ok()
-        );
+        assert!(db
+            .save_derived_block(DerivedRefPair { source: source2, derived: derived2 })
+            .is_ok());
+        assert!(db
+            .save_derived_block(DerivedRefPair { source: source2, derived: derived3 })
+            .is_ok());
 
         let safe_derived = db.latest_derived_block_at_source(source1.id()).expect("should exist");
         assert_eq!(safe_derived, derived1);

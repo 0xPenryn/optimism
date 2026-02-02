@@ -15,7 +15,7 @@ pub struct SpanBatchPayload {
     pub origin_bits: SpanBatchBits,
     /// List of transaction counts for each L2 block
     pub block_tx_counts: Vec<u64>,
-    /// Transactions encoded in SpanBatch specs
+    /// Transactions encoded in `SpanBatch` specs
     pub txs: SpanBatchTransactions,
 }
 

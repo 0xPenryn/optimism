@@ -6,7 +6,7 @@ use super::{OpDepositReceipt, OpTxReceipt};
 use crate::{OpReceiptEnvelope, OpTxType};
 use alloc::vec::Vec;
 use alloy_consensus::{
-    Eip658Value, Eip2718DecodableReceipt, Eip2718EncodableReceipt, Receipt, ReceiptWithBloom,
+    Eip2718DecodableReceipt, Eip2718EncodableReceipt, Eip658Value, Receipt, ReceiptWithBloom,
     RlpDecodableReceipt, RlpEncodableReceipt, TxReceipt, Typed2718,
 };
 use alloy_eips::eip2718::{Eip2718Error, Eip2718Result, IsTyped2718};
@@ -53,10 +53,10 @@ impl<T> OpReceipt<T> {
     /// Returns inner [`Receipt`].
     pub const fn as_receipt(&self) -> &Receipt<T> {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt,
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt,
             Self::Deposit(receipt) => &receipt.inner,
         }
     }
@@ -64,10 +64,10 @@ impl<T> OpReceipt<T> {
     /// Returns a mutable reference to the inner [`Receipt`].
     pub const fn as_receipt_mut(&mut self) -> &mut Receipt<T> {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt,
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt,
             Self::Deposit(receipt) => &mut receipt.inner,
         }
     }
@@ -75,10 +75,10 @@ impl<T> OpReceipt<T> {
     /// Consumes this and returns the inner [`Receipt`].
     pub fn into_receipt(self) -> Receipt<T> {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt,
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt,
             Self::Deposit(receipt) => receipt.inner,
         }
     }
@@ -102,10 +102,10 @@ impl<T> OpReceipt<T> {
         T: Encodable,
     {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt.rlp_encoded_fields_length_with_bloom(bloom),
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt.rlp_encoded_fields_length_with_bloom(bloom),
             Self::Deposit(receipt) => receipt.rlp_encoded_fields_length_with_bloom(bloom),
         }
     }
@@ -116,10 +116,10 @@ impl<T> OpReceipt<T> {
         T: Encodable,
     {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt.rlp_encode_fields_with_bloom(bloom, out),
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt.rlp_encode_fields_with_bloom(bloom, out),
             Self::Deposit(receipt) => receipt.rlp_encode_fields_with_bloom(bloom, out),
         }
     }
@@ -185,10 +185,10 @@ impl<T> OpReceipt<T> {
     {
         self.tx_type().encode(out);
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => {
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => {
                 receipt.status.encode(out);
                 receipt.cumulative_gas_used.encode(out);
                 receipt.logs.encode(out);
@@ -212,22 +212,22 @@ impl<T> OpReceipt<T> {
     where
         T: Encodable,
     {
-        self.tx_type().length()
-            + match self {
-                Self::Legacy(receipt)
-                | Self::Eip2930(receipt)
-                | Self::Eip1559(receipt)
-                | Self::Eip7702(receipt) => {
-                    receipt.status.length()
-                        + receipt.cumulative_gas_used.length()
-                        + receipt.logs.length()
+        self.tx_type().length() +
+            match self {
+                Self::Legacy(receipt) |
+                Self::Eip2930(receipt) |
+                Self::Eip1559(receipt) |
+                Self::Eip7702(receipt) => {
+                    receipt.status.length() +
+                        receipt.cumulative_gas_used.length() +
+                        receipt.logs.length()
                 }
                 Self::Deposit(receipt) => {
-                    receipt.inner.status.length()
-                        + receipt.inner.cumulative_gas_used.length()
-                        + receipt.inner.logs.length()
-                        + receipt.deposit_nonce.map_or(0, |nonce| nonce.length())
-                        + receipt.deposit_receipt_version.map_or(0, |version| version.length())
+                    receipt.inner.status.length() +
+                        receipt.inner.cumulative_gas_used.length() +
+                        receipt.inner.logs.length() +
+                        receipt.deposit_nonce.map_or(0, |nonce| nonce.length()) +
+                        receipt.deposit_receipt_version.map_or(0, |version| version.length())
                 }
             }
     }
@@ -399,10 +399,10 @@ impl<T: Send + Sync + Clone + Debug + Eq + AsRef<Log>> TxReceipt for OpReceipt<T
 
     fn into_logs(self) -> Vec<Self::Log> {
         match self {
-            Self::Legacy(receipt)
-            | Self::Eip2930(receipt)
-            | Self::Eip1559(receipt)
-            | Self::Eip7702(receipt) => receipt.logs,
+            Self::Legacy(receipt) |
+            Self::Eip2930(receipt) |
+            Self::Eip1559(receipt) |
+            Self::Eip7702(receipt) => receipt.logs,
             Self::Deposit(receipt) => receipt.inner.logs,
         }
     }
@@ -475,8 +475,8 @@ pub(crate) mod serde_bincode_compat {
     ///
     /// Intended to use with the [`serde_with::serde_as`] macro in the following way:
     /// ```rust
-    /// use op_alloy_consensus::{OpReceipt, serde_bincode_compat};
-    /// use serde::{Deserialize, Serialize, de::DeserializeOwned};
+    /// use op_alloy_consensus::{serde_bincode_compat, OpReceipt};
+    /// use serde::{de::DeserializeOwned, Deserialize, Serialize};
     /// use serde_with::serde_as;
     ///
     /// #[serde_as]
@@ -582,7 +582,7 @@ mod tests {
     use super::*;
     use alloc::vec;
     use alloy_eips::Encodable2718;
-    use alloy_primitives::{Bytes, address, b256, bytes, hex_literal::hex};
+    use alloy_primitives::{address, b256, bytes, hex_literal::hex, Bytes};
     use alloy_rlp::Encodable;
 
     // Test vector from: https://eips.ethereum.org/EIPS/eip-2481

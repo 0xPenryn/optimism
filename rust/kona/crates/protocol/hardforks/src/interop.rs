@@ -6,7 +6,7 @@
 
 use alloc::string::String;
 use alloy_eips::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, b256, hex};
+use alloy_primitives::{address, b256, hex, Address, Bytes, TxKind, B256, U256};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::{TxDeposit, UpgradeDepositSource};
 
@@ -71,14 +71,14 @@ impl Interop {
 
     /// Returns the `CrossL2Inbox` deployment bytecode.
     pub fn cross_l2_inbox_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/crossl2inbox_interop.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/crossl2inbox_interop.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the `L2ToL2CrossDomainMessenger` proxy upgrade bytecode.
     pub fn l2_to_l2_xdm_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/l2tol2_xdm_interop.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/l2tol2_xdm_interop.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
@@ -203,16 +203,16 @@ mod test {
         assert_eq!(interop_upgrade_tx.len(), 4);
 
         let expected_txs: Vec<Bytes> = vec![
-            hex::decode(include_str!("./bytecode/interop_tx_0.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/interop_tx_0.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/interop_tx_1.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/interop_tx_1.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/interop_tx_2.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/interop_tx_2.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/interop_tx_3.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/interop_tx_3.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
         ];

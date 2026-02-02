@@ -130,7 +130,7 @@ where
     L2: L2ChainProvider + Send + Sync + Debug + Clone,
     DA: DataAvailabilityProvider + Send + Sync + Debug + Clone,
 {
-    /// Returns the optional L1 [BlockInfo] origin.
+    /// Returns the optional L1 [`BlockInfo`] origin.
     fn origin(&self) -> Option<BlockInfo> {
         self.pipeline.origin()
     }
@@ -158,7 +158,7 @@ where
     L2: L2ChainProvider + Send + Sync + Debug + Clone,
     DA: DataAvailabilityProvider + Send + Sync + Debug + Clone,
 {
-    /// Peeks at the next [OpAttributesWithParent] from the pipeline.
+    /// Peeks at the next [`OpAttributesWithParent`] from the pipeline.
     fn peek(&self) -> Option<&OpAttributesWithParent> {
         self.pipeline.peek()
     }
@@ -173,7 +173,7 @@ where
         self.pipeline.rollup_config()
     }
 
-    /// Returns the [SystemConfig] by L2 number.
+    /// Returns the [`SystemConfig`] by L2 number.
     async fn system_config_by_number(
         &mut self,
         number: u64,

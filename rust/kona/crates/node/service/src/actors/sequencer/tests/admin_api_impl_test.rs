@@ -1,6 +1,6 @@
 use crate::{
+    actors::{sequencer::tests::test_util::test_actor, MockConductor, MockSequencerEngineClient},
     ConductorError, EngineClientError, SequencerAdminQuery,
-    actors::{MockConductor, MockSequencerEngineClient, sequencer::tests::test_util::test_actor},
 };
 use alloy_primitives::B256;
 use alloy_transport::RpcError;

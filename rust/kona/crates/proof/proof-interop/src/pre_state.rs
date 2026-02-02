@@ -1,15 +1,15 @@
 //! Types for the pre-state claims used in the interop proof.
 
 use alloc::vec::Vec;
-use alloy_primitives::{B256, Bytes, b256, keccak256};
+use alloy_primitives::{b256, keccak256, Bytes, B256};
 use alloy_rlp::{Buf, Decodable, Encodable, Header, RlpDecodable, RlpEncodable};
-use kona_interop::{OutputRootWithChain, SUPER_ROOT_VERSION, SuperRoot};
+use kona_interop::{OutputRootWithChain, SuperRoot, SUPER_ROOT_VERSION};
 use serde::{Deserialize, Serialize};
 
-/// The current [TransitionState] encoding format version.
+/// The current [`TransitionState`] encoding format version.
 pub(crate) const TRANSITION_STATE_VERSION: u8 = 255;
 
-/// The maximum number of steps allowed in a [TransitionState].
+/// The maximum number of steps allowed in a [`TransitionState`].
 pub const TRANSITION_STATE_MAX_STEPS: u64 = 2u64.pow(7) - 1;
 
 /// The [Bytes] representation of the string "invalid".
@@ -19,10 +19,10 @@ pub const INVALID_TRANSITION: Bytes = Bytes::from_static(b"invalid");
 pub const INVALID_TRANSITION_HASH: B256 =
     b256!("ffd7db0f9d5cdeb49c4c9eba649d4dc6d852d64671e65488e57f58584992ac68");
 
-/// The [PreState] of the interop proof program can be one of two types: a [SuperRoot] or a
-/// [TransitionState]. The [SuperRoot] is the canonical state of the superchain, while the
-/// [TransitionState] is a super-structure of the [SuperRoot] that represents the progress of a
-/// pending superchain state transition from one [SuperRoot] to the next.
+/// The [`PreState`] of the interop proof program can be one of two types: a [`SuperRoot`] or a
+/// [`TransitionState`]. The [`SuperRoot`] is the canonical state of the superchain, while the
+/// [`TransitionState`] is a super-structure of the [`SuperRoot`] that represents the progress of a
+/// pending superchain state transition from one [`SuperRoot`] to the next.
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub enum PreState {
@@ -33,14 +33,14 @@ pub enum PreState {
 }
 
 impl PreState {
-    /// Hashes the encoded [PreState] using [keccak256].
+    /// Hashes the encoded [`PreState`] using [keccak256].
     pub fn hash(&self) -> B256 {
         let mut rlp_buf = Vec::with_capacity(self.length());
         self.encode(&mut rlp_buf);
         keccak256(&rlp_buf)
     }
 
-    /// Returns the timestamp of the [PreState].
+    /// Returns the timestamp of the [`PreState`].
     pub const fn timestamp(&self) -> u64 {
         match self {
             Self::SuperRoot(super_root) => super_root.timestamp,
@@ -48,9 +48,9 @@ impl PreState {
         }
     }
 
-    /// Returns the active L2 output root hash of the [PreState]. This is the output root that
+    /// Returns the active L2 output root hash of the [`PreState`]. This is the output root that
     /// represents the pre-state of the chain that is to be committed to in the next transition
-    /// step, or [None] if the [PreState] has already been fully saturated.
+    /// step, or [None] if the [`PreState`] has already been fully saturated.
     pub fn active_l2_output_root(&self) -> Option<&OutputRootWithChain> {
         match self {
             Self::SuperRoot(super_root) => super_root.output_roots.first(),
@@ -60,14 +60,14 @@ impl PreState {
         }
     }
 
-    /// Returns the active L2 chain ID of the [PreState]. This is the chain ID of the output root
-    /// that is to be committed to in the next transition step, or [None] if the [PreState]
+    /// Returns the active L2 chain ID of the [`PreState`]. This is the chain ID of the output root
+    /// that is to be committed to in the next transition step, or [None] if the [`PreState`]
     /// has already been fully saturated.
     pub fn active_l2_chain_id(&self) -> Option<u64> {
         self.active_l2_output_root().map(|output_root| output_root.chain_id)
     }
 
-    /// Transitions to the next state, appending the [OptimisticBlock] to the pending progress.
+    /// Transitions to the next state, appending the [`OptimisticBlock`] to the pending progress.
     pub fn transition(self, optimistic_block: Option<OptimisticBlock>) -> Option<Self> {
         match self {
             Self::SuperRoot(super_root) => Some(Self::TransitionState(TransitionState::new(
@@ -98,10 +98,9 @@ impl PreState {
                                 .collect(),
                         );
                         return Some(Self::SuperRoot(super_root));
-                    } else {
-                        transition_state.step += 1;
-                        return Some(Self::TransitionState(transition_state));
-                    };
+                    }
+                    transition_state.step += 1;
+                    return Some(Self::TransitionState(transition_state));
                 }
 
                 transition_state.pending_progress.push(optimistic_block?);
@@ -146,8 +145,8 @@ impl Decodable for PreState {
     }
 }
 
-/// The [TransitionState] is a super-structure of the [SuperRoot] that represents the progress of a
-/// pending superchain state transition from one [SuperRoot] to the next.
+/// The [`TransitionState`] is a super-structure of the [`SuperRoot`] that represents the progress
+/// of a pending superchain state transition from one [`SuperRoot`] to the next.
 #[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 pub struct TransitionState {
@@ -160,7 +159,8 @@ pub struct TransitionState {
 }
 
 impl TransitionState {
-    /// Create a new [TransitionState] with the given pre-state, pending progress, and step number.
+    /// Create a new [`TransitionState`] with the given pre-state, pending progress, and step
+    /// number.
     pub const fn new(
         pre_state: SuperRoot,
         pending_progress: Vec<OptimisticBlock>,
@@ -169,14 +169,14 @@ impl TransitionState {
         Self { pre_state, pending_progress, step }
     }
 
-    /// Hashes the encoded [TransitionState] using [keccak256].
+    /// Hashes the encoded [`TransitionState`] using [keccak256].
     pub fn hash(&self) -> B256 {
         let mut rlp_buf = Vec::with_capacity(self.length());
         self.encode(&mut rlp_buf);
         keccak256(&rlp_buf)
     }
 
-    /// Returns the RLP payload length of the [TransitionState].
+    /// Returns the RLP payload length of the [`TransitionState`].
     pub fn payload_length(&self) -> usize {
         Header { list: false, payload_length: self.pre_state.encoded_length() }.length() +
             self.pre_state.encoded_length() +
@@ -247,7 +247,7 @@ pub struct OptimisticBlock {
 }
 
 impl OptimisticBlock {
-    /// Create a new [OptimisticBlock] with the given block hash and output root hash.
+    /// Create a new [`OptimisticBlock`] with the given block hash and output root hash.
     pub const fn new(block_hash: B256, output_root: B256) -> Self {
         Self { block_hash, output_root }
     }
@@ -311,7 +311,7 @@ mod test {
         assert_eq!(transition_state, TransitionState::decode(&mut rlp_buf.as_slice()).unwrap());
     }
 
-    /// Helper function to create a test TransitionState with three output roots
+    /// Helper function to create a test `TransitionState` with three output roots
     fn create_test_transition_state(step: u64, chain_count: u64) -> TransitionState {
         const TIMESTAMP: u64 = 10;
 

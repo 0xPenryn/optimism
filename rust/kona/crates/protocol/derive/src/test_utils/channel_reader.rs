@@ -1,4 +1,4 @@
-//! Test utilities for the [ChannelReader] stage.
+//! Test utilities for the [`ChannelReader`] stage.
 //!
 //! [ChannelReader]: crate::stages::ChannelReader
 

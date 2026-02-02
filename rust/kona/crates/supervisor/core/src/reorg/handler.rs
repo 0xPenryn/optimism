@@ -1,5 +1,5 @@
 use super::metrics::Metrics;
-use crate::{ReorgHandlerError, reorg::task::ReorgTask};
+use crate::{reorg::task::ReorgTask, ReorgHandlerError};
 use alloy_primitives::ChainId;
 use alloy_rpc_client::RpcClient;
 use derive_more::Constructor;

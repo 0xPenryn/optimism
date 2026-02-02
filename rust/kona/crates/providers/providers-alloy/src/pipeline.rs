@@ -171,7 +171,7 @@ impl SignalReceiver for OnlinePipeline {
 }
 
 impl OriginProvider for OnlinePipeline {
-    /// Returns the optional L1 [BlockInfo] origin.
+    /// Returns the optional L1 [`BlockInfo`] origin.
     fn origin(&self) -> Option<BlockInfo> {
         match self {
             Self::Polled(pipeline) => pipeline.origin(),
@@ -193,7 +193,7 @@ impl Iterator for OnlinePipeline {
 
 #[async_trait]
 impl Pipeline for OnlinePipeline {
-    /// Peeks at the next [OpAttributesWithParent] from the pipeline.
+    /// Peeks at the next [`OpAttributesWithParent`] from the pipeline.
     fn peek(&self) -> Option<&OpAttributesWithParent> {
         match self {
             Self::Polled(pipeline) => pipeline.peek(),
@@ -217,7 +217,7 @@ impl Pipeline for OnlinePipeline {
         }
     }
 
-    /// Returns the [SystemConfig] by L2 number.
+    /// Returns the [`SystemConfig`] by L2 number.
     async fn system_config_by_number(
         &mut self,
         number: u64,

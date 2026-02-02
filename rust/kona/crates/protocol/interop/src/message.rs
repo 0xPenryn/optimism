@@ -4,8 +4,8 @@
 //! <https://github.com/ethereum-optimism/optimism/blob/34d5f66ade24bd1f3ce4ce7c0a6cfc1a6540eca1/packages/contracts-bedrock/src/L2/CrossL2Inbox.sol>
 
 use alloc::{vec, vec::Vec};
-use alloy_primitives::{Bytes, ChainId, Log, keccak256};
-use alloy_sol_types::{SolEvent, sol};
+use alloy_primitives::{keccak256, Bytes, ChainId, Log};
+use alloy_sol_types::{sol, SolEvent};
 use derive_more::{AsRef, Constructor, From};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::OpReceiptEnvelope;
@@ -45,7 +45,7 @@ sol! {
     ) external;
 }
 
-/// A [RawMessagePayload] is the raw payload of an initiating message.
+/// A [`RawMessagePayload`] is the raw payload of an initiating message.
 #[derive(Debug, Clone, From, AsRef, PartialEq, Eq)]
 pub struct RawMessagePayload(Bytes);
 
@@ -104,11 +104,11 @@ pub struct ExecutingDescriptor {
     pub chain_id: Option<ChainId>,
 }
 
-/// A wrapper type for [ExecutingMessage] containing the chain ID of the chain that the message was
-/// executed on.
+/// A wrapper type for [`ExecutingMessage`] containing the chain ID of the chain that the message
+/// was executed on.
 #[derive(Debug)]
 pub struct EnrichedExecutingMessage {
-    /// The inner [ExecutingMessage].
+    /// The inner [`ExecutingMessage`].
     pub inner: ExecutingMessage,
     /// The chain ID of the chain that the message was executed on.
     pub executing_chain_id: u64,
@@ -117,7 +117,7 @@ pub struct EnrichedExecutingMessage {
 }
 
 impl EnrichedExecutingMessage {
-    /// Create a new [EnrichedExecutingMessage] from an [ExecutingMessage] and a chain ID.
+    /// Create a new [`EnrichedExecutingMessage`] from an [`ExecutingMessage`] and a chain ID.
     pub const fn new(
         inner: ExecutingMessage,
         executing_chain_id: u64,
@@ -127,7 +127,7 @@ impl EnrichedExecutingMessage {
     }
 }
 
-/// Extracts all [ExecutingMessage] events from list of [OpReceiptEnvelope]s.
+/// Extracts all [`ExecutingMessage`] events from list of [`OpReceiptEnvelope`]s.
 ///
 /// See [`parse_log_to_executing_message`].
 ///
@@ -162,7 +162,7 @@ pub fn parse_log_to_executing_message(log: &Log) -> Option<ExecutingMessage> {
 
 #[cfg(test)]
 mod tests {
-    use alloy_primitives::{Address, B256, LogData, U256};
+    use alloy_primitives::{Address, LogData, B256, U256};
 
     use super::*;
 

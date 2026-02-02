@@ -1,4 +1,4 @@
-//! Contains the [L1Retrieval] stage of the derivation pipeline.
+//! Contains the [`L1Retrieval`] stage of the derivation pipeline.
 
 use crate::{
     ActivationSignal, DataAvailabilityProvider, FrameQueueProvider, OriginAdvancer, OriginProvider,
@@ -16,13 +16,13 @@ pub trait L1RetrievalProvider {
     /// Returns the next L1 [`BlockInfo`] in the [`PollingTraversal`] stage, if the stage is not
     /// complete. This function can only be called once while the stage is in progress, and will
     /// return [`None`] on subsequent calls unless the stage is reset or complete. If the stage
-    /// is complete and the [`BlockInfo`] has been consumed, an [PipelineError::Eof] error is
+    /// is complete and the [`BlockInfo`] has been consumed, a [`PipelineError::Eof`] error is
     /// returned.
     ///
     /// [`PollingTraversal`]: crate::PollingTraversal
     async fn next_l1_block(&mut self) -> PipelineResult<Option<BlockInfo>>;
 
-    /// Returns the batcher [`Address`] from the [kona_genesis::SystemConfig].
+    /// Returns the batcher [`Address`] from the [`kona_genesis::SystemConfig`].
     fn batcher_addr(&self) -> Address;
 }
 
@@ -94,7 +94,7 @@ where
         match self.provider.next(next, self.prev.batcher_addr()).await {
             Ok(data) => Ok(data),
             Err(e) => {
-                if let PipelineErrorKind::Temporary(PipelineError::Eof) = e {
+                if e == PipelineErrorKind::Temporary(PipelineError::Eof) {
                     self.next = None;
                     self.provider.clear();
                 }

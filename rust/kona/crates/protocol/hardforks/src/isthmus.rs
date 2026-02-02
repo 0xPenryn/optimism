@@ -6,7 +6,7 @@
 
 use alloc::{string::String, vec::Vec};
 use alloy_eips::eip2718::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex};
+use alloy_primitives::{address, hex, Address, Bytes, TxKind, B256, U256};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::{TxDeposit, UpgradeDepositSource};
 
@@ -119,28 +119,28 @@ impl Isthmus {
 
     /// Returns the raw bytecode for the L1 Block deployment.
     pub fn l1_block_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/l1_block_isthmus.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/l1_block_isthmus.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the gas price oracle deployment bytecode.
     pub fn gas_price_oracle_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/gpo_isthmus.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/gpo_isthmus.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the gas price oracle deployment bytecode.
     pub fn operator_fee_vault_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/ofv_isthmus.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/ofv_isthmus.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
 
     /// Returns the EIP-2935 creation data.
     pub fn eip2935_creation_data() -> Bytes {
-        hex::decode(include_str!("./bytecode/eip2935_isthmus.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/eip2935_isthmus.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
@@ -300,28 +300,28 @@ mod tests {
         assert_eq!(isthmus_upgrade_tx.len(), 8);
 
         let expected_txs: Vec<Bytes> = vec![
-            hex::decode(include_str!("./bytecode/isthmus_tx_0.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_0.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_1.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_1.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_2.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_2.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_3.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_3.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_4.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_4.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_5.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_5.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_6.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_6.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/isthmus_tx_7.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/isthmus_tx_7.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
         ];

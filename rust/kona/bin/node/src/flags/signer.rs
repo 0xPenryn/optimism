@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
 use alloy_primitives::{Address, B256};
-use alloy_signer::{Signer, k256::ecdsa};
+use alloy_signer::{k256::ecdsa, Signer};
 use alloy_signer_local::PrivateKeySigner;
-use clap::{Parser, arg};
+use clap::Parser;
 use kona_cli::SecretKeyLoader;
 use kona_sources::{BlockSigner, ClientCert, RemoteSigner};
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};

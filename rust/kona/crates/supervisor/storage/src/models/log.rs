@@ -67,13 +67,11 @@ impl Compact for LogEntry {
         let hash = B256::from_slice(&buf[..32]);
         buf.advance(32);
 
-        let executing_message = if has_msg {
+        let executing_message = has_msg.then(|| {
             let (msg, rest) = ExecutingMessageEntry::from_compact(buf, buf.len());
             buf = rest;
-            Some(msg)
-        } else {
-            None
-        };
+            msg
+        });
 
         (Self { index, hash, executing_message }, buf)
     }

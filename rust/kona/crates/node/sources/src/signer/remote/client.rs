@@ -1,6 +1,6 @@
 use alloy_primitives::Address;
 use alloy_rpc_client::ClientBuilder;
-use alloy_transport_http::{Http, reqwest};
+use alloy_transport_http::{reqwest, Http};
 use reqwest::header::HeaderMap;
 use std::sync::Arc;
 use thiserror::Error;
@@ -8,8 +8,8 @@ use tokio::sync::RwLock;
 use url::Url;
 
 use crate::{
-    RemoteSignerHandler,
     signer::remote::cert::{CertificateError, ClientCert},
+    RemoteSignerHandler,
 };
 
 /// Configuration for the remote signer client

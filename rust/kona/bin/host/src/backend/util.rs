@@ -8,7 +8,7 @@ use kona_preimage::{PreimageKey, PreimageKeyType};
 use tokio::sync::RwLock;
 
 /// Constructs a merkle patricia trie from the ordered list passed and stores all encoded
-/// intermediate nodes of the trie in the [KeyValueStore].
+/// intermediate nodes of the trie in the [`KeyValueStore`].
 pub(crate) async fn store_ordered_trie<KV: KeyValueStore + ?Sized, T: AsRef<[u8]>>(
     kv: &RwLock<KV>,
     values: &[T],
@@ -29,7 +29,7 @@ pub(crate) async fn store_ordered_trie<KV: KeyValueStore + ?Sized, T: AsRef<[u8]
     hb.root();
     let intermediates = hb.take_proof_nodes().into_inner();
 
-    for (_, value) in intermediates.into_iter() {
+    for (_, value) in intermediates {
         let value_hash = keccak256(value.as_ref());
         let key = PreimageKey::new(*value_hash, PreimageKeyType::Keccak256);
 

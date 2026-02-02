@@ -16,8 +16,8 @@ pub enum DerivationState {
     /// [`crate::DerivationActor`] is waiting for confirmation that they were processed into a safe
     /// head.
     AwaitingSafeHeadConfirmation,
-    /// A reorg or some other inconsistency was detected, necessitating a [`kona_derive::Signal`] to
-    /// be processed before continuing derivation.
+    /// A reorg or some other inconsistency was detected, necessitating a [`kona_derive::Signal`]
+    /// to be processed before continuing derivation.
     AwaitingSignal,
     /// After receiving a [`kona_derive::Signal`], we need an update of L1 data or a new engine
     /// safe head to start deriving again. This represents the state waiting for one of the two.
@@ -28,7 +28,7 @@ pub enum DerivationState {
 
 /// The possible updates of the [`DerivationStateMachine`] implemented by the
 /// [`crate::DerivationActor`].
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DerivationStateUpdate {
     /// The initial EL sync has completed along with the current safe head, allowing derivation to
     /// start.
@@ -49,7 +49,7 @@ pub enum DerivationStateUpdate {
     SignalProcessed,
 }
 
-/// An error processing a [DerivationStateMachine] state transition.
+/// An error processing a [`DerivationStateMachine`] state transition.
 #[derive(Debug, Error)]
 pub enum DerivationStateTransitionError {
     /// An invalid state transition was attempted.
@@ -194,10 +194,10 @@ impl DerivationStateMachine {
         &mut self,
         state_update: &DerivationStateUpdate,
     ) -> Result<(), DerivationStateTransitionError> {
-        if let DerivationStateUpdate::NewAttributesConfirmed(safe_head) = state_update {
-            if safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash {
-                info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
-            }
+        if let DerivationStateUpdate::NewAttributesConfirmed(safe_head) = state_update &&
+            safe_head.block_info.hash == self.confirmed_safe_head.block_info.hash
+        {
+            info!(target: "derivation", ?safe_head, "Re-received safe head. Skipping state transition.");
         }
 
         info!(target: "derivation", state=?self.state, ?state_update, "Executing derivation state update.");
@@ -216,16 +216,16 @@ impl DerivationStateMachine {
 #[cfg(test)]
 mod tests {
     use super::{
-        DerivationState::*, DerivationStateMachine, DerivationStateTransitionError,
-        DerivationStateUpdate::*, L2BlockInfo, transition,
+        transition, DerivationState::*, DerivationStateMachine, DerivationStateTransitionError,
+        DerivationStateUpdate::*, L2BlockInfo,
     };
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{BlockHash, b256};
+    use alloy_primitives::{b256, BlockHash};
     use kona_protocol::{BlockInfo, OpAttributesWithParent};
     use op_alloy_rpc_types_engine::OpPayloadAttributes;
     use rstest::rstest;
 
-    /// Creates a dummy L2BlockInfo for testing
+    /// Creates a dummy `L2BlockInfo` for testing
     fn dummy_l2_block_info() -> L2BlockInfo {
         L2BlockInfo {
             block_info: BlockInfo {
@@ -239,7 +239,7 @@ mod tests {
         }
     }
 
-    /// Creates a dummy OpAttributesWithParent for testing
+    /// Creates a dummy `OpAttributesWithParent` for testing
     fn dummy_op_attributes() -> OpAttributesWithParent {
         OpAttributesWithParent {
             attributes: OpPayloadAttributes::default(),

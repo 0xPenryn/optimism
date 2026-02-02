@@ -7,20 +7,20 @@ use alloc::{
     vec::Vec,
 };
 use tracing::{
-    Event, Level, Metadata, Subscriber,
     field::{Field, Visit},
     span::{Attributes, Id, Record},
+    Event, Level, Metadata, Subscriber,
 };
 
-/// Custom [Subscriber] implementation that uses [crate::io] to write log entries to
-/// [crate::FileDescriptor::StdOut].
+/// Custom [`Subscriber`] implementation that uses [`crate::io`] to write log entries to
+/// [`crate::FileDescriptor::StdOut`].
 #[derive(Debug, Clone)]
 pub struct FpvmTracingSubscriber {
     min_level: Level,
 }
 
 impl FpvmTracingSubscriber {
-    /// Create a new [FpvmTracingSubscriber] with the specified minimum log level.
+    /// Create a new [`FpvmTracingSubscriber`] with the specified minimum log level.
     pub const fn new(min_level: Level) -> Self {
         Self { min_level }
     }

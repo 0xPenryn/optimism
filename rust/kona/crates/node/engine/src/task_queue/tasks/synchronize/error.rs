@@ -1,11 +1,11 @@
-//! Contains error types for the [crate::SynchronizeTask].
+//! Contains error types for the [`crate::SynchronizeTask`].
 
-use crate::{EngineTaskError, task_queue::tasks::task::EngineTaskErrorSeverity};
+use crate::{task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError};
 use alloy_rpc_types_engine::PayloadStatusEnum;
 use alloy_transport::{RpcError, TransportErrorKind};
 use thiserror::Error;
 
-/// An error that occurs when running the [crate::SynchronizeTask].
+/// An error that occurs when running the [`crate::SynchronizeTask`].
 #[derive(Debug, Error)]
 pub enum SynchronizeTaskError {
     /// The forkchoice update call to the engine api failed.
@@ -26,8 +26,9 @@ impl EngineTaskError for SynchronizeTaskError {
     fn severity(&self) -> EngineTaskErrorSeverity {
         match self {
             Self::FinalizedAheadOfUnsafe(_, _) => EngineTaskErrorSeverity::Critical,
-            Self::ForkchoiceUpdateFailed(_) => EngineTaskErrorSeverity::Temporary,
-            Self::UnexpectedPayloadStatus(_) => EngineTaskErrorSeverity::Temporary,
+            Self::ForkchoiceUpdateFailed(_) | Self::UnexpectedPayloadStatus(_) => {
+                EngineTaskErrorSeverity::Temporary
+            }
             Self::InvalidForkchoiceState => EngineTaskErrorSeverity::Reset,
         }
     }

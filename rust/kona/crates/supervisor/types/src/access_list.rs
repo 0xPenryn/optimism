@@ -1,7 +1,7 @@
-use alloy_primitives::{B256, keccak256};
+use alloy_primitives::{keccak256, B256};
 use thiserror::Error;
 
-/// A structured representation of a parsed CrossL2Inbox message access entry.
+/// A structured representation of a parsed `CrossL2Inbox` message access entry.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Access {
     /// Full 256-bit chain ID (combined from lookup + extension)
@@ -218,7 +218,7 @@ pub fn parse_access_list(entries: Vec<B256>) -> Result<Vec<Access>, AccessListEr
 /// ### Spec References
 ///
 /// - [Optimism Access List Format](https://github.com/ethereum-optimism/specs/blob/main/specs/interop/predeploys.md#access-list)
-/// - Entry format and layout based on CrossL2Inbox access-list encoding.
+/// - Entry format and layout based on `CrossL2Inbox` access-list encoding.
 fn parse_entry(entry: &B256) -> Result<AccessListEntry, AccessListError> {
     match entry[0] {
         PREFIX_LOOKUP => {
@@ -251,7 +251,7 @@ fn parse_entry(entry: &B256) -> Result<AccessListEntry, AccessListError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_primitives::{B256, U256, b256};
+    use alloy_primitives::{b256, B256, U256};
 
     fn make_lookup_entry(
         block_number: u64,

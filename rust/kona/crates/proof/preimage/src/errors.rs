@@ -3,8 +3,8 @@
 use alloc::string::String;
 use thiserror::Error;
 
-/// A [PreimageOracleError] is an enum that differentiates pipe-related errors from other errors
-/// in the [PreimageOracleServer] and [HintReaderServer] implementations.
+/// A [`PreimageOracleError`] is an enum that differentiates pipe-related errors from other errors
+/// in the [`PreimageOracleServer`] and [`HintReaderServer`] implementations.
 ///
 /// [PreimageOracleServer]: crate::PreimageOracleServer
 /// [HintReaderServer]: crate::HintReaderServer
@@ -33,10 +33,11 @@ pub enum PreimageOracleError {
     Other(String),
 }
 
-/// A [Result] type for the [PreimageOracleError] enum.
+/// A [Result] type for the [`PreimageOracleError`] enum.
 pub type PreimageOracleResult<T> = Result<T, PreimageOracleError>;
 
-/// A [ChannelError] is an enum that describes the error cases of a [Channel] trait implementation.
+/// A [`ChannelError`] is an enum that describes the error cases of a [Channel] trait
+/// implementation.
 ///
 /// [Channel]: crate::Channel
 #[derive(Error, Debug)]
@@ -49,5 +50,5 @@ pub enum ChannelError {
     UnexpectedEOF,
 }
 
-/// A [Result] type for the [ChannelError] enum.
+/// A [Result] type for the [`ChannelError`] enum.
 pub type ChannelResult<T> = Result<T, ChannelError>;

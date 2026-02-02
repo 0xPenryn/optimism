@@ -40,7 +40,7 @@ pub struct RollupConfig {
     pub genesis: ChainGenesis,
     /// The block time of the L2, in seconds.
     pub block_time: u64,
-    /// Sequencer batches may not be more than MaxSequencerDrift seconds after
+    /// Sequencer batches may not be more than `MaxSequencerDrift` seconds after
     /// the L1 timestamp of the sequencing window end.
     ///
     /// Note: When L1 has many 1 second consecutive blocks, and L2 grows at fixed 2 seconds,
@@ -355,7 +355,7 @@ impl RollupConfig {
         }
     }
 
-    /// Returns the [HardForkConfig] using [RollupConfig] timestamps.
+    /// Returns the [`HardForkConfig`] using [`RollupConfig`] timestamps.
     #[deprecated(since = "0.1.0", note = "Use the `hardforks` field instead.")]
     pub const fn hardfork_config(&self) -> HardForkConfig {
         self.hardforks
@@ -425,37 +425,37 @@ impl OpHardforks for RollupConfig {
                 .hardforks
                 .regolith_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Canyon)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Canyon)),
             OpHardfork::Canyon => self
                 .hardforks
                 .canyon_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Ecotone)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Ecotone)),
             OpHardfork::Ecotone => self
                 .hardforks
                 .ecotone_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Fjord)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Fjord)),
             OpHardfork::Fjord => self
                 .hardforks
                 .fjord_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Granite)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Granite)),
             OpHardfork::Granite => self
                 .hardforks
                 .granite_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Holocene)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Holocene)),
             OpHardfork::Holocene => self
                 .hardforks
                 .holocene_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Isthmus)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Isthmus)),
             OpHardfork::Isthmus => self
                 .hardforks
                 .isthmus_time
                 .map(ForkCondition::Timestamp)
-                .unwrap_or(self.op_fork_activation(OpHardfork::Jovian)),
+                .unwrap_or_else(|| self.op_fork_activation(OpHardfork::Jovian)),
             OpHardfork::Jovian => self
                 .hardforks
                 .jovian_time
@@ -478,7 +478,7 @@ mod tests {
     use alloy_eips::BlockNumHash;
     use alloy_primitives::address;
     #[cfg(feature = "serde")]
-    use alloy_primitives::{U256, b256};
+    use alloy_primitives::{b256, U256};
 
     #[test]
     #[cfg(feature = "arbitrary")]
@@ -777,7 +777,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_deserialize_reference_rollup_config() {
-        use crate::{OP_MAINNET_BASE_FEE_CONFIG, SystemConfig};
+        use crate::{SystemConfig, OP_MAINNET_BASE_FEE_CONFIG};
 
         let raw: &str = r#"
         {

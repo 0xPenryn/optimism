@@ -4,7 +4,7 @@
 use alloc::{format, string::String, sync::Arc, vec::Vec};
 use spin::Mutex;
 use tracing::{Event, Level, Subscriber};
-use tracing_subscriber::{Layer, layer::Context};
+use tracing_subscriber::{layer::Context, Layer};
 
 /// The storage for the collected traces.
 #[derive(Debug, Default, Clone)]
@@ -16,7 +16,8 @@ impl TraceStorage {
         self.0
             .lock()
             .iter()
-            .filter_map(|(l, message)| if *l == level { Some(message.clone()) } else { None })
+            .filter(|&(l, _message)| *l == level)
+            .map(|(_l, message)| message.clone())
             .collect()
     }
 

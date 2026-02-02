@@ -2,19 +2,19 @@
 //! transaction.
 
 use alloy_consensus::Header;
-use alloy_eips::{BlockNumHash, eip7840::BlobParams};
-use alloy_primitives::{Address, B256, Bytes, Sealable, Sealed, TxKind, U256, address};
+use alloy_eips::{eip7840::BlobParams, BlockNumHash};
+use alloy_primitives::{address, Address, Bytes, Sealable, Sealed, TxKind, B256, U256};
 use kona_genesis::{L1ChainConfig, RollupConfig, SystemConfig};
 use op_alloy_consensus::{DepositSourceDomain, L1InfoDepositSource, TxDeposit};
 
 use crate::{
+    info::{
+        bedrock::L1BlockInfoBedrockOnlyFields as _, ecotone::L1BlockInfoEcotoneOnlyFields as _,
+        isthmus::L1BlockInfoIsthmusBaseFields as _, L1BlockInfoBedrockBaseFields,
+        L1BlockInfoEcotoneBaseFields as _, L1BlockInfoJovian,
+    },
     BlockInfoError, DecodeError, L1BlockInfoBedrock, L1BlockInfoEcotone, L1BlockInfoIsthmus,
     Predeploys,
-    info::{
-        L1BlockInfoBedrockBaseFields, L1BlockInfoEcotoneBaseFields as _, L1BlockInfoJovian,
-        bedrock::L1BlockInfoBedrockOnlyFields as _, ecotone::L1BlockInfoEcotoneOnlyFields as _,
-        isthmus::L1BlockInfoIsthmusBaseFields as _,
-    },
 };
 
 /// The system transaction gas limit post-Regolith
@@ -852,10 +852,10 @@ mod test {
         assert_eq!(
             l1_info.blob_base_fee(),
             l1_header
-                .blob_fee(if fork_active != use_wrong_params {
-                    BlobParams::prague()
-                } else {
+                .blob_fee(if fork_active == use_wrong_params {
                     BlobParams::cancun()
+                } else {
+                    BlobParams::prague()
                 })
                 .unwrap_or(1)
         );

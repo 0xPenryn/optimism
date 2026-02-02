@@ -1,4 +1,4 @@
-//! An implementation of the [DataAvailabilityProvider] trait for tests.
+//! An implementation of the [`DataAvailabilityProvider`] trait for tests.
 
 use crate::{errors::PipelineError, traits::DataAvailabilityProvider, types::PipelineResult};
 use alloc::{boxed::Box, vec::Vec};

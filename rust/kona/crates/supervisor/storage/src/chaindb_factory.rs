@@ -5,13 +5,13 @@ use std::{
 };
 
 use crate::{
-    CrossChainSafetyProvider, FinalizedL1Storage, HeadRefStorageReader, HeadRefStorageWriter,
-    LogStorageReader, Metrics, chaindb::ChainDb, error::StorageError,
+    chaindb::ChainDb, error::StorageError, CrossChainSafetyProvider, FinalizedL1Storage,
+    HeadRefStorageReader, HeadRefStorageWriter, LogStorageReader, Metrics,
 };
 use alloy_primitives::ChainId;
 use kona_interop::DerivedRefPair;
 use kona_protocol::BlockInfo;
-use kona_supervisor_metrics::{MetricsReporter, observe_metrics_for_result};
+use kona_supervisor_metrics::{observe_metrics_for_result, MetricsReporter};
 use kona_supervisor_types::Log;
 use op_alloy_consensus::interop::SafetyLevel;
 use tracing::error;
@@ -140,7 +140,7 @@ impl FinalizedL1Storage for ChainDbFactory {
                     error!(target: "supervisor::storage", %err, "Failed to acquire read lock on finalized_l1");
                     StorageError::LockPoisoned
                 })?;
-                guard.as_ref().cloned().ok_or(StorageError::FutureData)
+                guard.as_ref().copied().ok_or(StorageError::FutureData)
             }
         )
     }
@@ -158,15 +158,15 @@ impl FinalizedL1Storage for ChainDbFactory {
                     })?;
 
                 // Check if the new block number is greater than the current finalized block
-                if let Some(ref current) = *guard {
-                    if block.number <= current.number {
-                        error!(target: "supervisor::storage",
-                            current_block_number = current.number,
-                            new_block_number = block.number,
-                            "New finalized block number is not greater than current finalized block number",
-                        );
-                        return Err(StorageError::BlockOutOfOrder);
-                    }
+                if let Some(ref current) = *guard
+                    && block.number <= current.number
+                {
+                    error!(target: "supervisor::storage",
+                        current_block_number = current.number,
+                        new_block_number = block.number,
+                        "New finalized block number is not greater than current finalized block number",
+                    );
+                    return Err(StorageError::BlockOutOfOrder);
                 }
                 *guard = Some(block);
                 Ok(())

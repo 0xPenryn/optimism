@@ -42,29 +42,47 @@ rand.workspace = true
 bincode = { workspace = true }
 serde_json.workspace = true
 alloy-signer.workspace = true
-tokio = { workspace = true, features = ["macros"] }
 arbitrary = { workspace = true, features = ["derive"] }
 alloy-primitives = { workspace = true, features = ["rand", "arbitrary"] }
 
 [features]
 default = ["std"]
-std = ["alloy-eips/std", "alloy-consensus/std", "derive_more/std"]
+std = [
+	"alloy-eips/std",
+	"alloy-consensus/std",
+	"derive_more/std",
+	"alloy-primitives/std",
+	"alloy-rlp/std",
+	"alloy-rpc-types-eth?/std",
+	"alloy-serde?/std",
+	"serde?/std",
+	"serde_with?/std",
+	"thiserror/std"
+]
 alloy-compat = ["serde", "dep:alloy-network", "dep:alloy-rpc-types-eth"]
 k256 = ["alloy-primitives/k256", "alloy-consensus/k256"]
 kzg = ["alloy-eips/kzg", "alloy-consensus/kzg", "std"]
 arbitrary = [
-    "std",
-    "dep:arbitrary",
-    "alloy-consensus/arbitrary",
-    "alloy-eips/arbitrary",
-    "alloy-primitives/rand",
-    "alloy-primitives/arbitrary",
+	"std",
+	"dep:arbitrary",
+	"alloy-consensus/arbitrary",
+	"alloy-eips/arbitrary",
+	"alloy-primitives/rand",
+	"alloy-primitives/arbitrary",
+	"alloy-rpc-types-eth?/arbitrary",
+	"alloy-serde?/arbitrary"
 ]
 serde = [
-    "dep:serde",
-    "dep:alloy-serde",
-    "alloy-primitives/serde",
-    "alloy-consensus/serde",
-    "alloy-eips/serde",
+	"dep:serde",
+	"dep:alloy-serde",
+	"alloy-primitives/serde",
+	"alloy-consensus/serde",
+	"alloy-eips/serde",
+	"alloy-rpc-types-eth?/serde"
 ]
-serde-bincode-compat = ["serde_with", "alloy-consensus/serde-bincode-compat"]
+serde-bincode-compat = [
+	"serde_with",
+	"alloy-consensus/serde-bincode-compat",
+	"alloy-eips/serde-bincode-compat",
+	"alloy-rpc-types-eth?/serde-bincode-compat"
+]

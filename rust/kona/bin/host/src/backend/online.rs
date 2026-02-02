@@ -1,19 +1,19 @@
-//! Contains the [OnlineHostBackend] definition.
+//! Contains the [`OnlineHostBackend`] definition.
 
 use crate::SharedKeyValueStore;
 use anyhow::Result;
 use async_trait::async_trait;
 use kona_preimage::{
-    HintRouter, PreimageFetcher, PreimageKey,
     errors::{PreimageOracleError, PreimageOracleResult},
+    HintRouter, PreimageFetcher, PreimageKey,
 };
-use kona_proof::{Hint, errors::HintParsingError};
+use kona_proof::{errors::HintParsingError, Hint};
 use std::{collections::HashSet, hash::Hash, str::FromStr, sync::Arc};
 use tokio::sync::RwLock;
 use tracing::{debug, error, trace};
 
-/// The [OnlineHostBackendCfg] trait is used to define the type configuration for the
-/// [OnlineHostBackend].
+/// The [`OnlineHostBackendCfg`] trait is used to define the type configuration for the
+/// [`OnlineHostBackend`].
 pub trait OnlineHostBackendCfg {
     /// The hint type describing the range of hints that can be received.
     type HintType: FromStr<Err = HintParsingError> + Hash + Eq + PartialEq + Clone + Send + Sync;
@@ -22,11 +22,11 @@ pub trait OnlineHostBackendCfg {
     type Providers: Send + Sync;
 }
 
-/// A [HintHandler] is an interface for receiving hints, fetching remote data, and storing it in the
-/// key-value store.
+/// A [`HintHandler`] is an interface for receiving hints, fetching remote data, and storing it in
+/// the key-value store.
 #[async_trait]
 pub trait HintHandler {
-    /// The type configuration for the [HintHandler].
+    /// The type configuration for the [`HintHandler`].
     type Cfg: OnlineHostBackendCfg;
 
     /// Fetches data in response to a hint.
@@ -38,8 +38,8 @@ pub trait HintHandler {
     ) -> Result<()>;
 }
 
-/// The [OnlineHostBackend] is a [HintRouter] and [PreimageFetcher] that is used to fetch data from
-/// remote sources in response to hints.
+/// The [`OnlineHostBackend`] is a [`HintRouter`] and [`PreimageFetcher`] that is used to fetch data
+/// from remote sources in response to hints.
 ///
 /// [PreimageKey]: kona_preimage::PreimageKey
 #[allow(missing_debug_implementations)]
@@ -58,7 +58,7 @@ where
     proactive_hints: HashSet<C::HintType>,
     /// The last hint that was received.
     last_hint: Arc<RwLock<Option<Hint<C::HintType>>>>,
-    /// Phantom marker for the [HintHandler].
+    /// Phantom marker for the [`HintHandler`].
     _hint_handler: std::marker::PhantomData<H>,
 }
 
@@ -67,7 +67,7 @@ where
     C: OnlineHostBackendCfg,
     H: HintHandler,
 {
-    /// Creates a new [HintHandler] with the given configuration, key-value store, providers, and
+    /// Creates a new [`HintHandler`] with the given configuration, key-value store, providers, and
     /// external configuration.
     pub fn new(cfg: C, kv: SharedKeyValueStore, providers: C::Providers, _: H) -> Self {
         Self {
@@ -80,7 +80,7 @@ where
         }
     }
 
-    /// Adds a new proactive hint to the [OnlineHostBackend].
+    /// Adds a new proactive hint to the [`OnlineHostBackend`].
     pub fn with_proactive_hint(mut self, hint_type: C::HintType) -> Self {
         self.proactive_hints.insert(hint_type);
         self

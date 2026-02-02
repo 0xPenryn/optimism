@@ -38,7 +38,7 @@ pub use record::{NodeRecord, NodeRecordParseError};
 
 mod utils;
 pub use utils::{
-    PeerIdConversionError, enr_to_multiaddr, local_id_to_p2p_id, peer_id_to_secp256k1_pubkey,
+    enr_to_multiaddr, local_id_to_p2p_id, peer_id_to_secp256k1_pubkey, PeerIdConversionError,
 };
 
 mod monitoring;

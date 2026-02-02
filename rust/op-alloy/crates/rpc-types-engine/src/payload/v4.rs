@@ -3,7 +3,7 @@
 use alloc::vec::Vec;
 use alloy_consensus::Block;
 use alloy_eips::Decodable2718;
-use alloy_primitives::{B256, Bytes, U256};
+use alloy_primitives::{Bytes, B256, U256};
 use alloy_rpc_types_engine::{BlobsBundleV1, ExecutionPayloadV3, PayloadError};
 
 /// The Opstack execution payload for `newPayloadV4` of the engine API introduced with isthmus.
@@ -143,12 +143,12 @@ impl ssz::Encode for OpExecutionPayloadV4 {
     }
 
     fn ssz_append(&self, buf: &mut Vec<u8>) {
-        let offset = <B256 as ssz::Encode>::ssz_fixed_len() * 6
-            + <alloy_primitives::Address as ssz::Encode>::ssz_fixed_len()
-            + <alloy_primitives::Bloom as ssz::Encode>::ssz_fixed_len()
-            + <u64 as ssz::Encode>::ssz_fixed_len() * 6
-            + <U256 as ssz::Encode>::ssz_fixed_len()
-            + ssz::BYTES_PER_LENGTH_OFFSET * 3;
+        let offset = <B256 as ssz::Encode>::ssz_fixed_len() * 6 +
+            <alloy_primitives::Address as ssz::Encode>::ssz_fixed_len() +
+            <alloy_primitives::Bloom as ssz::Encode>::ssz_fixed_len() +
+            <u64 as ssz::Encode>::ssz_fixed_len() * 6 +
+            <U256 as ssz::Encode>::ssz_fixed_len() +
+            ssz::BYTES_PER_LENGTH_OFFSET * 3;
 
         let mut encoder = ssz::SszEncoder::container(buf, offset);
 
@@ -175,8 +175,8 @@ impl ssz::Encode for OpExecutionPayloadV4 {
     }
 
     fn ssz_bytes_len(&self) -> usize {
-        <ExecutionPayloadV3 as ssz::Encode>::ssz_bytes_len(&self.payload_inner)
-            + <B256 as ssz::Encode>::ssz_fixed_len()
+        <ExecutionPayloadV3 as ssz::Encode>::ssz_bytes_len(&self.payload_inner) +
+            <B256 as ssz::Encode>::ssz_fixed_len()
     }
 }
 

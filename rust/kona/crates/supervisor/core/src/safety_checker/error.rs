@@ -1,4 +1,4 @@
-use alloy_primitives::{B256, ChainId};
+use alloy_primitives::{ChainId, B256};
 use kona_interop::InteropValidationError;
 use kona_protocol::BlockInfo;
 use kona_supervisor_storage::StorageError;

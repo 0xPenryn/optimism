@@ -1,10 +1,10 @@
 #![allow(missing_docs)]
-//! Contains benchmarks for the [TrieNode].
+//! Contains benchmarks for the [`TrieNode`].
 
 use alloy_trie::Nibbles;
-use criterion::{Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, Criterion};
 use kona_mpt::{NoopTrieHinter, NoopTrieProvider, TrieNode};
-use rand::{Rng, SeedableRng, rngs::StdRng, seq::IteratorRandom};
+use rand::{rngs::StdRng, seq::IteratorRandom, Rng, SeedableRng};
 
 fn trie(c: &mut Criterion) {
     let mut g = c.benchmark_group("execution");

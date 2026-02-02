@@ -29,7 +29,7 @@ mod tests {
     use clap::Parser;
     use std::net::IpAddr;
 
-    /// A mock command that uses the MetricsArgs.
+    /// A mock command that uses the `MetricsArgs`.
     #[derive(Parser, Debug, Clone)]
     #[command(about = "Mock command")]
     struct MockCommand {

@@ -18,7 +18,7 @@ use tokio::sync::{mpsc, oneshot, watch};
 /// supported [`EngineActorRequest`] operations to limit the power of callers to RPC-type requests.
 #[derive(Clone, Constructor, Debug)]
 pub struct QueuedEngineRpcClient {
-    /// A channel to use to send the EngineActor requests.
+    /// A channel to use to send the `EngineActor` requests.
     pub engine_actor_request_tx: mpsc::Sender<EngineActorRequest>,
 }
 

@@ -35,7 +35,7 @@ impl L2Finalizer {
                 ),
             )
             .and_modify(|n| *n = (*n).max(attributes.block_number()))
-            .or_insert(attributes.block_number());
+            .or_insert_with(|| attributes.block_number());
     }
 
     /// Clears the finalization queue.

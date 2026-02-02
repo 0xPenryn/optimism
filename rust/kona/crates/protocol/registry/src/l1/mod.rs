@@ -7,7 +7,7 @@ use core::{fmt::Display, ops::Deref};
 use kona_genesis::L1ChainConfig;
 
 use alloy_chains::NamedChain;
-use alloy_primitives::{Address, U256, address, map::HashMap};
+use alloy_primitives::{address, map::HashMap, Address, U256};
 
 /// L1 chain configuration.
 /// Simple wrapper around the [`L1ChainConfig`] type from the `alloy-genesis` crate.

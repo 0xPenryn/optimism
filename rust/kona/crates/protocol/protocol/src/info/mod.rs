@@ -15,9 +15,10 @@
 //!
 //! The chains of embedding are:
 //!
-//! 1. L1BlockInfoBedrockBase < L1BlockInfoEcotoneBase < L1BlockInfoIsthmus < L1BlockInfoJovian
-//! 2. L1BlockInfoBedrockBase < L1BlockInfoBedrock
-//! 3. L1BlockInfoEcotoneBase < L1BlockInfoEcotone
+//! 1. `L1BlockInfoBedrockBase` < `L1BlockInfoEcotoneBase` < `L1BlockInfoIsthmus` <
+//!    `L1BlockInfoJovian`
+//! 2. `L1BlockInfoBedrockBase` < `L1BlockInfoBedrock`
+//! 3. `L1BlockInfoEcotoneBase` < `L1BlockInfoEcotone`
 
 mod variant;
 pub use variant::L1BlockInfoTx;

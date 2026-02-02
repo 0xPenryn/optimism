@@ -1,23 +1,23 @@
-//! Contains a concrete implementation of the [KeyValueStore] trait that stores data on disk,
-//! using the [InteropHost] config.
+//! Contains a concrete implementation of the [`KeyValueStore`] trait that stores data on disk,
+//! using the [`InteropHost`] config.
 
 use super::InteropHost;
 use crate::{KeyValueStore, Result};
-use alloy_primitives::{B256, keccak256};
+use alloy_primitives::{keccak256, B256};
 use kona_preimage::PreimageKey;
 use kona_proof_interop::boot::{
     L1_CONFIG_KEY, L1_HEAD_KEY, L2_AGREED_PRE_STATE_KEY, L2_CLAIMED_POST_STATE_KEY,
     L2_CLAIMED_TIMESTAMP_KEY, L2_ROLLUP_CONFIG_KEY,
 };
 
-/// A simple, synchronous key-value store that returns data from a [InteropHost] config.
+/// A simple, synchronous key-value store that returns data from a [`InteropHost`] config.
 #[derive(Debug)]
 pub struct InteropLocalInputs {
     cfg: InteropHost,
 }
 
 impl InteropLocalInputs {
-    /// Create a new [InteropLocalInputs] with the given [InteropHost] config.
+    /// Create a new [`InteropLocalInputs`] with the given [`InteropHost`] config.
     pub const fn new(cfg: InteropHost) -> Self {
         Self { cfg }
     }

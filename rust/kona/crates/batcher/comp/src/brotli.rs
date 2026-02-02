@@ -25,7 +25,7 @@ impl From<BrotliLevel> for u32 {
 /// A Brotli Compression Error.
 #[derive(thiserror::Error, Debug)]
 pub enum BrotliCompressionError {
-    /// Unimplemented in no_std environments.
+    /// Unimplemented in `no_std` environments.
     #[error("brotli compression is not supported in no_std environments")]
     NoStd,
     /// An error returned by the `std` brotli compression method.
@@ -64,7 +64,7 @@ impl From<BrotliLevel> for BrotliCompressor {
 /// in the [`brotli`](https://crates.io/crates/brotli) crate.
 ///
 /// Note: The level must be between 0 and 11. In Optimism, the levels 9, 10, and 11 are used.
-///       By default, [BrotliLevel::Brotli10] is used.
+///       By default, [`BrotliLevel::Brotli10`] is used.
 #[allow(unused_variables)]
 #[allow(unused_mut)]
 pub fn compress_brotli(

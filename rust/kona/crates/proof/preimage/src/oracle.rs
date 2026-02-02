@@ -1,11 +1,11 @@
 use crate::{
-    PreimageKey, PreimageOracleClient, PreimageOracleServer,
     errors::{PreimageOracleError, PreimageOracleResult},
     traits::{Channel, PreimageFetcher},
+    PreimageKey, PreimageOracleClient, PreimageOracleServer,
 };
 use alloc::{boxed::Box, vec::Vec};
 
-/// An [OracleReader] is a high-level interface to the preimage oracle channel.
+/// An [`OracleReader`] is a high-level interface to the preimage oracle channel.
 #[derive(Debug, Clone, Copy)]
 pub struct OracleReader<C> {
     channel: C,
@@ -15,7 +15,7 @@ impl<C> OracleReader<C>
 where
     C: Channel,
 {
-    /// Create a new [OracleReader] from a [Channel].
+    /// Create a new [`OracleReader`] from a [`Channel`].
     pub const fn new(channel: C) -> Self {
         Self { channel }
     }
@@ -90,7 +90,7 @@ where
     }
 }
 
-/// An [OracleServer] is a router for the host to serve data back to the client [OracleReader].
+/// An [`OracleServer`] is a router for the host to serve data back to the client [`OracleReader`].
 #[derive(Debug, Clone, Copy)]
 pub struct OracleServer<C> {
     channel: C,
@@ -100,7 +100,7 @@ impl<C> OracleServer<C>
 where
     C: Channel,
 {
-    /// Create a new [OracleServer] from a [Channel].
+    /// Create a new [`OracleServer`] from a [`Channel`].
     pub const fn new(channel: C) -> Self {
         Self { channel }
     }
@@ -138,7 +138,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{PreimageKeyType, native_channel::BidirectionalChannel};
+    use crate::{native_channel::BidirectionalChannel, PreimageKeyType};
     use alloc::sync::Arc;
     use alloy_primitives::keccak256;
     use std::collections::HashMap;

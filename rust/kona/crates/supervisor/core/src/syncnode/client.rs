@@ -1,5 +1,5 @@
-use super::{AuthenticationError, ClientError, metrics::Metrics};
-use alloy_primitives::{B256, ChainId};
+use super::{metrics::Metrics, AuthenticationError, ClientError};
+use alloy_primitives::{ChainId, B256};
 use alloy_rpc_types_engine::{Claims, JwtSecret};
 use alloy_rpc_types_eth::BlockNumHash;
 use async_trait::async_trait;
@@ -8,7 +8,7 @@ use jsonrpsee::{
     ws_client::{HeaderMap, HeaderValue, WsClient, WsClientBuilder},
 };
 use kona_supervisor_metrics::observe_metrics_for_result_async;
-use kona_supervisor_rpc::{BlockInfo, ManagedModeApiClient, jsonrpsee::SubscriptionTopic};
+use kona_supervisor_rpc::{jsonrpsee::SubscriptionTopic, BlockInfo, ManagedModeApiClient};
 use kona_supervisor_types::{BlockSeal, OutputV0, Receipts, SubscriptionEvent};
 use std::{
     fmt::Debug,
@@ -34,7 +34,7 @@ pub trait ManagedNodeClient: Send + Sync + Debug {
 
     /// Fetches the pending [`OutputV0`] at a specific timestamp.
     async fn pending_output_v0_at_timestamp(&self, timestamp: u64)
-    -> Result<OutputV0, ClientError>;
+        -> Result<OutputV0, ClientError>;
 
     /// Fetches the L2 [`BlockInfo`] by timestamp.
     async fn l2_block_ref_by_timestamp(&self, timestamp: u64) -> Result<BlockInfo, ClientError>;
@@ -130,7 +130,7 @@ impl Client {
         Ok(headers)
     }
 
-    /// Returns a reference to the WebSocket client, creating it if it doesn't exist.
+    /// Returns a reference to the `WebSocket` client, creating it if it doesn't exist.
     // todo: support http client as well
     pub async fn get_ws_client(&self) -> Result<Arc<WsClient>, ClientError> {
         let mut ws_client_guard = self.ws_client.lock().await;

@@ -1,8 +1,8 @@
 //! A task to consolidate the engine state.
 
 use crate::{
-    ConsolidateTaskError, EngineClient, EngineState, EngineTaskExt, SynchronizeTask,
-    state::EngineSyncStateUpdate, task_queue::build_and_seal,
+    state::EngineSyncStateUpdate, task_queue::build_and_seal, ConsolidateTaskError, EngineClient,
+    EngineState, EngineTaskExt, SynchronizeTask,
 };
 use alloy_rpc_types_eth::Block;
 use async_trait::async_trait;
@@ -95,7 +95,7 @@ impl<EngineClient_: EngineClient> ConsolidateTask<EngineClient_> {
         Ok(())
     }
 
-    /// This provides symmetric fallback behavior to with build_and_seal.
+    /// This provides symmetric fallback behavior to with `build_and_seal`.
     async fn reconcile_to_safe_head(
         &self,
         state: &mut EngineState,

@@ -120,10 +120,13 @@ async fn test_custom_block_priority_config() {
     let wallet = Arc::new(Mutex::new(Wallet::default().with_chain_id(chain_spec.chain().into())));
 
     // Configure and launch the node.
-    let config = NodeConfig::new(chain_spec).with_datadir_args(DatadirArgs {
-        datadir: reth_db::test_utils::tempdir_path().into(),
-        ..Default::default()
-    });
+    let mut config =
+        NodeConfig::new(chain_spec).with_unused_ports().with_datadir_args(DatadirArgs {
+            datadir: reth_db::test_utils::tempdir_path().into(),
+            ..Default::default()
+        });
+    config.network.discovery.discv5_port = 0;
+    config.network.discovery.discv5_port_ipv6 = 0;
     let db = create_test_rw_db_with_path(
         config
             .datadir

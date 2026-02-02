@@ -1,10 +1,10 @@
-//! Defines the [BasicKernelInterface] trait, which describes the functionality of several system
+//! Defines the [`BasicKernelInterface`] trait, which describes the functionality of several system
 //! calls inside of the kernel.
 
-use crate::{FileDescriptor, errors::IOResult};
+use crate::{errors::IOResult, FileDescriptor};
 
-/// The [BasicKernelInterface] trait describes the functionality of several core system calls inside
-/// of the kernel.
+/// The [`BasicKernelInterface`] trait describes the functionality of several core system calls
+/// inside of the kernel.
 ///
 /// Commonly, embedded proving environments delegate IO operations to custom file descriptors.
 /// This trait is a safe wrapper around the raw system calls available to the `client` program

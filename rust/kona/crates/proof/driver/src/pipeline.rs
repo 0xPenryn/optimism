@@ -81,8 +81,8 @@ where
     ///
     /// ## Step Results
     /// The pipeline can return different step results:
-    /// - **PreparedAttributes**: Attributes ready for the next block
-    /// - **AdvancedOrigin**: L1 origin moved forward
+    /// - **`PreparedAttributes`**: Attributes ready for the next block
+    /// - **`AdvancedOrigin`**: L1 origin moved forward
     /// - **OriginAdvanceErr/StepFailed**: Various error conditions
     async fn produce_payload(
         &mut self,

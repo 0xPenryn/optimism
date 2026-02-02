@@ -3,16 +3,16 @@
 
 use crate::errors::{TrieDBError, TrieDBResult};
 use alloc::{string::ToString, vec::Vec};
-use alloy_consensus::{EMPTY_ROOT_HASH, Header, Sealed};
-use alloy_primitives::{Address, B256, U256, keccak256};
+use alloy_consensus::{Header, Sealed, EMPTY_ROOT_HASH};
+use alloy_primitives::{keccak256, Address, B256, U256};
 use alloy_rlp::{Decodable, Encodable};
 use alloy_trie::TrieAccount;
 use kona_mpt::{Nibbles, TrieHinter, TrieNode, TrieNodeError};
 use revm::{
-    Database,
-    database::{BundleState, states::StorageSlot},
-    primitives::{BLOCK_HASH_HISTORY, HashMap},
+    database::{states::StorageSlot, BundleState},
+    primitives::{HashMap, BLOCK_HASH_HISTORY},
     state::{AccountInfo, Bytecode},
+    Database,
 };
 
 mod traits;
@@ -29,32 +29,32 @@ pub use traits::{NoopTrieDBProvider, TrieDBProvider};
 /// capture state transitions during block execution.
 ///
 /// **Behavior**:
-/// - When an account is queried and the trie path has not already been opened by [Self::basic], we
-///   fall through to the `PreimageFetcher` to fetch the preimages of the trie nodes on the path to
-///   the account. After it has been fetched, the path will be cached until the next call to
-///   [Self::state_root].
+/// - When an account is queried and the trie path has not already been opened by [`Self::basic`],
+///   we fall through to the `PreimageFetcher` to fetch the preimages of the trie nodes on the path
+///   to the account. After it has been fetched, the path will be cached until the next call to
+///   [`Self::state_root`].
 /// - When querying for the code hash of an account, the [`TrieDBProvider`] is consulted to fetch
 ///   the code hash of the account.
 /// - When a [`BundleState`] changeset is committed to the parent [`State`] database, the changes
 ///   are first applied to the [`State`]'s cache, then the trie hash is recomputed with
-///   [Self::state_root].
-/// - When the block hash of a block number is needed via [Self::block_hash], the
+///   [`Self::state_root`].
+/// - When the block hash of a block number is needed via [`Self::block_hash`], the
 ///   `HeaderByHashFetcher` is consulted to walk back to the desired block number by revealing the
 ///   parent hash of block headers until the desired block number is reached, up to a maximum of
-///   [BLOCK_HASH_HISTORY] blocks back relative to the current parent block hash.
+///   [`BLOCK_HASH_HISTORY`] blocks back relative to the current parent block hash.
 ///
 /// **Example Construction**:
 /// ```rust
 /// use alloy_consensus::{Header, Sealable};
-/// use alloy_evm::{EvmEnv, EvmFactory, block::BlockExecutorFactory};
+/// use alloy_evm::{block::BlockExecutorFactory, EvmEnv, EvmFactory};
 /// use alloy_op_evm::{
-///     OpBlockExecutionCtx, OpBlockExecutorFactory, OpEvmFactory, block::OpAlloyReceiptBuilder,
+///     block::OpAlloyReceiptBuilder, OpBlockExecutionCtx, OpBlockExecutorFactory, OpEvmFactory,
 /// };
 /// use alloy_op_hardforks::OpChainHardforks;
-/// use alloy_primitives::{B256, Bytes};
+/// use alloy_primitives::{Bytes, B256};
 /// use kona_executor::{NoopTrieDBProvider, TrieDB};
 /// use kona_mpt::NoopTrieHinter;
-/// use revm::database::{State, states::bundle_state::BundleRetention};
+/// use revm::database::{states::bundle_state::BundleRetention, State};
 ///
 /// let mock_parent_block_header = Header::default();
 /// let trie_db =
@@ -100,7 +100,7 @@ where
     F: TrieDBProvider,
     H: TrieHinter,
 {
-    /// Creates a new [TrieDB] with the given root node.
+    /// Creates a new [`TrieDB`] with the given root node.
     pub fn new(parent_block_header: Sealed<Header>, fetcher: F, hinter: H) -> Self {
         Self {
             root_node: TrieNode::new_blinded(parent_block_header.state_root),
@@ -116,7 +116,7 @@ where
         self.root_node
     }
 
-    /// Returns a shared reference to the root [TrieNode] of the trie DB.
+    /// Returns a shared reference to the root [`TrieNode`] of the trie DB.
     pub const fn root(&self) -> &TrieNode {
         &self.root_node
     }
@@ -140,10 +140,10 @@ where
         self.parent_block_header = parent_block_header;
     }
 
-    /// Applies a [BundleState] changeset to the [TrieNode] and recomputes the state root hash.
+    /// Applies a [`BundleState`] changeset to the [`TrieNode`] and recomputes the state root hash.
     ///
     /// ## Takes
-    /// - `bundle`: The [BundleState] changeset to apply to the trie DB.
+    /// - `bundle`: The [`BundleState`] changeset to apply to the trie DB.
     ///
     /// ## Returns
     /// - `Ok(B256)`: The new state root hash of the trie DB.
@@ -166,13 +166,13 @@ where
         Ok(root)
     }
 
-    /// Fetches the [TrieAccount] of an account from the trie DB.
+    /// Fetches the [`TrieAccount`] of an account from the trie DB.
     ///
     /// ## Takes
     /// - `address`: The address of the account.
     ///
     /// ## Returns
-    /// - `Ok(Some(TrieAccount))`: The [TrieAccount] of the account.
+    /// - `Ok(Some(TrieAccount))`: The [`TrieAccount`] of the account.
     /// - `Ok(None)`: If the account does not exist in the trie.
     /// - `Err(_)`: If the account could not be fetched.
     pub fn get_trie_account(
@@ -199,10 +199,10 @@ where
             .map(Some)
     }
 
-    /// Modifies the accounts in the storage trie with the given [BundleState] changeset.
+    /// Modifies the accounts in the storage trie with the given [`BundleState`] changeset.
     ///
     /// ## Takes
-    /// - `bundle`: The [BundleState] changeset to apply to the trie DB.
+    /// - `bundle`: The [`BundleState`] changeset to apply to the trie DB.
     ///
     /// ## Returns
     /// - `Ok(())` if the accounts were successfully updated.

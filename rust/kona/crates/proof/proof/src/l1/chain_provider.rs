@@ -1,6 +1,6 @@
-//! Contains the concrete implementation of the [ChainProvider] trait for the proof.
+//! Contains the concrete implementation of the [`ChainProvider`] trait for the proof.
 
-use crate::{HintType, errors::OracleProviderError};
+use crate::{errors::OracleProviderError, HintType};
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use alloy_consensus::{Header, Receipt, ReceiptEnvelope, TxEnvelope};
 use alloy_eips::eip2718::Decodable2718;
@@ -22,7 +22,7 @@ pub struct OracleL1ChainProvider<T: CommsClient> {
 }
 
 impl<T: CommsClient> OracleL1ChainProvider<T> {
-    /// Creates a new [OracleL1ChainProvider] with the given boot information and oracle client.
+    /// Creates a new [`OracleL1ChainProvider`] with the given boot information and oracle client.
     pub const fn new(l1_head: B256, oracle: Arc<T>) -> Self {
         Self { l1_head, oracle }
     }

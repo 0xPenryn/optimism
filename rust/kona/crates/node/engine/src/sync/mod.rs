@@ -100,15 +100,13 @@ pub async fn find_starting_forkchoice<EngineClient_: EngineClient>(
             );
             current_fc.safe = safe_cursor;
             break;
-        } else {
-            let block = engine_client
-                .get_l2_block(safe_cursor.block_info.parent_hash.into())
-                .full()
-                .await?
-                .ok_or(SyncStartError::BlockNotFound(safe_cursor.block_info.parent_hash.into()))?;
-            safe_cursor =
-                L2BlockInfo::from_block_and_genesis(&block.into_consensus(), &cfg.genesis)?;
         }
+        let block = engine_client
+            .get_l2_block(safe_cursor.block_info.parent_hash.into())
+            .full()
+            .await?
+            .ok_or(SyncStartError::BlockNotFound(safe_cursor.block_info.parent_hash.into()))?;
+        safe_cursor = L2BlockInfo::from_block_and_genesis(&block.into_consensus(), &cfg.genesis)?;
     }
 
     // Leave the finalized block as-is, and return the current forkchoice.

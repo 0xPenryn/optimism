@@ -5,19 +5,19 @@ use crate::{
         BuilderClientArgs, DerivationDelegateArgs, GlobalArgs, L1ClientArgs, L2ClientArgs, P2PArgs,
         RollupBoostFlags, RpcArgs, SequencerArgs,
     },
-    metrics::{CliMetrics, init_rollup_config_metrics},
+    metrics::{init_rollup_config_metrics, CliMetrics},
 };
 use alloy_provider::RootProvider;
 use alloy_rpc_types_engine::JwtSecret;
 use alloy_transport_http::Http;
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 use backon::{ExponentialBuilder, Retryable};
 use clap::Parser;
 use kona_cli::{LogConfig, MetricsArgs};
 use kona_engine::{HyperAuthClient, OpEngineClient};
 use kona_genesis::{L1ChainConfig, RollupConfig};
 use kona_node_service::{EngineConfig, L1ConfigBuilder, NodeMode, RollupNodeBuilder};
-use kona_registry::{L1Config, scr_rollup_config_by_alloy_ident};
+use kona_registry::{scr_rollup_config_by_alloy_ident, L1Config};
 use op_alloy_network::Optimism;
 use op_alloy_provider::ext::engine::OpEngineApi;
 use serde_json::from_reader;
@@ -177,7 +177,7 @@ impl NodeCommand {
                     self.p2p_flags
                         .advertise_ip
                         .map(|ip| ip.to_string())
-                        .unwrap_or(String::from("0.0.0.0"))
+                        .unwrap_or_else(|| String::from("0.0.0.0"))
                 ),
                 (
                     CliMetrics::P2P_ADVERTISE_TCP_PORT,
@@ -221,7 +221,7 @@ impl NodeCommand {
         false
     }
 
-    /// Helper to check JWT signature error from anyhow::Error (for retry condition)
+    /// Helper to check JWT signature error from `anyhow::Error` (for retry condition)
     fn is_jwt_signature_error_from_anyhow(error: &anyhow::Error) -> bool {
         Self::is_jwt_signature_error(error.as_ref() as &dyn std::error::Error)
     }
@@ -379,7 +379,7 @@ impl NodeCommand {
     }
 
     /// Returns the L2 JWT secret for the engine API
-    /// using the provided [PathBuf]. If the file is not found,
+    /// using the provided [`PathBuf`]. If the file is not found,
     /// it will return the default JWT secret.
     pub fn l2_jwt_secret(&self) -> anyhow::Result<JwtSecret> {
         if let Some(path) = &self.l2_client_args.l2_engine_jwt_secret &&
@@ -397,7 +397,7 @@ impl NodeCommand {
     }
 
     /// Returns the builder JWT secret for the engine API
-    /// using the provided [PathBuf]. If the file is not found,
+    /// using the provided [`PathBuf`]. If the file is not found,
     /// it will return the default JWT secret.
     pub fn builder_jwt_secret(&self) -> anyhow::Result<JwtSecret> {
         if let Some(path) = &self.builder_client_args.builder_jwt_path &&
@@ -469,7 +469,9 @@ mod tests {
 
     #[test]
     fn test_node_cli_defaults() {
-        let args = NodeCommand::parse_from(["node"].iter().chain(default_flags().iter()).copied());
+        let args = NodeCommand::parse_from(
+            std::iter::once(&"node").chain(default_flags().iter()).copied(),
+        );
         assert_eq!(args.node_mode, NodeMode::Validator);
     }
 

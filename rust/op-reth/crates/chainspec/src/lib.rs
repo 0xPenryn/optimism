@@ -465,25 +465,24 @@ impl OpGenesisInfo {
                 optimism_base_fee_info.eip1559_denominator,
             )
         {
-            let base_fee_params = if let Some(canyon_denominator) =
-                optimism_base_fee_info.eip1559_denominator_canyon
-            {
-                BaseFeeParamsKind::Variable(
-                    vec![
-                        (
-                            EthereumHardfork::London.boxed(),
-                            BaseFeeParams::new(denominator as u128, elasticity as u128),
-                        ),
-                        (
-                            OpHardfork::Canyon.boxed(),
-                            BaseFeeParams::new(canyon_denominator as u128, elasticity as u128),
-                        ),
-                    ]
-                    .into(),
-                )
-            } else {
-                BaseFeeParams::new(denominator as u128, elasticity as u128).into()
-            };
+            let base_fee_params = optimism_base_fee_info.eip1559_denominator_canyon.map_or_else(
+                || BaseFeeParams::new(denominator as u128, elasticity as u128).into(),
+                |canyon_denominator| {
+                    BaseFeeParamsKind::Variable(
+                        vec![
+                            (
+                                EthereumHardfork::London.boxed(),
+                                BaseFeeParams::new(denominator as u128, elasticity as u128),
+                            ),
+                            (
+                                OpHardfork::Canyon.boxed(),
+                                BaseFeeParams::new(canyon_denominator as u128, elasticity as u128),
+                            ),
+                        ]
+                        .into(),
+                    )
+                },
+            );
 
             info.base_fee_params = base_fee_params;
         }

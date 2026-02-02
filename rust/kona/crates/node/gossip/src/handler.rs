@@ -144,7 +144,7 @@ mod tests {
     use crate::{v2_valid_block, v3_valid_block, v4_valid_block};
 
     use super::*;
-    use alloy_primitives::{B256, Signature};
+    use alloy_primitives::{Signature, B256};
 
     #[test]
     fn test_valid_decode() {

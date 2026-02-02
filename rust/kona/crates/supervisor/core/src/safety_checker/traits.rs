@@ -1,4 +1,4 @@
-use crate::{CrossSafetyError, event::ChainEvent};
+use crate::{event::ChainEvent, CrossSafetyError};
 use alloy_primitives::ChainId;
 use kona_protocol::BlockInfo;
 use kona_supervisor_storage::CrossChainSafetyProvider;

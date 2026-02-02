@@ -80,7 +80,7 @@ impl alloy_network_primitives::ReceiptResponse for OpTransactionReceipt {
 }
 
 /// Additional fields for Optimism transaction receipts: <https://github.com/ethereum-optimism/op-geth/blob/f2e69450c6eec9c35d56af91389a1c47737206ca/core/types/receipt.go#L87-L87>
-#[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[doc(alias = "OptimismTxReceiptFields")]
 pub struct OpTransactionReceiptFields {
@@ -103,7 +103,7 @@ pub struct OpTransactionReceiptFields {
 
 /// Serialize/Deserialize l1FeeScalar to/from string
 mod l1_fee_scalar_serde {
-    use serde::{Deserialize, de};
+    use serde::{de, Deserialize};
 
     pub(super) fn serialize<S>(value: &Option<f64>, s: S) -> Result<S::Ok, S::Error>
     where
@@ -205,7 +205,7 @@ impl From<OpTransactionReceipt> for OpReceiptEnvelope<alloy_primitives::Log> {
     fn from(value: OpTransactionReceipt) -> Self {
         let inner_envelope = value.inner.inner.into();
 
-        /// Helper function to convert the inner logs within a [ReceiptWithBloom] from RPC to
+        /// Helper function to convert the inner logs within a [`ReceiptWithBloom`] from RPC to
         /// consensus types.
         #[inline(always)]
         fn convert_standard_receipt(
@@ -253,7 +253,7 @@ impl From<OpTransactionReceipt> for OpReceiptEnvelope<alloy_primitives::Log> {
 mod tests {
     use super::*;
     use alloc::string::ToString;
-    use serde_json::{Value, json};
+    use serde_json::{json, Value};
 
     // <https://github.com/alloy-rs/op-alloy/issues/18>
     #[test]

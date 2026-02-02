@@ -1,15 +1,15 @@
-//! An example encoding and decoding a [SingleBatch].
+//! An example encoding and decoding a [`SingleBatch`].
 //!
-//! This example demonstrates EIP-2718 encoding a [SingleBatch]
-//! through a [ChannelOut] and into individual [Frame]s.
+//! This example demonstrates EIP-2718 encoding a [`SingleBatch`]
+//! through a [`ChannelOut`] and into individual [Frame]s.
 //!
 //! Notice, the raw batch is first _encoded_.
 //! Once encoded, it is compressed into raw data that the channel is constructed with.
 //!
-//! The [ChannelOut] then outputs frames individually using the maximum frame size,
+//! The [`ChannelOut`] then outputs frames individually using the maximum frame size,
 //! in this case hardcoded to 100, to construct the frames.
 //!
-//! Finally, once [Frame]s are built from the [ChannelOut], they are encoded and ready
+//! Finally, once [Frame]s are built from the [`ChannelOut`], they are encoded and ready
 //! to be batch-submitted to the data availability layer.
 
 #[cfg(feature = "std")]

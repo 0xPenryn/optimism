@@ -8,7 +8,7 @@ use alloy_op_evm::block::OpTxEnv;
 use core::fmt::Debug;
 use kona_executor::TrieDBProvider;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
-use kona_proof::{CachingOracle, l2::OracleL2ChainProvider};
+use kona_proof::{l2::OracleL2ChainProvider, CachingOracle};
 use kona_proof_interop::{
     BootInfo, HintType, OracleInteropProvider, PreState, SuperchainConsolidator,
 };

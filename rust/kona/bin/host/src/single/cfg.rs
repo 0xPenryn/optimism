@@ -2,9 +2,9 @@
 
 use super::{SingleChainHintHandler, SingleChainLocalInputs};
 use crate::{
-    DiskKeyValueStore, MemoryKeyValueStore, OfflineHostBackend, OnlineHostBackend,
-    OnlineHostBackendCfg, PreimageServer, SharedKeyValueStore, SplitKeyValueStore,
-    eth::rpc_provider, server::PreimageServerError,
+    eth::rpc_provider, server::PreimageServerError, DiskKeyValueStore, MemoryKeyValueStore,
+    OfflineHostBackend, OnlineHostBackend, OnlineHostBackendCfg, PreimageServer,
+    SharedKeyValueStore, SplitKeyValueStore,
 };
 use alloy_primitives::B256;
 use alloy_provider::RootProvider;
@@ -143,7 +143,7 @@ pub enum SingleChainHostError {
 }
 
 impl SingleChainHost {
-    /// Starts the [SingleChainHost] application.
+    /// Starts the [`SingleChainHost`] application.
     pub async fn start(self) -> Result<(), SingleChainHostError> {
         if self.server {
             let hint = FileChannel::new(FileDescriptor::HintRead, FileDescriptor::HintWrite);
@@ -229,7 +229,7 @@ impl SingleChainHost {
             self.data_dir.is_some()
     }
 
-    /// Reads the [RollupConfig] from the file system and returns the deserialized configuration.
+    /// Reads the [`RollupConfig`] from the file system and returns the deserialized configuration.
     pub fn read_rollup_config(&self) -> Result<RollupConfig, SingleChainHostError> {
         let path =
             self.rollup_config_path.as_ref().ok_or_else(|| SingleChainHostError::NoRollupConfig)?;
@@ -241,7 +241,7 @@ impl SingleChainHost {
         serde_json::from_str(&ser_config).map_err(SingleChainHostError::ParseError)
     }
 
-    /// Reads the [L1ChainConfig] from the file system and returns the deserialized configuration.
+    /// Reads the [`L1ChainConfig`] from the file system and returns the deserialized configuration.
     pub fn read_l1_config(&self) -> Result<L1ChainConfig, SingleChainHostError> {
         let path = self.l1_config_path.as_ref().ok_or_else(|| SingleChainHostError::NoL1Config)?;
 
@@ -379,8 +379,8 @@ mod test {
             ([].as_slice(), false),
         ];
 
-        for (args_ext, valid) in cases.into_iter() {
-            let args = default_flags.iter().chain(args_ext.iter()).cloned().collect::<Vec<_>>();
+        for (args_ext, valid) in cases {
+            let args = default_flags.iter().chain(args_ext.iter()).copied().collect::<Vec<_>>();
 
             let parsed = SingleChainHost::try_parse_from(args);
             assert_eq!(parsed.is_ok(), valid);

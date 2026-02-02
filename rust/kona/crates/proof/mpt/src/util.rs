@@ -2,7 +2,7 @@
 
 use alloc::vec::Vec;
 use alloy_rlp::{Buf, BufMut, Encodable, Header};
-use alloy_trie::{HashBuilder, Nibbles, proof::ProofRetainer};
+use alloy_trie::{proof::ProofRetainer, HashBuilder, Nibbles};
 
 /// Compute a trie root of the collection of items with a custom encoder.
 pub fn ordered_trie_with_encoder<T, F>(items: &[T], mut encode: F) -> HashBuilder
@@ -51,7 +51,7 @@ pub(crate) const fn adjust_index_for_rlp(i: usize, len: usize) -> usize {
 }
 
 /// Walks through a RLP list's elements and returns the total number of elements in the list.
-/// Returns [alloy_rlp::Error::UnexpectedString] if the RLP stream is not a list.
+/// Returns [`alloy_rlp::Error::UnexpectedString`] if the RLP stream is not a list.
 ///
 /// ## Takes
 /// - `buf` - The RLP stream to walk through

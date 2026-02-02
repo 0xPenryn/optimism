@@ -2,7 +2,7 @@
 
 use crate::{
     commands::{BootstoreCommand, InfoCommand, NetCommand, NodeCommand, RegistryCommand},
-    flags::{GlobalArgs, init_unified_metrics},
+    flags::{init_unified_metrics, GlobalArgs},
     version,
 };
 use anyhow::Result;

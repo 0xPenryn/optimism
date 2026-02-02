@@ -1,5 +1,5 @@
-//! Contains the [CachingOracle], which is a wrapper around an [OracleReader] and [HintWriter] that
-//! stores a configurable number of responses in an [LruCache] for quick retrieval.
+//! Contains the [`CachingOracle`], which is a wrapper around an [`OracleReader`] and [`HintWriter`]
+//! that stores a configurable number of responses in an [`LruCache`] for quick retrieval.
 //!
 //! [OracleReader]: kona_preimage::OracleReader
 //! [HintWriter]: kona_preimage::HintWriter
@@ -8,13 +8,13 @@ use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use async_trait::async_trait;
 use core::num::NonZeroUsize;
 use kona_preimage::{
-    HintWriterClient, PreimageKey, PreimageOracleClient, errors::PreimageOracleResult,
+    errors::PreimageOracleResult, HintWriterClient, PreimageKey, PreimageOracleClient,
 };
 use lru::LruCache;
 use spin::Mutex;
 
-/// A wrapper around an [OracleReader] and [HintWriter] that stores a configurable number of
-/// responses in an [LruCache] for quick retrieval.
+/// A wrapper around an [`OracleReader`] and [`HintWriter`] that stores a configurable number of
+/// responses in an [`LruCache`] for quick retrieval.
 ///
 /// [OracleReader]: kona_preimage::OracleReader
 /// [HintWriter]: kona_preimage::HintWriter
@@ -38,7 +38,7 @@ where
     OR: PreimageOracleClient,
     HW: HintWriterClient,
 {
-    /// Creates a new [CachingOracle] that wraps the given [OracleReader] and stores up to `N`
+    /// Creates a new [`CachingOracle`] that wraps the given [`OracleReader`] and stores up to `N`
     /// responses in the cache.
     ///
     /// [OracleReader]: kona_preimage::OracleReader
@@ -91,12 +91,11 @@ where
             // SAFETY: The value never enters the cache unless the preimage length matches the
             // buffer length, due to the checks in the OracleReader.
             buf.copy_from_slice(value.as_slice());
-            Ok(())
         } else {
             self.oracle_reader.get_exact(key, buf).await?;
             self.cache.lock().put(key, buf.to_vec());
-            Ok(())
         }
+        Ok(())
     }
 }
 

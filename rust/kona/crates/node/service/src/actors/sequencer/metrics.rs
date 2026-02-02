@@ -5,14 +5,14 @@ use crate::{
 };
 use kona_derive::AttributesBuilder;
 
-/// SequencerActor metrics-related method implementations.
+/// `SequencerActor` metrics-related method implementations.
 impl<
-    AttributesBuilder_,
-    Conductor_,
-    OriginSelector_,
-    SequencerEngineClient_,
-    UnsafePayloadGossipClient_,
->
+        AttributesBuilder_,
+        Conductor_,
+        OriginSelector_,
+        SequencerEngineClient_,
+        UnsafePayloadGossipClient_,
+    >
     SequencerActor<
         AttributesBuilder_,
         Conductor_,

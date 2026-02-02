@@ -1,13 +1,13 @@
-//! Contains error types for the [crate::SynchronizeTask].
+//! Contains error types for the [`crate::SynchronizeTask`].
 
-use crate::{EngineTaskError, InsertTaskError, task_queue::tasks::task::EngineTaskErrorSeverity};
+use crate::{task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError, InsertTaskError};
 use alloy_transport::{RpcError, TransportErrorKind};
 use kona_protocol::FromBlockError;
 use op_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use thiserror::Error;
 use tokio::sync::mpsc;
 
-/// An error that occurs when running the [crate::SealTask].
+/// An error that occurs when running the [`crate::SealTask`].
 #[derive(Debug, Error)]
 pub enum SealTaskError {
     /// Impossible to insert the payload into the engine.
@@ -34,9 +34,7 @@ pub enum SealTaskError {
     FromBlock(#[from] FromBlockError),
     /// Error sending the built payload envelope.
     #[error(transparent)]
-    MpscSend(
-        #[from] Box<mpsc::error::SendError<Result<OpExecutionPayloadEnvelope, SealTaskError>>>,
-    ),
+    MpscSend(#[from] Box<mpsc::error::SendError<Result<OpExecutionPayloadEnvelope, Self>>>),
     /// The clock went backwards.
     #[error("The clock went backwards")]
     ClockWentBackwards,
@@ -56,11 +54,11 @@ impl EngineTaskError for SealTaskError {
             Self::PayloadInsertionFailed(inner) => inner.severity(),
             Self::GetPayloadFailed(_) => EngineTaskErrorSeverity::Temporary,
             Self::HoloceneInvalidFlush => EngineTaskErrorSeverity::Flush,
-            Self::DepositOnlyPayloadReattemptFailed => EngineTaskErrorSeverity::Critical,
-            Self::DepositOnlyPayloadFailed => EngineTaskErrorSeverity::Critical,
-            Self::FromBlock(_) => EngineTaskErrorSeverity::Critical,
-            Self::MpscSend(_) => EngineTaskErrorSeverity::Critical,
-            Self::ClockWentBackwards => EngineTaskErrorSeverity::Critical,
+            Self::DepositOnlyPayloadReattemptFailed |
+            Self::DepositOnlyPayloadFailed |
+            Self::FromBlock(_) |
+            Self::MpscSend(_) |
+            Self::ClockWentBackwards |
             Self::UnsafeHeadChangedSinceBuild => EngineTaskErrorSeverity::Critical,
         }
     }

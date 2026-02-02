@@ -48,7 +48,6 @@ thiserror.workspace = true
 tokio = { workspace = true, features = ["sync", "macros"] }
 tokio-util.workspace = true
 auto_impl.workspace = true
-reqwest = { workspace = true }
 futures = { workspace = true }
 derive_more = { workspace = true, features = ["try_from"] }
 

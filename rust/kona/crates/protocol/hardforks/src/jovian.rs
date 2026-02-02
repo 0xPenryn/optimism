@@ -6,11 +6,11 @@
 
 use alloc::{string::String, vec::Vec};
 use alloy_eips::eip2718::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex, keccak256};
+use alloy_primitives::{address, hex, keccak256, Address, Bytes, TxKind, B256, U256};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::{TxDeposit, UpgradeDepositSource};
 
-use crate::{Hardfork, upgrade_to_calldata};
+use crate::{upgrade_to_calldata, Hardfork};
 
 /// The Jovian network upgrade transactions.
 #[derive(Debug, Default, Clone, Copy)]
@@ -74,7 +74,7 @@ impl Jovian {
 
     /// Returns the raw bytecode for the L1 Block deployment.
     pub fn l1_block_deployment_bytecode() -> Bytes {
-        hex::decode(include_str!("./bytecode/jovian-l1-block-deployment.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/jovian-l1-block-deployment.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
@@ -82,7 +82,7 @@ impl Jovian {
     /// Returns the gas price oracle deployment bytecode.
     pub fn gas_price_oracle_deployment_bytecode() -> Bytes {
         hex::decode(
-            include_str!("./bytecode/jovian-gas-price-oracle-deployment.hex").replace("\n", ""),
+            include_str!("./bytecode/jovian-gas-price-oracle-deployment.hex").replace('\n', ""),
         )
         .expect("Expected hex byte string")
         .into()

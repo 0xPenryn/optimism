@@ -7,5 +7,5 @@ use thiserror::Error;
 #[error("IO error (errno: {_0})")]
 pub struct IOError(pub i32);
 
-/// A [Result] type for the [IOError].
+/// A [Result] type for the [`IOError`].
 pub type IOResult<T> = Result<T, IOError>;

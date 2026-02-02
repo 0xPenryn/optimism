@@ -9,10 +9,10 @@ use op_revm::{
     OpTransactionError,
 };
 use revm::{
-    Context, Inspector,
-    context::{BlockEnv, Evm as RevmEvm, FrameStack, TxEnv, result::EVMError},
+    context::{result::EVMError, BlockEnv, Evm as RevmEvm, FrameStack, TxEnv},
     handler::instructions::EthInstructions,
     inspector::NoOpInspector,
+    Context, Inspector,
 };
 
 /// Factory producing [`OpEvm`]s with FPVM-accelerated precompile overrides enabled.

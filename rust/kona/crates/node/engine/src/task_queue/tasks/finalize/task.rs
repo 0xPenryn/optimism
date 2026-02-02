@@ -1,8 +1,8 @@
 //! A task for finalizing an L2 block.
 
 use crate::{
-    EngineClient, EngineState, EngineTaskExt, FinalizeTaskError, SynchronizeTask,
-    state::EngineSyncStateUpdate,
+    state::EngineSyncStateUpdate, EngineClient, EngineState, EngineTaskExt, FinalizeTaskError,
+    SynchronizeTask,
 };
 use async_trait::async_trait;
 use derive_more::Constructor;

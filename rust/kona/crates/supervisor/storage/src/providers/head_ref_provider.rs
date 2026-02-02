@@ -1,5 +1,5 @@
 //! Provider for tracking block safety head reference
-use crate::{StorageError, models::SafetyHeadRefs};
+use crate::{models::SafetyHeadRefs, StorageError};
 use alloy_primitives::ChainId;
 use derive_more::Constructor;
 use kona_protocol::BlockInfo;
@@ -51,18 +51,18 @@ where
     ) -> Result<(), StorageError> {
         // Ensure the block_info.number is greater than the stored head reference
         // If the head reference is not set, this check will be skipped.
-        if let Ok(current_head_ref) = self.get_safety_head_ref(safety_level) {
-            if current_head_ref.number > incoming_head_ref.number {
-                warn!(
-                    target: "supervisor::storage",
-                    chain_id = %self.chain_id,
-                    %current_head_ref,
-                    %incoming_head_ref,
-                    %safety_level,
-                    "Attempting to update head reference with a block that has a lower number than the current head reference",
-                );
-                return Ok(());
-            }
+        if let Ok(current_head_ref) = self.get_safety_head_ref(safety_level) &&
+            current_head_ref.number > incoming_head_ref.number
+        {
+            warn!(
+                target: "supervisor::storage",
+                chain_id = %self.chain_id,
+                %current_head_ref,
+                %incoming_head_ref,
+                %safety_level,
+                "Attempting to update head reference with a block that has a lower number than the current head reference",
+            );
+            return Ok(());
         }
 
         self.tx
@@ -142,8 +142,8 @@ mod tests {
     use crate::models::Tables;
     use alloy_primitives::B256;
     use reth_db::{
+        mdbx::{init_db_for, DatabaseArguments},
         DatabaseEnv,
-        mdbx::{DatabaseArguments, init_db_for},
     };
     use reth_db_api::Database;
     use tempfile::TempDir;

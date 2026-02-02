@@ -3,7 +3,7 @@
 use crate::flags::{GlobalArgs, P2PArgs, RpcArgs};
 use clap::Parser;
 use futures::future::OptionFuture;
-use jsonrpsee::{RpcModule, core::async_trait, server::Server};
+use jsonrpsee::{core::async_trait, server::Server, RpcModule};
 use kona_cli::LogConfig;
 use kona_gossip::P2pRpcRequest;
 use kona_node_service::{
@@ -27,7 +27,7 @@ use url::Url;
 /// ```sh
 /// kona-node net [FLAGS] [OPTIONS]
 /// ```
-#[derive(Parser, Default, PartialEq, Debug, Clone)]
+#[derive(Parser, Default, PartialEq, Eq, Debug, Clone)]
 #[command(about = "Runs the networking stack for the kona-node.")]
 pub struct NetCommand {
     /// URL of the L1 execution client RPC API.
@@ -64,8 +64,10 @@ impl NetCommand {
         let rpc_config = Option::<RpcBuilder>::from(self.rpc);
 
         // Get the rollup config from the args
-        let rollup_config = scr_rollup_config_by_alloy_ident(&args.l2_chain_id)
-            .ok_or(anyhow::anyhow!("Rollup config not found for chain id: {}", args.l2_chain_id))?;
+        let rollup_config =
+            scr_rollup_config_by_alloy_ident(&args.l2_chain_id).ok_or_else(|| {
+                anyhow::anyhow!("Rollup config not found for chain id: {}", args.l2_chain_id)
+            })?;
 
         // Start the Network Stack
         self.p2p.check_ports()?;

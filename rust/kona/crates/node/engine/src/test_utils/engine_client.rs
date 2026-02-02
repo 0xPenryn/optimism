@@ -1,9 +1,9 @@
 //! Mock implementations for testing engine client functionality.
 
 use crate::{EngineClient, HyperAuthClient};
-use alloy_eips::{BlockId, eip1898::BlockNumberOrTag};
+use alloy_eips::{eip1898::BlockNumberOrTag, BlockId};
 use alloy_network::{Ethereum, Network};
-use alloy_primitives::{Address, B256, BlockHash, StorageKey};
+use alloy_primitives::{Address, BlockHash, StorageKey, B256};
 use alloy_provider::{EthGetBlock, ProviderCall, RpcWithBlock};
 use alloy_rpc_types_engine::{
     ClientVersionV1, ExecutionPayloadBodiesV1, ExecutionPayloadEnvelopeV2, ExecutionPayloadInputV2,
@@ -28,7 +28,7 @@ use tokio::sync::RwLock;
 
 use crate::EngineClientError;
 
-/// Builder for creating test MockEngineClient instances with sensible defaults
+/// Builder for creating test `MockEngineClient` instances with sensible defaults
 pub fn test_engine_client_builder() -> MockEngineClientBuilder {
     MockEngineClientBuilder::new().with_config(Arc::new(RollupConfig::default()))
 }
@@ -45,19 +45,19 @@ pub struct MockEngineStorage {
     pub block_info_by_tag: HashMap<BlockNumberOrTag, L2BlockInfo>,
 
     // Version-specific new_payload responses
-    /// Storage for new_payload_v1 responses.
+    /// Storage for `new_payload_v1` responses.
     pub new_payload_v1_response: Option<PayloadStatus>,
-    /// Storage for new_payload_v2 responses.
+    /// Storage for `new_payload_v2` responses.
     pub new_payload_v2_response: Option<PayloadStatus>,
-    /// Storage for new_payload_v3 responses.
+    /// Storage for `new_payload_v3` responses.
     pub new_payload_v3_response: Option<PayloadStatus>,
-    /// Storage for new_payload_v4 responses.
+    /// Storage for `new_payload_v4` responses.
     pub new_payload_v4_response: Option<PayloadStatus>,
 
     // Version-specific fork_choice_updated responses
-    /// Storage for fork_choice_updated_v2 responses.
+    /// Storage for `fork_choice_updated_v2` responses.
     pub fork_choice_updated_v2_response: Option<ForkchoiceUpdated>,
-    /// Storage for fork_choice_updated_v3 responses.
+    /// Storage for `fork_choice_updated_v3` responses.
     pub fork_choice_updated_v3_response: Option<ForkchoiceUpdated>,
 
     // Version-specific get_payload responses
@@ -69,9 +69,9 @@ pub struct MockEngineStorage {
     pub execution_payload_v4: Option<OpExecutionPayloadEnvelopeV4>,
 
     // Version-specific get_payload_bodies responses
-    /// Storage for get_payload_bodies_by_hash_v1 responses.
+    /// Storage for `get_payload_bodies_by_hash_v1` responses.
     pub get_payload_bodies_by_hash_v1_response: Option<ExecutionPayloadBodiesV1>,
-    /// Storage for get_payload_bodies_by_range_v1 responses.
+    /// Storage for `get_payload_bodies_by_range_v1` responses.
     pub get_payload_bodies_by_range_v1_response: Option<ExecutionPayloadBodiesV1>,
 
     // Non-versioned responses
@@ -83,13 +83,13 @@ pub struct MockEngineStorage {
     pub capabilities: Option<Vec<String>>,
 
     // Storage for get_l1_block, get_l2_block, and get_proof
-    /// Storage for L1 blocks by stringified BlockId.
+    /// Storage for L1 blocks by stringified `BlockId`.
     /// L1 blocks use standard Ethereum transactions.
     pub l1_blocks_by_id: HashMap<String, Block<EthTransaction>>,
-    /// Storage for L2 blocks by stringified BlockId.
+    /// Storage for L2 blocks by stringified `BlockId`.
     /// L2 blocks use OP Stack transactions.
     pub l2_blocks_by_id: HashMap<String, Block<OpTransaction>>,
-    /// Storage for proofs by (address, stringified BlockId) key.
+    /// Storage for proofs by (address, stringified `BlockId`) key.
     pub proofs_by_address: HashMap<(Address, String), EIP1186AccountProofResponse>,
 }
 
@@ -147,37 +147,37 @@ impl MockEngineClientBuilder {
         self
     }
 
-    /// Sets the new_payload_v1 response.
+    /// Sets the `new_payload_v1` response.
     pub fn with_new_payload_v1_response(mut self, status: PayloadStatus) -> Self {
         self.storage.new_payload_v1_response = Some(status);
         self
     }
 
-    /// Sets the new_payload_v2 response.
+    /// Sets the `new_payload_v2` response.
     pub fn with_new_payload_v2_response(mut self, status: PayloadStatus) -> Self {
         self.storage.new_payload_v2_response = Some(status);
         self
     }
 
-    /// Sets the new_payload_v3 response.
+    /// Sets the `new_payload_v3` response.
     pub fn with_new_payload_v3_response(mut self, status: PayloadStatus) -> Self {
         self.storage.new_payload_v3_response = Some(status);
         self
     }
 
-    /// Sets the new_payload_v4 response.
+    /// Sets the `new_payload_v4` response.
     pub fn with_new_payload_v4_response(mut self, status: PayloadStatus) -> Self {
         self.storage.new_payload_v4_response = Some(status);
         self
     }
 
-    /// Sets the fork_choice_updated_v2 response.
+    /// Sets the `fork_choice_updated_v2` response.
     pub fn with_fork_choice_updated_v2_response(mut self, response: ForkchoiceUpdated) -> Self {
         self.storage.fork_choice_updated_v2_response = Some(response);
         self
     }
 
-    /// Sets the fork_choice_updated_v3 response.
+    /// Sets the `fork_choice_updated_v3` response.
     pub fn with_fork_choice_updated_v3_response(mut self, response: ForkchoiceUpdated) -> Self {
         self.storage.fork_choice_updated_v3_response = Some(response);
         self
@@ -201,7 +201,7 @@ impl MockEngineClientBuilder {
         self
     }
 
-    /// Sets the get_payload_bodies_by_hash_v1 response.
+    /// Sets the `get_payload_bodies_by_hash_v1` response.
     pub fn with_payload_bodies_by_hash_response(
         mut self,
         bodies: ExecutionPayloadBodiesV1,
@@ -210,7 +210,7 @@ impl MockEngineClientBuilder {
         self
     }
 
-    /// Sets the get_payload_bodies_by_range_v1 response.
+    /// Sets the `get_payload_bodies_by_range_v1` response.
     pub fn with_payload_bodies_by_range_response(
         mut self,
         bodies: ExecutionPayloadBodiesV1,
@@ -237,21 +237,21 @@ impl MockEngineClientBuilder {
         self
     }
 
-    /// Sets an L1 block response for a specific BlockId.
+    /// Sets an L1 block response for a specific `BlockId`.
     pub fn with_l1_block(mut self, block_id: BlockId, block: Block<EthTransaction>) -> Self {
         let key = block_id_to_key(&block_id);
         self.storage.l1_blocks_by_id.insert(key, block);
         self
     }
 
-    /// Sets an L2 block response for a specific BlockId.
+    /// Sets an L2 block response for a specific `BlockId`.
     pub fn with_l2_block(mut self, block_id: BlockId, block: Block<OpTransaction>) -> Self {
         let key = block_id_to_key(&block_id);
         self.storage.l2_blocks_by_id.insert(key, block);
         self
     }
 
-    /// Sets a proof response for a specific address and BlockId.
+    /// Sets a proof response for a specific address and `BlockId`.
     pub fn with_proof(
         mut self,
         address: Address,
@@ -281,11 +281,11 @@ impl Default for MockEngineClientBuilder {
     }
 }
 
-/// Mock implementation of the EngineClient trait for testing.
+/// Mock implementation of the `EngineClient` trait for testing.
 ///
-/// This mock allows tests to configure expected responses for all EngineClient
-/// and OpEngineApi methods. All responses are stored in a shared [`MockEngineStorage`]
-/// protected by an RwLock for thread-safe access.
+/// This mock allows tests to configure expected responses for all `EngineClient`
+/// and `OpEngineApi` methods. All responses are stored in a shared [`MockEngineStorage`]
+/// protected by an `RwLock` for thread-safe access.
 #[derive(Debug, Clone)]
 pub struct MockEngineClient {
     /// The rollup configuration.
@@ -320,32 +320,32 @@ impl MockEngineClient {
         self.storage.write().await.block_info_by_tag.insert(tag, info);
     }
 
-    /// Sets the new_payload_v1 response.
+    /// Sets the `new_payload_v1` response.
     pub async fn set_new_payload_v1_response(&self, status: PayloadStatus) {
         self.storage.write().await.new_payload_v1_response = Some(status);
     }
 
-    /// Sets the new_payload_v2 response.
+    /// Sets the `new_payload_v2` response.
     pub async fn set_new_payload_v2_response(&self, status: PayloadStatus) {
         self.storage.write().await.new_payload_v2_response = Some(status);
     }
 
-    /// Sets the new_payload_v3 response.
+    /// Sets the `new_payload_v3` response.
     pub async fn set_new_payload_v3_response(&self, status: PayloadStatus) {
         self.storage.write().await.new_payload_v3_response = Some(status);
     }
 
-    /// Sets the new_payload_v4 response.
+    /// Sets the `new_payload_v4` response.
     pub async fn set_new_payload_v4_response(&self, status: PayloadStatus) {
         self.storage.write().await.new_payload_v4_response = Some(status);
     }
 
-    /// Sets the fork_choice_updated_v2 response.
+    /// Sets the `fork_choice_updated_v2` response.
     pub async fn set_fork_choice_updated_v2_response(&self, response: ForkchoiceUpdated) {
         self.storage.write().await.fork_choice_updated_v2_response = Some(response);
     }
 
-    /// Sets the fork_choice_updated_v3 response.
+    /// Sets the `fork_choice_updated_v3` response.
     pub async fn set_fork_choice_updated_v3_response(&self, response: ForkchoiceUpdated) {
         self.storage.write().await.fork_choice_updated_v3_response = Some(response);
     }
@@ -365,12 +365,12 @@ impl MockEngineClient {
         self.storage.write().await.execution_payload_v4 = Some(payload);
     }
 
-    /// Sets the get_payload_bodies_by_hash_v1 response.
+    /// Sets the `get_payload_bodies_by_hash_v1` response.
     pub async fn set_payload_bodies_by_hash_response(&self, bodies: ExecutionPayloadBodiesV1) {
         self.storage.write().await.get_payload_bodies_by_hash_v1_response = Some(bodies);
     }
 
-    /// Sets the get_payload_bodies_by_range_v1 response.
+    /// Sets the `get_payload_bodies_by_range_v1` response.
     pub async fn set_payload_bodies_by_range_response(&self, bodies: ExecutionPayloadBodiesV1) {
         self.storage.write().await.get_payload_bodies_by_range_v1_response = Some(bodies);
     }
@@ -390,19 +390,19 @@ impl MockEngineClient {
         self.storage.write().await.capabilities = Some(capabilities);
     }
 
-    /// Sets an L1 block response for a specific BlockId.
+    /// Sets an L1 block response for a specific `BlockId`.
     pub async fn set_l1_block(&self, block_id: BlockId, block: Block<EthTransaction>) {
         let key = block_id_to_key(&block_id);
         self.storage.write().await.l1_blocks_by_id.insert(key, block);
     }
 
-    /// Sets an L2 block response for a specific BlockId.
+    /// Sets an L2 block response for a specific `BlockId`.
     pub async fn set_l2_block(&self, block_id: BlockId, block: Block<OpTransaction>) {
         let key = block_id_to_key(&block_id);
         self.storage.write().await.l2_blocks_by_id.insert(key, block);
     }
 
-    /// Sets a proof response for a specific address and BlockId.
+    /// Sets a proof response for a specific address and `BlockId`.
     pub async fn set_proof(
         &self,
         address: Address,
@@ -505,7 +505,7 @@ impl EngineClient for MockEngineClient {
         numtag: BlockNumberOrTag,
     ) -> Result<Option<L2BlockInfo>, EngineClientError> {
         let storage = self.storage.read().await;
-        Ok(storage.block_info_by_tag.get(&numtag).cloned())
+        Ok(storage.block_info_by_tag.get(&numtag).copied())
     }
 }
 
@@ -675,8 +675,8 @@ impl OpEngineApi<Optimism, Http<HyperAuthClient>> for MockEngineClient {
     }
 }
 
-/// Helper function to convert BlockId to a string key for HashMap storage.
-/// This is necessary because BlockId doesn't implement Hash.
+/// Helper function to convert `BlockId` to a string key for `HashMap` storage.
+/// This is necessary because `BlockId` doesn't implement Hash.
 fn block_id_to_key(block_id: &BlockId) -> String {
     match block_id {
         BlockId::Hash(hash) => format!("hash:{}", hash.block_hash),

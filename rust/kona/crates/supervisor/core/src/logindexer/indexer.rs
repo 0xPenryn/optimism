@@ -175,7 +175,7 @@ pub enum LogIndexerError {
 mod tests {
     use super::*;
     use crate::syncnode::{AuthenticationError, ClientError};
-    use alloy_primitives::{Address, B256, Bytes};
+    use alloy_primitives::{Address, Bytes, B256};
     use async_trait::async_trait;
     use kona_interop::{ExecutingMessageBuilder, InteropProvider, SuperchainBuilder};
     use kona_protocol::BlockInfo;

@@ -195,7 +195,7 @@ mod tests {
     use super::*;
     use crate::syncnode::{AuthenticationError, ClientError};
     use alloy_eips::BlockNumHash;
-    use alloy_primitives::{B256, ChainId};
+    use alloy_primitives::{ChainId, B256};
     use alloy_provider::mock::{Asserter, MockResponse, MockTransport};
     use alloy_rpc_client::RpcClient;
     use async_trait::async_trait;

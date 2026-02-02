@@ -1,13 +1,13 @@
-//! Contains error types for the [crate::FinalizeTask].
+//! Contains error types for the [`crate::FinalizeTask`].
 
 use crate::{
-    EngineTaskError, SynchronizeTaskError, task_queue::tasks::task::EngineTaskErrorSeverity,
+    task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError, SynchronizeTaskError,
 };
 use alloy_transport::{RpcError, TransportErrorKind};
 use kona_protocol::FromBlockError;
 use thiserror::Error;
 
-/// An error that occurs when running the [crate::FinalizeTask].
+/// An error that occurs when running the [`crate::FinalizeTask`].
 #[derive(Debug, Error)]
 pub enum FinalizeTaskError {
     /// The block is not safe, and therefore cannot be finalized.
@@ -32,9 +32,9 @@ pub enum FinalizeTaskError {
 impl EngineTaskError for FinalizeTaskError {
     fn severity(&self) -> EngineTaskErrorSeverity {
         match self {
-            Self::BlockNotSafe => EngineTaskErrorSeverity::Critical,
-            Self::BlockNotFound(_) => EngineTaskErrorSeverity::Critical,
-            Self::FromBlock(_) => EngineTaskErrorSeverity::Critical,
+            Self::BlockNotSafe | Self::BlockNotFound(_) | Self::FromBlock(_) => {
+                EngineTaskErrorSeverity::Critical
+            }
             Self::TransportError(_) => EngineTaskErrorSeverity::Temporary,
             Self::ForkchoiceUpdateFailed(inner) => inner.severity(),
         }

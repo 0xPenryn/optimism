@@ -13,15 +13,15 @@ mod batch;
 pub use batch::{
     Batch, BatchDecodingError, BatchDropReason, BatchEncodingError, BatchReader, BatchTransaction,
     BatchType, BatchValidationProvider, BatchValidity, BatchWithInclusionBlock, DecompressionError,
-    MAX_SPAN_BATCH_ELEMENTS, RawSpanBatch, SINGLE_BATCH_TYPE, SPAN_BATCH_TYPE, SingleBatch,
-    SpanBatch, SpanBatchBits, SpanBatchEip1559TransactionData, SpanBatchEip2930TransactionData,
-    SpanBatchEip7702TransactionData, SpanBatchElement, SpanBatchError,
-    SpanBatchLegacyTransactionData, SpanBatchPayload, SpanBatchPrefix, SpanBatchTransactionData,
-    SpanBatchTransactions, SpanDecodingError,
+    RawSpanBatch, SingleBatch, SpanBatch, SpanBatchBits, SpanBatchEip1559TransactionData,
+    SpanBatchEip2930TransactionData, SpanBatchEip7702TransactionData, SpanBatchElement,
+    SpanBatchError, SpanBatchLegacyTransactionData, SpanBatchPayload, SpanBatchPrefix,
+    SpanBatchTransactionData, SpanBatchTransactions, SpanDecodingError, MAX_SPAN_BATCH_ELEMENTS,
+    SINGLE_BATCH_TYPE, SPAN_BATCH_TYPE,
 };
 
 mod brotli;
-pub use brotli::{BrotliDecompressionError, decompress_brotli};
+pub use brotli::{decompress_brotli, BrotliDecompressionError};
 
 mod sync;
 pub use sync::SyncStatus;
@@ -37,7 +37,7 @@ pub use block::{BlockInfo, FromBlockError, L2BlockInfo};
 
 mod frame;
 pub use frame::{
-    DERIVATION_VERSION_0, FRAME_OVERHEAD, Frame, FrameDecodingError, FrameParseError, MAX_FRAME_LEN,
+    Frame, FrameDecodingError, FrameParseError, DERIVATION_VERSION_0, FRAME_OVERHEAD, MAX_FRAME_LEN,
 };
 
 mod utils;
@@ -45,14 +45,14 @@ pub use utils::{read_tx_data, to_system_config};
 
 mod channel;
 pub use channel::{
-    CHANNEL_ID_LENGTH, Channel, ChannelError, ChannelId, FJORD_MAX_RLP_BYTES_PER_CHANNEL,
+    Channel, ChannelError, ChannelId, CHANNEL_ID_LENGTH, FJORD_MAX_RLP_BYTES_PER_CHANNEL,
     MAX_RLP_BYTES_PER_CHANNEL,
 };
 
 mod deposits;
 pub use deposits::{
-    DEPOSIT_EVENT_ABI, DEPOSIT_EVENT_ABI_HASH, DEPOSIT_EVENT_VERSION_0, DepositError,
-    decode_deposit,
+    decode_deposit, DepositError, DEPOSIT_EVENT_ABI, DEPOSIT_EVENT_ABI_HASH,
+    DEPOSIT_EVENT_VERSION_0,
 };
 
 mod info;

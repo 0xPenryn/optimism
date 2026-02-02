@@ -7,7 +7,7 @@ use alloy_eips::{
     eip2718::{Decodable2718, Eip2718Error, Eip2718Result, Encodable2718, IsTyped2718},
     eip2930::AccessList,
 };
-use alloy_primitives::{Address, B256, Bytes, ChainId, Signature, TxHash, TxKind, U256, keccak256};
+use alloy_primitives::{keccak256, Address, Bytes, ChainId, Signature, TxHash, TxKind, B256, U256};
 use alloy_rlp::{BufMut, Decodable, Encodable, Header};
 use core::mem;
 
@@ -50,7 +50,7 @@ pub struct TxDeposit {
 }
 
 impl TxDeposit {
-    /// Decodes the inner [TxDeposit] fields from RLP bytes.
+    /// Decodes the inner [`TxDeposit`] fields from RLP bytes.
     ///
     /// NOTE: This assumes a RLP header has already been decoded, and _just_ decodes the following
     /// RLP fields in the following order:
@@ -100,14 +100,14 @@ impl TxDeposit {
     /// Outputs the length of the transaction's fields, without a RLP header or length of the
     /// eip155 fields.
     pub(crate) fn rlp_encoded_fields_length(&self) -> usize {
-        self.source_hash.length()
-            + self.from.length()
-            + self.to.length()
-            + self.mint.length()
-            + self.value.length()
-            + self.gas_limit.length()
-            + self.is_system_transaction.length()
-            + self.input.0.length()
+        self.source_hash.length() +
+            self.from.length() +
+            self.to.length() +
+            self.mint.length() +
+            self.value.length() +
+            self.gas_limit.length() +
+            self.is_system_transaction.length() +
+            self.input.0.length()
     }
 
     /// Encodes only the transaction's fields into the desired buffer, without a RLP header.
@@ -123,7 +123,7 @@ impl TxDeposit {
         self.input.encode(out);
     }
 
-    /// Calculates a heuristic for the in-memory size of the [TxDeposit] transaction.
+    /// Calculates a heuristic for the in-memory size of the [`TxDeposit`] transaction.
     #[inline]
     pub fn size(&self) -> usize {
         mem::size_of::<B256>() + // source_hash
@@ -617,7 +617,7 @@ mod tests {
 #[cfg(all(feature = "serde", feature = "serde-bincode-compat"))]
 pub(super) mod serde_bincode_compat {
     use alloc::borrow::Cow;
-    use alloy_primitives::{Address, B256, Bytes, TxKind, U256};
+    use alloy_primitives::{Address, Bytes, TxKind, B256, U256};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
 
@@ -625,7 +625,7 @@ pub(super) mod serde_bincode_compat {
     ///
     /// Intended to use with the [`serde_with::serde_as`] macro in the following way:
     /// ```rust
-    /// use op_alloy_consensus::{TxDeposit, serde_bincode_compat};
+    /// use op_alloy_consensus::{serde_bincode_compat, TxDeposit};
     /// use serde::{Deserialize, Serialize};
     /// use serde_with::serde_as;
     ///
@@ -705,7 +705,7 @@ pub(super) mod serde_bincode_compat {
         use serde::{Deserialize, Serialize};
         use serde_with::serde_as;
 
-        use super::super::{TxDeposit, serde_bincode_compat};
+        use super::super::{serde_bincode_compat, TxDeposit};
 
         #[test]
         fn test_tx_deposit_bincode_roundtrip() {

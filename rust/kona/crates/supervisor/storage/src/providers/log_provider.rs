@@ -422,8 +422,8 @@ mod tests {
     use kona_protocol::BlockInfo;
     use kona_supervisor_types::{ExecutingMessage, Log};
     use reth_db::{
+        mdbx::{init_db_for, DatabaseArguments},
         DatabaseEnv,
-        mdbx::{DatabaseArguments, init_db_for},
     };
     use reth_db_api::Database;
     use tempfile::TempDir;
@@ -452,17 +452,13 @@ mod tests {
         Log {
             index: log_index,
             hash: B256::from([log_index as u8; 32]),
-            executing_message: if with_msg {
-                Some(ExecutingMessage {
-                    chain_id: 10,
-                    block_number: 999,
-                    log_index: 7,
-                    hash: B256::from([0x44; 32]),
-                    timestamp: 88888,
-                })
-            } else {
-                None
-            },
+            executing_message: with_msg.then_some(ExecutingMessage {
+                chain_id: 10,
+                block_number: 999,
+                log_index: 7,
+                hash: B256::from([0x44; 32]),
+                timestamp: 88888,
+            }),
         }
     }
 
@@ -622,10 +618,12 @@ mod tests {
         let genesis = genesis_block();
         initialize_db(&db, &genesis).expect("Failed to initialize DB with genesis block");
 
-        assert!(
-            insert_block_logs(&db, &sample_block_info(1, genesis.hash), vec![sample_log(0, true)])
-                .is_ok()
-        );
+        assert!(insert_block_logs(
+            &db,
+            &sample_block_info(1, genesis.hash),
+            vec![sample_log(0, true)]
+        )
+        .is_ok());
 
         let result = log_reader.get_block(2);
         assert!(matches!(result, Err(StorageError::EntryNotFound(_))));

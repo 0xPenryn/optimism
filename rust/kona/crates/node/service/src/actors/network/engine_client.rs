@@ -16,7 +16,7 @@ pub trait NetworkEngineClient: Debug + Send + Sync {
 /// Client to use to send unsafe blocks to the Engine's inbound channel.
 #[derive(Debug)]
 pub struct QueuedNetworkEngineClient {
-    /// A channel to use to send the EngineActor requests.
+    /// A channel to use to send the `EngineActor` requests.
     pub engine_actor_request_tx: mpsc::Sender<EngineActorRequest>,
 }
 

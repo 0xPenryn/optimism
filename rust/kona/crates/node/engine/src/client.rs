@@ -1,10 +1,10 @@
 //! An Engine API Client.
 
 use crate::{Metrics, RollupBoostServerArgs, RollupBoostServerError};
-use alloy_eips::{BlockId, eip1898::BlockNumberOrTag};
+use alloy_eips::{eip1898::BlockNumberOrTag, BlockId};
 use alloy_network::{Ethereum, Network};
-use alloy_primitives::{Address, B256, BlockHash, Bytes, StorageKey};
-use alloy_provider::{EthGetBlock, Provider, RootProvider, RpcWithBlock, ext::EngineApi};
+use alloy_primitives::{Address, BlockHash, Bytes, StorageKey, B256};
+use alloy_provider::{ext::EngineApi, EthGetBlock, Provider, RootProvider, RpcWithBlock};
 use alloy_rpc_client::RpcClient;
 use alloy_rpc_types_engine::{
     ClientVersionV1, ExecutionPayloadBodiesV1, ExecutionPayloadEnvelopeV2, ExecutionPayloadInputV2,
@@ -14,11 +14,11 @@ use alloy_rpc_types_engine::{
 use alloy_rpc_types_eth::{Block, EIP1186AccountProofResponse};
 use alloy_transport::{RpcError, TransportErrorKind, TransportResult};
 use alloy_transport_http::{
-    AuthLayer, AuthService, Http, HyperClient,
     hyper_util::{
-        client::legacy::{Client, connect::HttpConnector},
+        client::legacy::{connect::HttpConnector, Client},
         rt::TokioExecutor,
     },
+    AuthLayer, AuthService, Http, HyperClient,
 };
 use async_trait::async_trait;
 use http::uri::InvalidUri;
@@ -64,7 +64,7 @@ pub enum EngineClientError {
 pub type HyperAuthClient<B = Full<Bytes>> = HyperClient<B, AuthService<Client<HttpConnector, B>>>;
 
 /// Engine API client used to communicate with L1/L2 ELs and optional rollup-boost.
-/// EngineClient trait that is very coupled to its only implementation.
+/// `EngineClient` trait that is very coupled to its only implementation.
 /// The main reason this exists is for mocking/unit testing.
 #[async_trait]
 pub trait EngineClient: OpEngineApi<Optimism, Http<HyperAuthClient>> + Send + Sync {
@@ -94,7 +94,7 @@ pub trait EngineClient: OpEngineApi<Optimism, Http<HyperAuthClient>> + Send + Sy
         numtag: BlockNumberOrTag,
     ) -> Result<Option<Block<Transaction>>, EngineClientError>;
 
-    /// Fetches the [L2BlockInfo] by [BlockNumberOrTag].
+    /// Fetches the [`L2BlockInfo`] by [`BlockNumberOrTag`].
     async fn l2_block_info_by_label(
         &self,
         numtag: BlockNumberOrTag,

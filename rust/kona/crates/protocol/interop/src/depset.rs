@@ -12,6 +12,7 @@ pub struct ChainDependency {}
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[allow(clippy::zero_sized_map_values)]
 pub struct DependencySet {
     /// Dependencies information per chain.
     pub dependencies: HashMap<ChainId, ChainDependency>,
@@ -31,6 +32,7 @@ impl DependencySet {
 }
 
 #[cfg(test)]
+#[allow(clippy::zero_sized_map_values)]
 mod tests {
     use super::*;
     use alloy_primitives::ChainId;

@@ -164,7 +164,7 @@ impl SingleBatch {
         }
 
         // We can do this check earlier, but it's intensive so we do it last for the sad-path.
-        for tx in self.transactions.iter() {
+        for tx in &self.transactions {
             if tx.is_empty() {
                 return BatchValidity::Drop(BatchDropReason::EmptyTransaction);
             }
@@ -630,11 +630,9 @@ mod tests {
             BatchValidity::Drop(BatchDropReason::NonEmptyTransitionBlock)
         );
 
-        assert!(
-            trace_store
-                .get_by_level(Level::WARN)
-                .iter()
-                .any(|s| { s.contains("Sequencer included user transactions") })
-        )
+        assert!(trace_store
+            .get_by_level(Level::WARN)
+            .iter()
+            .any(|s| { s.contains("Sequencer included user transactions") }))
     }
 }

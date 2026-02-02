@@ -1,6 +1,6 @@
-use crate::{BasicKernelInterface, FileDescriptor, errors::IOResult, mips64::syscall};
+use crate::{errors::IOResult, mips64::syscall, BasicKernelInterface, FileDescriptor};
 
-/// Concrete implementation of the [BasicKernelInterface] trait for the `MIPS64r2` target
+/// Concrete implementation of the [`BasicKernelInterface`] trait for the `MIPS64r2` target
 /// architecture. Exposes a safe interface for performing IO operations within the kernel.
 #[derive(Debug)]
 pub(crate) struct Mips64IO;
@@ -10,12 +10,12 @@ pub(crate) struct Mips64IO;
 /// See [Cannon System Call Specification](https://specs.optimism.io/experimental/fault-proof/cannon-fault-proof-vm.html#syscalls)
 ///
 /// **Note**: This is not an exhaustive list of system calls available to the `client` program,
-/// only the ones necessary for the [BasicKernelInterface] trait implementation. If an extension
-/// trait for the [BasicKernelInterface] trait is created for the `Cannon` kernel, this list should
-/// be extended accordingly.
+/// only the ones necessary for the [`BasicKernelInterface`] trait implementation. If an extension
+/// trait for the [`BasicKernelInterface`] trait is created for the `Cannon` kernel, this list
+/// should be extended accordingly.
 #[repr(usize)]
 pub(crate) enum SyscallNumber {
-    /// Sets the Exited and ExitCode states to true and $a0 respectively.
+    /// Sets the Exited and `ExitCode` states to true and $a0 respectively.
     Exit = 5205,
     /// Similar behavior as Linux/MIPS with support for unaligned reads.
     Read = 5000,

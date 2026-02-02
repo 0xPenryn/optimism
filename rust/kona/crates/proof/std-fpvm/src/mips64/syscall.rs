@@ -62,7 +62,11 @@ pub(crate) unsafe fn syscall1(n: usize, arg1: usize) -> usize {
         );
     }
 
-    if err == 0 { ret } else { ret.wrapping_neg() }
+    if err == 0 {
+        ret
+    } else {
+        ret.wrapping_neg()
+    }
 }
 
 /// Issues a raw system call with 2 arguments. (e.g. cannon's flavor of mmap)
@@ -96,7 +100,11 @@ pub(crate) unsafe fn syscall2(n: usize, arg1: usize, arg2: usize) -> usize {
             options(nostack, preserves_flags)
         );
     }
-    if err == 0 { ret } else { ret.wrapping_neg() }
+    if err == 0 {
+        ret
+    } else {
+        ret.wrapping_neg()
+    }
 }
 
 /// Issues a raw system call with 3 arguments. (e.g. read, write)
@@ -127,5 +135,9 @@ pub(crate) unsafe fn syscall3(n: usize, arg1: usize, arg2: usize, arg3: usize) -
         );
     }
 
-    if err == 0 { ret } else { ret.wrapping_neg() }
+    if err == 0 {
+        ret
+    } else {
+        ret.wrapping_neg()
+    }
 }

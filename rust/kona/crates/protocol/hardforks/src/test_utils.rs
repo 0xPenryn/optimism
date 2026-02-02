@@ -1,17 +1,17 @@
 //! Test utilities for the `kona-hardforks` crate.
 
 use alloy_eips::Encodable2718;
-use alloy_primitives::{Address, B256, keccak256};
+use alloy_primitives::{keccak256, Address, B256};
 use op_alloy_consensus::{OpTxType, TxDeposit};
-use op_revm::{DefaultOp, OpSpecId, transaction::deposit::DepositTransactionParts};
+use op_revm::{transaction::deposit::DepositTransactionParts, DefaultOp, OpSpecId};
 use revm::{
-    Context, ExecuteCommitEvm, MainBuilder,
     context::{
-        CfgEnv,
         result::{ExecutionResult, Output},
+        CfgEnv,
     },
     database::{CacheDB, EmptyDB},
     interpreter::Host,
+    Context, ExecuteCommitEvm, MainBuilder,
 };
 
 /// Runs an upgrade deposit transaction that deploys a contract in an in-memory EVM, and checks that

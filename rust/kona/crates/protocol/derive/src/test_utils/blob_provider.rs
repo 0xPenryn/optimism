@@ -1,9 +1,9 @@
-//! An implementation of the [BlobProvider] trait for tests.
+//! An implementation of the [`BlobProvider`] trait for tests.
 
-use crate::{BlobProvider, errors::BlobProviderError};
+use crate::{errors::BlobProviderError, BlobProvider};
 use alloc::{boxed::Box, vec::Vec};
 use alloy_eips::eip4844::{Blob, IndexedBlobHash};
-use alloy_primitives::{B256, map::HashMap};
+use alloy_primitives::{map::HashMap, B256};
 use async_trait::async_trait;
 use kona_protocol::BlockInfo;
 

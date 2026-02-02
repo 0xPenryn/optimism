@@ -52,25 +52,40 @@ alloy-primitives = { workspace = true, features = ["arbitrary", "getrandom"] }
 [features]
 default = ["std", "serde"]
 std = [
-  "dep:snap",
-  "dep:ethereum_ssz",
-  "dep:ethereum_ssz_derive",
-  "alloy-rpc-types-engine/ssz",
-  "alloy-primitives/std",
-  "alloy-rpc-types-engine/std",
-  "op-alloy-consensus/std",
+	"dep:snap",
+	"dep:ethereum_ssz",
+	"dep:ethereum_ssz_derive",
+	"alloy-rpc-types-engine/ssz",
+	"alloy-primitives/std",
+	"alloy-rpc-types-engine/std",
+	"op-alloy-consensus/std",
+	"alloy-consensus/std",
+	"alloy-eips/std",
+	"alloy-rlp/std",
+	"alloy-serde?/std",
+	"derive_more/std",
+	"serde?/std",
+	"sha2/std",
+	"thiserror/std"
 ]
 serde = [
 	"dep:serde",
 	"dep:alloy-serde",
 	"alloy-rpc-types-engine/serde",
-	"op-alloy-consensus/serde"
+	"op-alloy-consensus/serde",
+	"alloy-consensus/serde",
+	"alloy-eips/serde",
+	"alloy-primitives/serde"
 ]
 k256 = ["op-alloy-consensus/k256"]
 arbitrary = [
-  "std",
-  "dep:arbitrary",
-  "alloy-primitives/arbitrary",
-  "alloy-primitives/rand",
-  "op-alloy-consensus/arbitrary"
+	"std",
+	"dep:arbitrary",
+	"alloy-primitives/arbitrary",
+	"alloy-primitives/rand",
+	"op-alloy-consensus/arbitrary",
+	"alloy-consensus/arbitrary",
+	"alloy-eips/arbitrary",
+	"alloy-rpc-types-engine/arbitrary",
+	"alloy-serde?/arbitrary"
 ]

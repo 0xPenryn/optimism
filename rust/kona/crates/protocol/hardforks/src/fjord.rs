@@ -2,7 +2,7 @@
 
 use alloc::{string::String, vec::Vec};
 use alloy_eips::eip2718::Encodable2718;
-use alloy_primitives::{Address, B256, Bytes, TxKind, U256, address, hex};
+use alloy_primitives::{address, hex, Address, Bytes, TxKind, B256, U256};
 use kona_protocol::Predeploys;
 use op_alloy_consensus::{TxDeposit, UpgradeDepositSource};
 
@@ -50,7 +50,7 @@ impl Fjord {
             .source_hash()
     }
 
-    /// [UpgradeDepositSource] for setting the Fjord Gas Price Oracle.
+    /// [`UpgradeDepositSource`] for setting the Fjord Gas Price Oracle.
     pub fn enable_fjord_source() -> B256 {
         UpgradeDepositSource { intent: String::from("Fjord: Gas Price Oracle Set Fjord") }
             .source_hash()
@@ -58,7 +58,7 @@ impl Fjord {
 
     /// Returns the fjord gas price oracle deployment bytecode.
     pub fn gas_price_oracle_deployment_bytecode() -> alloy_primitives::Bytes {
-        hex::decode(include_str!("./bytecode/gpo_fjord.hex").replace("\n", ""))
+        hex::decode(include_str!("./bytecode/gpo_fjord.hex").replace('\n', ""))
             .expect("Expected hex byte string")
             .into()
     }
@@ -155,13 +155,13 @@ mod tests {
         assert_eq!(fjord_upgrade_tx.len(), 3);
 
         let expected_txs: Vec<Bytes> = vec![
-            hex::decode(include_str!("./bytecode/fjord_tx_0.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/fjord_tx_0.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/fjord_tx_1.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/fjord_tx_1.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
-            hex::decode(include_str!("./bytecode/fjord_tx_2.hex").replace("\n", ""))
+            hex::decode(include_str!("./bytecode/fjord_tx_2.hex").replace('\n', ""))
                 .unwrap()
                 .into(),
         ];

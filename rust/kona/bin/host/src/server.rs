@@ -1,13 +1,13 @@
-//! This module contains the [PreimageServer] struct and its implementation.
+//! This module contains the [`PreimageServer`] struct and its implementation.
 
 use kona_preimage::{
-    HintReaderServer, PreimageOracleServer, PreimageServerBackend, errors::PreimageOracleError,
+    errors::PreimageOracleError, HintReaderServer, PreimageOracleServer, PreimageServerBackend,
 };
 use std::sync::Arc;
 use tokio::spawn;
 use tracing::{error, info};
 
-/// The [PreimageServer] is responsible for waiting for incoming preimage requests and
+/// The [`PreimageServer`] is responsible for waiting for incoming preimage requests and
 /// serving them to the client.
 #[derive(Debug)]
 pub struct PreimageServer<P, H, B> {
@@ -15,7 +15,7 @@ pub struct PreimageServer<P, H, B> {
     oracle_server: P,
     /// The hint router.
     hint_reader: H,
-    /// [PreimageServerBackend] that routes hints and retrieves preimages.
+    /// [`PreimageServerBackend`] that routes hints and retrieves preimages.
     backend: Arc<B>,
 }
 
@@ -39,13 +39,13 @@ where
     H: HintReaderServer + Send + Sync + 'static,
     B: PreimageServerBackend + Send + Sync + 'static,
 {
-    /// Create a new [PreimageServer] with the given [PreimageOracleServer],
-    /// [HintReaderServer], and [PreimageServerBackend].
+    /// Create a new [`PreimageServer`] with the given [`PreimageOracleServer`],
+    /// [`HintReaderServer`], and [`PreimageServerBackend`].
     pub const fn new(oracle_server: P, hint_reader: H, backend: Arc<B>) -> Self {
         Self { oracle_server, hint_reader, backend }
     }
 
-    /// Starts the [PreimageServer] and waits for incoming requests.
+    /// Starts the [`PreimageServer`] and waits for incoming requests.
     pub async fn start(self) -> Result<(), PreimageServerError> {
         // Create the futures for the oracle server and hint router.
         let server = spawn(Self::start_oracle_server(self.oracle_server, self.backend.clone()));
@@ -69,7 +69,7 @@ where
             // Serve the next preimage request. This `await` will yield to the runtime
             // if no progress can be made.
             match oracle_server.next_preimage_request(backend.as_ref()).await {
-                Ok(_) => continue,
+                Ok(_) => {}
                 Err(PreimageOracleError::IOError(_)) => return Ok(()),
                 Err(e) => {
                     error!(target: "host_server", "Failed to serve preimage request: {e}");
@@ -87,7 +87,7 @@ where
             // Route the next hint. This `await` will yield to the runtime if no progress can be
             // made.
             match hint_reader.next_hint(backend.as_ref()).await {
-                Ok(_) => continue,
+                Ok(_) => {}
                 Err(PreimageOracleError::IOError(_)) => return Ok(()),
                 Err(e) => {
                     error!(target: "host_server", "Failed to serve route hint: {e}");

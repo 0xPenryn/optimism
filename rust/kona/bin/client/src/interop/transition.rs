@@ -13,13 +13,13 @@ use kona_driver::{Driver, DriverError};
 use kona_executor::TrieDBProvider;
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use kona_proof::{
-    CachingOracle,
     executor::KonaExecutor,
     l1::{OracleBlobProvider, OracleL1ChainProvider, OraclePipeline},
     l2::OracleL2ChainProvider,
     sync::new_oracle_pipeline_cursor,
+    CachingOracle,
 };
-use kona_proof_interop::{BootInfo, INVALID_TRANSITION_HASH, OptimisticBlock, PreState};
+use kona_proof_interop::{BootInfo, OptimisticBlock, PreState, INVALID_TRANSITION_HASH};
 use op_alloy_consensus::OpTxEnvelope;
 use op_revm::OpSpecId;
 use revm::context::BlockEnv;
@@ -40,15 +40,15 @@ where
         FromTxWithEncoded<OpTxEnvelope> + FromRecoveredTx<OpTxEnvelope> + OpTxEnv,
 {
     // Check if we can short-circuit the transition, if we are within padding.
-    if let PreState::TransitionState(ref transition_state) = boot.agreed_pre_state {
-        if transition_state.step >= transition_state.pre_state.output_roots.len() as u64 {
-            info!(
-                target: "interop_client",
-                "No derivation/execution required, transition state is already saturated."
-            );
+    if let PreState::TransitionState(ref transition_state) = boot.agreed_pre_state &&
+        transition_state.step >= transition_state.pre_state.output_roots.len() as u64
+    {
+        info!(
+            target: "interop_client",
+            "No derivation/execution required, transition state is already saturated."
+        );
 
-            return transition_and_check(boot.agreed_pre_state, None, boot.claimed_post_state);
-        }
+        return transition_and_check(boot.agreed_pre_state, None, boot.claimed_post_state);
     }
 
     // Fetch the L2 block hash of the current safe head.

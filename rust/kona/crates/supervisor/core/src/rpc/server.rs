@@ -3,7 +3,7 @@
 use super::Metrics;
 use crate::{SpecError, SupervisorError, SupervisorService};
 use alloy_eips::eip1898::BlockNumHash;
-use alloy_primitives::{B256, ChainId, map::HashMap};
+use alloy_primitives::{map::HashMap, ChainId, B256};
 use async_trait::async_trait;
 use jsonrpsee::{core::RpcResult, types::ErrorObject};
 use kona_interop::{DependencySet, DerivedIdPair, ExecutingDescriptor, SafetyLevel};
@@ -242,7 +242,7 @@ where
                 let mut finalized_timestamp = u64::MAX;
                 let mut uninitialized_chain_db_count = 0;
 
-                for (id, status) in chains.iter_mut() {
+                for (id, status) in &mut chains {
                     let head = match self.supervisor.super_head(*id) {
                         Ok(head) => head,
                         Err(SupervisorError::SpecError(SpecError::ErrorNotInSpec)) => {
@@ -313,7 +313,7 @@ where
                     .map(|id| (id, Default::default()))
                     .collect::<HashMap<_, BlockNumHash>>();
 
-                for (id, block) in chains.iter_mut() {
+                for (id, block) in &mut chains {
                     *block = self.supervisor.latest_block_from(derived_from, *id)?.id();
                 }
 
@@ -455,7 +455,6 @@ mod tests {
         );
 
         // Case 2: Only one chain db is initialized
-        let mut super_head_map = std::collections::HashMap::new();
         let block_info = BlockInfo { number: 42, ..Default::default() };
         let super_head = SuperHead {
             l1_source: Some(block_info),
@@ -463,7 +462,6 @@ mod tests {
             finalized: Some(BlockInfo { timestamp: 50, ..Default::default() }),
             ..Default::default()
         };
-        super_head_map.insert(chain_id_1, super_head);
 
         let mut mock_service = MockSupervisorService::new();
         mock_service
@@ -482,7 +480,6 @@ mod tests {
         assert!(result.is_ok());
 
         // Case 3: Both chain dbs are initialized
-        let mut super_head_map = std::collections::HashMap::new();
         let block_info_1 = BlockInfo { number: 42, ..Default::default() };
         let super_head_1 = SuperHead {
             l1_source: Some(block_info_1),
@@ -497,15 +494,16 @@ mod tests {
             finalized: Some(BlockInfo { timestamp: 60, ..Default::default() }),
             ..Default::default()
         };
-        super_head_map.insert(chain_id_1, super_head_1);
-        super_head_map.insert(chain_id_2, super_head_2);
-
         let mut mock_service = MockSupervisorService::new();
         mock_service
             .expect_chain_ids()
             .returning(move || Box::new(vec![chain_id_1, chain_id_2].into_iter()));
         mock_service.expect_super_head().times(2).returning(move |chain_id| {
-            if chain_id == chain_id_1 { Ok(super_head_1) } else { Ok(super_head_2) }
+            if chain_id == chain_id_1 {
+                Ok(super_head_1)
+            } else {
+                Ok(super_head_2)
+            }
         });
 
         let rpc = SupervisorRpc::new(Arc::new(mock_service));

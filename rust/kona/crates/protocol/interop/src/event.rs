@@ -16,7 +16,7 @@ use kona_protocol::BlockInfo;
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
 pub struct ManagedEvent {
     /// This is emitted when the node has determined that it needs a reset.
-    /// It tells the supervisor to send the interop_reset event with the
+    /// It tells the supervisor to send the `interop_reset` event with the
     /// required parameters.
     pub reset: Option<String>,
 
@@ -60,6 +60,10 @@ impl core::fmt::Display for ManagedEvent {
             parts.push(format!("derivation_origin_update: {origin}"));
         }
 
-        if parts.is_empty() { write!(f, "none") } else { write!(f, "{}", parts.join(", ")) }
+        if parts.is_empty() {
+            write!(f, "none")
+        } else {
+            write!(f, "{}", parts.join(", "))
+        }
     }
 }

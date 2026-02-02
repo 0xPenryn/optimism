@@ -7,14 +7,14 @@ use alloc::{boxed::Box, string::String, vec, vec::Vec};
 use alloy_primitives::{Address, Bytes};
 use kona_preimage::{HintWriterClient, PreimageOracleClient};
 use op_revm::{
-    OpSpecId,
     precompiles::{fjord, granite, isthmus},
+    OpSpecId,
 };
 use revm::{
     context::{Cfg, ContextTr},
     handler::{EthPrecompiles, PrecompileProvider},
     interpreter::{CallInputs, Gas, InstructionResult, InterpreterResult},
-    precompile::{PrecompileError, PrecompileResult, Precompiles, bls12_381_const, bn254},
+    precompile::{bls12_381_const, bn254, PrecompileError, PrecompileResult, Precompiles},
     primitives::{hardfork::SpecId, hash_map::HashMap},
 };
 
@@ -299,7 +299,7 @@ mod test {
     use super::*;
     use kona_preimage::{HintWriterClient, PreimageOracleClient};
     use op_revm::{DefaultOp as _, OpContext, OpSpecId};
-    use revm::{Context, database::EmptyDB, handler::PrecompileProvider, interpreter::CallInput};
+    use revm::{database::EmptyDB, handler::PrecompileProvider, interpreter::CallInput, Context};
 
     type TestContext = OpContext<EmptyDB>;
 

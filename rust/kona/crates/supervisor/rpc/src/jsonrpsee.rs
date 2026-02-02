@@ -7,7 +7,7 @@ pub use jsonrpsee::{
 
 use crate::{SuperRootOutputRpc, SupervisorSyncStatus};
 use alloy_eips::BlockNumHash;
-use alloy_primitives::{B256, BlockHash, ChainId, map::HashMap};
+use alloy_primitives::{map::HashMap, BlockHash, ChainId, B256};
 use jsonrpsee::proc_macros::rpc;
 use kona_interop::{
     DependencySet, DerivedIdPair, DerivedRefPair, ExecutingDescriptor, ManagedEvent, SafetyLevel,
@@ -171,7 +171,7 @@ pub trait ManagedModeApi {
     /// Update the cross safe block head
     #[method(name = "updateCrossSafe")]
     async fn update_cross_safe(&self, derived: BlockNumHash, source: BlockNumHash)
-    -> RpcResult<()>;
+        -> RpcResult<()>;
 
     /// Update the finalized block head
     #[method(name = "updateFinalized")]
@@ -217,11 +217,12 @@ pub trait ManagedModeApi {
     #[method(name = "chainID")]
     async fn chain_id(&self) -> RpcResult<String>;
 
-    /// Get the state_root, message_parser_storage_root, and block_hash at a given timestamp
+    /// Get the `state_root`, `message_parser_storage_root`, and `block_hash` at a given timestamp
     #[method(name = "outputV0AtTimestamp")]
     async fn output_v0_at_timestamp(&self, timestamp: u64) -> RpcResult<OutputV0>;
 
-    /// Get the pending state_root, message_parser_storage_root, and block_hash at a given timestamp
+    /// Get the pending `state_root`, `message_parser_storage_root`, and `block_hash` at a given
+    /// timestamp
     #[method(name = "pendingOutputV0AtTimestamp")]
     async fn pending_output_v0_at_timestamp(&self, timestamp: u64) -> RpcResult<OutputV0>;
 

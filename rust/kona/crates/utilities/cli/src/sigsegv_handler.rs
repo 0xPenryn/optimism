@@ -5,7 +5,7 @@
 //! Implementation modified from [`rustc`](https://github.com/rust-lang/rust/blob/3dee9775a8c94e701a08f7b2df2c444f353d8699/compiler/rustc_driver_impl/src/signal_handler.rs).
 
 use std::{
-    alloc::{Layout, alloc},
+    alloc::{alloc, Layout},
     fmt, mem, ptr,
 };
 
@@ -26,7 +26,11 @@ struct RawStderr(());
 impl fmt::Write for RawStderr {
     fn write_str(&mut self, s: &str) -> Result<(), fmt::Error> {
         let ret = unsafe { libc::write(libc::STDERR_FILENO, s.as_ptr().cast(), s.len()) };
-        if ret == -1 { Err(fmt::Error) } else { Ok(()) }
+        if ret == -1 {
+            Err(fmt::Error)
+        } else {
+            Ok(())
+        }
     }
 }
 
@@ -121,13 +125,13 @@ pub fn install() {
         let mut alt_stack: libc::stack_t = mem::zeroed();
         alt_stack.ss_sp = alloc(Layout::from_size_align(alt_stack_size, 1).unwrap()).cast();
         alt_stack.ss_size = alt_stack_size;
-        libc::sigaltstack(&alt_stack, ptr::null_mut());
+        libc::sigaltstack(&raw const alt_stack, ptr::null_mut());
 
         let mut sa: libc::sigaction = mem::zeroed();
         sa.sa_sigaction = print_stack_trace as libc::sighandler_t;
         sa.sa_flags = libc::SA_NODEFER | libc::SA_RESETHAND | libc::SA_ONSTACK;
-        libc::sigemptyset(&mut sa.sa_mask);
-        libc::sigaction(libc::SIGSEGV, &sa, ptr::null_mut());
+        libc::sigemptyset(&raw mut sa.sa_mask);
+        libc::sigaction(libc::SIGSEGV, &raw const sa, ptr::null_mut());
     }
 }
 

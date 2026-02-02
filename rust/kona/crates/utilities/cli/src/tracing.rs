@@ -1,7 +1,6 @@
-//! [tracing_subscriber] utilities.
+//! [`tracing_subscriber`] utilities.
 
 use tracing_subscriber::{
-    Layer,
     fmt::{
         format::{FormatEvent, FormatFields, Writer},
         time::{FormatTime, SystemTime},
@@ -9,6 +8,7 @@ use tracing_subscriber::{
     prelude::__tracing_subscriber_SubscriberExt,
     registry::LookupSpan,
     util::{SubscriberInitExt, TryInitError},
+    Layer,
 };
 
 use serde::{Deserialize, Serialize};
@@ -128,7 +128,7 @@ impl LogConfig {
         });
 
         let env_filter = env_filter
-            .unwrap_or(EnvFilter::from_default_env())
+            .unwrap_or_else(EnvFilter::from_default_env)
             .add_directive(self.global_level.into());
 
         tracing_subscriber::registry()

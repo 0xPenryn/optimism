@@ -21,7 +21,9 @@ mod payload;
 pub use payload::{FlashBlock, PendingFlashBlock};
 
 mod sequence;
-pub use sequence::{FlashBlockCompleteSequence, FlashBlockPendingSequence};
+pub use sequence::{
+    FlashBlockCompleteSequence, FlashBlockPendingSequence, SequenceExecutionOutcome,
+};
 
 mod service;
 pub use service::{FlashBlockBuildInfo, FlashBlockService};
@@ -34,7 +36,7 @@ mod cache;
 mod test_utils;
 
 mod ws;
-pub use ws::{FlashBlockDecoder, WsConnect, WsFlashBlockStream};
+pub use ws::{FlashBlockDecoder, WsConnect, WsConnector, WsFlashBlockStream};
 
 /// Receiver of the most recent [`PendingFlashBlock`] built out of [`FlashBlock`]s.
 ///

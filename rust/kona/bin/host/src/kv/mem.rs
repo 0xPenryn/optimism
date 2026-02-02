@@ -1,4 +1,4 @@
-//! Contains a concrete implementation of the [KeyValueStore] trait that stores data in memory.
+//! Contains a concrete implementation of the [`KeyValueStore`] trait that stores data in memory.
 
 use super::KeyValueStore;
 use crate::Result;
@@ -14,7 +14,7 @@ pub struct MemoryKeyValueStore {
 }
 
 impl MemoryKeyValueStore {
-    /// Create a new [MemoryKeyValueStore] with an empty store.
+    /// Create a new [`MemoryKeyValueStore`] with an empty store.
     pub fn new() -> Self {
         Self { store: HashMap::default() }
     }

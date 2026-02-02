@@ -14,7 +14,7 @@ use kona_node_service::{
 };
 use kona_peers::BootNode;
 use kona_sources::BlockSigner;
-use libp2p::{Multiaddr, identity::Keypair, multiaddr::Protocol};
+use libp2p::{identity::Keypair, multiaddr::Protocol, Multiaddr};
 use op_alloy_rpc_types_engine::OpExecutionPayloadEnvelope;
 use rand::RngCore;
 use tokio::sync::mpsc;
@@ -60,7 +60,7 @@ impl TestNetworkBuilder {
     /// Minimal network configuration.
     /// Only allows loopback addresses in the discovery table.
     pub(crate) fn build(&mut self, bootnodes: Vec<Enr>) -> TestNetwork {
-        let keypair = self.custom_keypair.take().unwrap_or(Keypair::generate_secp256k1());
+        let keypair = self.custom_keypair.take().unwrap_or_else(Keypair::generate_secp256k1);
 
         let secp256k1_key = keypair.clone().try_into_secp256k1()
         .map_err(|e| anyhow::anyhow!("Impossible to convert keypair to secp256k1. This is a bug since we only support secp256k1 keys: {e}")).unwrap()

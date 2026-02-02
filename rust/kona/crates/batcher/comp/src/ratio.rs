@@ -14,7 +14,7 @@ use crate::{CompressorResult, CompressorWriter, Config, VariantCompressor};
 ///
 /// full = uncompressedLength * approxCompRatio >= targetFrameSize * targetNumFrames
 ///
-/// The ratio compressor wraps a [VariantCompressor] which dispatches to the
+/// The ratio compressor wraps a [`VariantCompressor`] which dispatches to the
 /// appropriate compression algorithm (ZLIB or Brotli).
 #[derive(Debug, Clone)]
 pub struct RatioCompressor {
@@ -22,12 +22,12 @@ pub struct RatioCompressor {
     config: Config,
     /// The amount of data currently in the compressor.
     lake: u64,
-    /// The inner [VariantCompressor] that will be used to compress the data.
+    /// The inner [`VariantCompressor`] that will be used to compress the data.
     compressor: VariantCompressor,
 }
 
 impl RatioCompressor {
-    /// Create a new [RatioCompressor] with the given [VariantCompressor].
+    /// Create a new [`RatioCompressor`] with the given [`VariantCompressor`].
     pub const fn new(config: Config, compressor: VariantCompressor) -> Self {
         Self { config, lake: 0, compressor }
     }
