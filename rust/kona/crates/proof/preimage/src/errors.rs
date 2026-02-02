@@ -4,10 +4,8 @@ use alloc::string::String;
 use thiserror::Error;
 
 /// A [`PreimageOracleError`] is an enum that differentiates pipe-related errors from other errors
-/// in the [`PreimageOracleServer`] and [`HintReaderServer`] implementations.
-///
-/// [PreimageOracleServer]: crate::PreimageOracleServer
-/// [HintReaderServer]: crate::HintReaderServer
+/// in the [`PreimageOracleServer`](crate::PreimageOracleServer) and
+/// [`HintReaderServer`](crate::HintReaderServer) implementations.
 #[derive(Error, Debug)]
 pub enum PreimageOracleError {
     /// The pipe has been broken.

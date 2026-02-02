@@ -1,6 +1,4 @@
-//! Contains the error types for the [`InsertTask`].
-//!
-//! [InsertTask]: crate::InsertTask
+//! Contains the error types for the [`InsertTask`](crate::InsertTask).
 
 use crate::{
     task_queue::tasks::task::EngineTaskErrorSeverity, EngineTaskError, SynchronizeTaskError,
@@ -10,9 +8,7 @@ use alloy_transport::{RpcError, TransportErrorKind};
 use kona_protocol::FromBlockError;
 use op_alloy_rpc_types_engine::OpPayloadError;
 
-/// An error that occurs when running the [`InsertTask`].
-///
-/// [InsertTask]: crate::InsertTask
+/// An error that occurs when running the [`InsertTask`](crate::InsertTask).
 #[derive(Debug, thiserror::Error)]
 pub enum InsertTaskError {
     /// Error converting a payload into a block.

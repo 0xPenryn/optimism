@@ -33,9 +33,7 @@ pub struct InteropHost {
     /// L1 chain.
     #[arg(long, env)]
     pub l1_head: B256,
-    /// Agreed [`PreState`] to start from.
-    ///
-    /// [PreState]: kona_proof_interop::PreState
+    /// Agreed [`PreState`](kona_proof_interop::PreState) to start from.
     #[arg(long, visible_alias = "l2-pre-state", value_parser = Bytes::from_str, env)]
     pub agreed_l2_pre_state: Bytes,
     /// Claimed L2 post-state to validate.

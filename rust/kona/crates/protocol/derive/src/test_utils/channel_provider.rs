@@ -1,6 +1,4 @@
-//! Mock testing utilities for the [`ChannelBank`] stage.
-//!
-//! [ChannelBank]: crate::stages::ChannelBank
+//! Mock testing utilities for the [`ChannelBank`](crate::stages::ChannelBank) stage.
 
 use crate::{
     errors::PipelineError,

@@ -4,7 +4,7 @@
 //! exposing high-level APIs to write and query logs, block metadata, and
 //! other execution states.
 //!
-//! The storage system is built on top of [`reth-db`], using MDBX,
+//! The storage system is built on top of `reth-db`, using MDBX,
 //! and defines schemas for supervisor-specific data like:
 //! - L2 log entries
 //! - Block ancestry metadata

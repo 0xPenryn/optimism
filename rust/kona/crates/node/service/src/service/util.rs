@@ -1,16 +1,13 @@
 //! Utilities for the rollup node service, internal to the crate.
 
-/// Spawns a set of parallel actors in a [`JoinSet`], and cancels all actors if any of them fail.
-/// The type of the error in the [`NodeActor`]s is erased to avoid having to specify a common error
-/// type between actors.
+/// Spawns a set of parallel actors in a [`JoinSet`](tokio::task::JoinSet), and cancels all actors
+/// if any of them fail. The type of the error in the [`NodeActor`](crate::NodeActor)s is erased to
+/// avoid having to specify a common error type between actors.
 ///
 /// Actors are passed in as optional arguments, in case a given actor is not needed.
 ///
 /// This macro also handles OS shutdown signals (SIGTERM, SIGINT) and triggers graceful shutdown
 /// when received.
-///
-/// [JoinSet]: tokio::task::JoinSet
-/// [NodeActor]: crate::NodeActor
 macro_rules! spawn_and_wait {
     ($cancellation:expr, actors = [$($actor:expr$(,)?)*]) => {
         let mut task_handles = tokio::task::JoinSet::new();

@@ -1,15 +1,11 @@
 //! Stages pertaining to the reading and decoding of channels.
 //!
-//! Sitting after the [`FrameQueue`] stage, the [`ChannelBank`] and [`ChannelAssembler`] stages are
-//! responsible for reading and decoding the [Frame]s into [Channel]s. The [`ChannelReader`] stage
-//! is responsible for decoding the [Channel]s into [Batch]es, forwarding the [Batch]es to the
-//! [`BatchQueue`] stage.
-//!
-//! [Frame]: kona_protocol::Frame
-//! [Channel]: kona_protocol::Channel
-//! [Batch]: kona_protocol::Batch
-//! [FrameQueue]: crate::stages::FrameQueue
-//! [BatchQueue]: crate::stages::BatchQueue
+//! Sitting after the [`FrameQueue`](crate::stages::FrameQueue) stage, the [`ChannelBank`] and
+//! [`ChannelAssembler`] stages are responsible for reading and decoding the [`Frame`]s into
+//! [`Channel`](kona_protocol::Channel)s. The [`ChannelReader`] stage is responsible for decoding
+//! the [`Channel`](kona_protocol::Channel)s into [`Batch`](kona_protocol::Batch)es, forwarding
+//! the [`Batch`](kona_protocol::Batch)es to the
+//! [`BatchQueue`](crate::stages::BatchQueue) stage.
 
 use crate::types::PipelineResult;
 use alloc::boxed::Box;

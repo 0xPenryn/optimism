@@ -1,16 +1,11 @@
-//! Contains stages pertaining to the processing of [Batch]es.
+//! Contains stages pertaining to the processing of [`Batch`]es.
 //!
-//! Sitting after the [`ChannelReader`] stage, the [`BatchStream`] and [`BatchProvider`] stages are
-//! responsible for validating and ordering the [Batch]es. The [`BatchStream`] stage is
-//! responsible for streaming [`SingleBatch`]es from [`SpanBatch`]es, while the [`BatchProvider`]
-//! stage is responsible for ordering and validating the [Batch]es for the [`AttributesQueue`]
-//! stage.
-//!
-//! [Batch]: kona_protocol::Batch
-//! [SingleBatch]: kona_protocol::SingleBatch
-//! [SpanBatch]: kona_protocol::SpanBatch
-//! [ChannelReader]: crate::stages::channel::ChannelReader
-//! [AttributesQueue]: crate::stages::attributes_queue::AttributesQueue
+//! Sitting after the [`ChannelReader`](crate::stages::channel::ChannelReader) stage, the
+//! [`BatchStream`] and [`BatchProvider`] stages are responsible for validating and ordering the
+//! [`Batch`]es. The [`BatchStream`] stage is responsible for streaming
+//! [`SingleBatch`](kona_protocol::SingleBatch)es from [`SpanBatch`](kona_protocol::SpanBatch)es,
+//! while the [`BatchProvider`] stage is responsible for ordering and validating the [`Batch`]es
+//! for the [`AttributesQueue`](crate::stages::attributes_queue::AttributesQueue) stage.
 
 use crate::types::PipelineResult;
 use alloc::boxed::Box;

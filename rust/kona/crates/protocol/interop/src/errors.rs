@@ -6,17 +6,13 @@ use core::fmt::Debug;
 use kona_registry::HashMap;
 use thiserror::Error;
 
-/// An error type for the [`MessageGraph`] struct.
-///
-/// [MessageGraph]: crate::MessageGraph
+/// An error type for the [`MessageGraph`](crate::MessageGraph) struct.
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 pub enum MessageGraphError<E: Debug> {
     /// Dependency set is impossibly empty
     #[error("Dependency set is impossibly empty")]
     EmptyDependencySet,
-    /// Missing a [`RollupConfig`] for a chain ID
-    ///
-    /// [RollupConfig]: kona_genesis::RollupConfig
+    /// Missing a [`RollupConfig`](kona_genesis::RollupConfig) for a chain ID
     #[error("Missing a RollupConfig for chain ID {0}")]
     MissingRollupConfig(u64),
     /// Interop provider error
@@ -92,9 +88,8 @@ pub enum MessageGraphError<E: Debug> {
 pub type MessageGraphResult<T, P: InteropProvider> =
     core::result::Result<T, MessageGraphError<P::Error>>;
 
-/// An error type for the [`SuperRoot`] struct's serialization and deserialization.
-///
-/// [SuperRoot]: crate::SuperRoot
+/// An error type for the [`SuperRoot`](crate::SuperRoot) struct's serialization and
+/// deserialization.
 #[derive(Debug, Clone, Error)]
 pub enum SuperRootError {
     /// Invalid super root version byte

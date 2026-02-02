@@ -6,9 +6,7 @@ use thiserror::Error;
 /// A [Result] type alias where the error is [`TrieNodeError`].
 pub type TrieNodeResult<T> = Result<T, TrieNodeError>;
 
-/// An error type for [`TrieNode`] operations.
-///
-/// [TrieNode]: crate::TrieNode
+/// An error type for [`TrieNode`](crate::TrieNode) operations.
 #[derive(Error, Debug, PartialEq, Eq)]
 pub enum TrieNodeError {
     /// Invalid trie node type encountered.
@@ -31,9 +29,7 @@ pub enum TrieNodeError {
 /// A [Result] type alias where the error is [`OrderedListWalkerError`].
 pub type OrderedListWalkerResult<T> = Result<T, OrderedListWalkerError>;
 
-/// An error type for [`OrderedListWalker`] operations.
-///
-/// [OrderedListWalker]: crate::OrderedListWalker
+/// An error type for [`OrderedListWalker`](crate::OrderedListWalker) operations.
 #[derive(Error, Debug, PartialEq, Eq)]
 pub enum OrderedListWalkerError {
     /// Iterator has already been hydrated, and cannot be re-hydrated until it is exhausted.

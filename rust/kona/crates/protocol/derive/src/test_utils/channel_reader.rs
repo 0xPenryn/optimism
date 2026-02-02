@@ -1,6 +1,4 @@
-//! Test utilities for the [`ChannelReader`] stage.
-//!
-//! [ChannelReader]: crate::stages::ChannelReader
+//! Test utilities for the [`ChannelReader`](crate::stages::ChannelReader) stage.
 
 use crate::{
     ChannelReaderProvider, OriginAdvancer, OriginProvider, PipelineError, PipelineResult, Signal,
