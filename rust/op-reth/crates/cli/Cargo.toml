@@ -122,4 +122,5 @@ serde = [
     "reth-optimism-chainspec/serde",
 ]
 
-edge = ["reth-cli-commands/edge", "reth-node-core/edge"]
+rocksdb = ["reth-cli-commands/rocksdb", "reth-node-core/rocksdb"]
+edge = ["rocksdb", "reth-cli-commands/edge", "reth-node-core/edge"]

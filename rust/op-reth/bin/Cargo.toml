@@ -27,7 +27,15 @@ tracing.workspace = true
 workspace = true
 
 [features]
-default = ["jemalloc", "otlp", "reth-optimism-evm/portable", "js-tracer", "keccak-cache-global", "asm-keccak"]
+default = [
+    "jemalloc",
+    "otlp",
+    "reth-optimism-evm/portable",
+    "js-tracer",
+    "keccak-cache-global",
+    "asm-keccak",
+    "rocksdb",
+]
 
 otlp = ["reth-optimism-cli/otlp"]
 
@@ -57,7 +65,8 @@ min-info-logs = ["tracing/release_max_level_info"]
 min-debug-logs = ["tracing/release_max_level_debug"]
 min-trace-logs = ["tracing/release_max_level_trace"]
 
-edge = ["reth-optimism-cli/edge"]
+rocksdb = ["reth-optimism-cli/rocksdb"]
+edge = ["rocksdb", "reth-optimism-cli/edge"]
 
 [[bin]]
 name = "op-reth"
