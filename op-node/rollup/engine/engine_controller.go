@@ -466,15 +466,15 @@ func (e *EngineController) initializeUnknowns(ctx context.Context) error {
 		e.log.Info("Loaded initial local-unsafe block ref", "local_unsafe", ref)
 	}
 	var finalizedRef eth.L2BlockRef
-	if e.FinalizedHead() == (eth.L2BlockRef{}) {
-		var err error
-		finalizedRef, err = e.engine.L2BlockRefByLabel(ctx, eth.Finalized)
-		if err != nil {
-			return fmt.Errorf("failed to load finalized head: %w", err)
-		}
-		e.SetFinalizedHead(finalizedRef)
-		e.log.Info("Loaded initial finalized block ref", "finalized", finalizedRef)
-	}
+	// if e.FinalizedHead() == (eth.L2BlockRef{}) {
+	// 	var err error
+	// 	finalizedRef, err = e.engine.L2BlockRefByLabel(ctx, eth.Finalized)
+	// 	if err != nil {
+	// 		return fmt.Errorf("failed to load finalized head: %w", err)
+	// 	}
+	// 	e.SetFinalizedHead(finalizedRef)
+	// 	e.log.Info("Loaded initial finalized block ref", "finalized", finalizedRef)
+	// }
 	if e.SafeL2Head() == (eth.L2BlockRef{}) {
 		ref, err := e.engine.L2BlockRefByLabel(ctx, eth.Safe)
 		if err != nil {
