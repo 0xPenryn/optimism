@@ -502,12 +502,6 @@ func (e *EngineController) initializeUnknowns(ctx context.Context) error {
 }
 
 func (e *EngineController) tryUpdateEngineInternal(ctx context.Context) error {
-	if fc == e.lastForkchoice {
-		return nil
-	}
-	if e.isEngineInitialELSyncing() {
-		e.log.Warn("Attempting to update forkchoice state while EL syncing")
-	}
 	if err := e.initializeUnknowns(ctx); err != nil {
 		return derive.NewTemporaryError(fmt.Errorf("cannot update engine until engine forkchoice is initialized: %w", err))
 	}
@@ -520,6 +514,12 @@ func (e *EngineController) tryUpdateEngineInternal(ctx context.Context) error {
 		HeadBlockHash:      e.unsafeHead.Hash,
 		SafeBlockHash:      e.SafeL2Head().Hash,
 		FinalizedBlockHash: e.FinalizedHead().Hash,
+	}
+	if fc == e.lastForkchoice {
+		return nil
+	}
+	if e.isEngineInitialELSyncing() {
+		e.log.Warn("Attempting to update forkchoice state while EL syncing")
 	}
 	logFn := e.logSyncProgressMaybe()
 	defer logFn()
