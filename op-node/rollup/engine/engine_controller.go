@@ -520,7 +520,8 @@ func (e *EngineController) tryUpdateEngineInternal(ctx context.Context) error {
 		return nil
 	}
 	if e.isEngineInitialELSyncing() {
-		e.log.Warn("Attempting to update forkchoice state while EL syncing")
+		e.log.Warn("not Attempting to update forkchoice state while EL syncing")
+		return nil
 	}
 	logFn := e.logSyncProgressMaybe()
 	defer logFn()
