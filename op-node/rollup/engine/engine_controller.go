@@ -627,6 +627,9 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 	if !e.isEngineInitialELSyncing() {
 		fc.FinalizedBlockHash = e.FinalizedHead().Hash
 	}
+
+	e.log.Info("Forkchoice state", fc)
+
 	if e.syncStatus == syncStatusFinishedELButNotFinalized {
 		offsetRef := ref
 		if target := sync.OffsetBlockNum(e.syncCfg.OffsetELSafe, e.rollupCfg.BlockTime, ref.Number, e.rollupCfg.Genesis.L2.Number); target < ref.Number {
