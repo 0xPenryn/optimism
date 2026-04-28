@@ -620,9 +620,12 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 
 	// Mark the new payload as valid
 	fc := eth.ForkchoiceState{
-		HeadBlockHash:      envelope.ExecutionPayload.BlockHash,
-		SafeBlockHash:      e.SafeL2Head().Hash,
-		FinalizedBlockHash: e.FinalizedHead().Hash,
+		HeadBlockHash: envelope.ExecutionPayload.BlockHash,
+		SafeBlockHash: e.SafeL2Head().Hash,
+	}
+	// only set finalized after initial EL sync
+	if !e.isEngineInitialELSyncing() {
+		fc.FinalizedBlockHash = e.FinalizedHead().Hash
 	}
 	if e.syncStatus == syncStatusFinishedELButNotFinalized {
 		offsetRef := ref
