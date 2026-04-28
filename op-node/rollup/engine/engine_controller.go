@@ -629,7 +629,6 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 	}
 
 	e.log.Info("Forkchoice state", fc)
-	e.log.Info("sync status", e.syncStatus)
 
 	if e.syncStatus == syncStatusFinishedELButNotFinalized {
 		offsetRef := ref
