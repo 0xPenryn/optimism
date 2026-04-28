@@ -628,7 +628,8 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 		fc.FinalizedBlockHash = e.FinalizedHead().Hash
 	}
 
-	e.log.Info("sync status", "status", e.syncStatus)
+	e.log.Info("Forkchoice state", fc)
+	e.log.Info("sync status", e.syncStatus)
 
 	if e.syncStatus == syncStatusFinishedELButNotFinalized {
 		offsetRef := ref
@@ -662,9 +663,6 @@ func (e *EngineController) insertUnsafePayload(ctx context.Context, envelope *et
 	logFn := e.logSyncProgressMaybe()
 	defer logFn()
 	fcu2Start := time.Now()
-
-	e.log.Info("Forkchoice state", "fc", fc)
-
 	fcRes, err := e.engine.ForkchoiceUpdate(ctx, &fc, nil)
 	if err != nil {
 		var rpcErr rpc.Error
